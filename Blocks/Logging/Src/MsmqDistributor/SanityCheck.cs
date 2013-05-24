@@ -11,12 +11,11 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.ServiceProcess;
 using System.Timers;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Properties;
-using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 {
@@ -30,12 +29,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
         private static string Header = ExceptionFormatter.Header;
 
         private Timer timer;
-		private DistributorEventLogger eventLogger;
+        private DistributorEventLogger eventLogger;
         private DistributorService distributorService;
 
         public SanityCheck(DistributorService distributorService)
         {
-			this.eventLogger = distributorService.EventLogger;
+            this.eventLogger = distributorService.EventLogger;
             this.distributorService = distributorService;
         }
 
@@ -63,15 +62,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
             {
                 string errorMessage = string.Format(
                     CultureInfo.CurrentCulture,
-                    Resources.ServiceControllerStopException, 
+                    Resources.ServiceControllerStopException,
                     this.distributorService.ApplicationName);
- 				this.eventLogger.LogServiceFailure(
-					errorMessage,
-					e,
-					TraceEventType.Error);
-                
+                this.eventLogger.LogServiceFailure(
+                    errorMessage,
+                    e,
+                    TraceEventType.Error);
+
                 throw new LoggingException(errorMessage, e);
-            }            
+            }
         }
 
         /// <devdoc>
@@ -89,10 +88,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
                 catch (Exception err)
                 {
                     string errorMessage = string.Format(CultureInfo.CurrentCulture, Resources.ServiceUnableToShutdown, this.distributorService.ApplicationName);
-					this.eventLogger.LogServiceFailure(
-						errorMessage,
-						err,
-						TraceEventType.Error);
+                    this.eventLogger.LogServiceFailure(
+                        errorMessage,
+                        err,
+                        TraceEventType.Error);
                     this.distributorService.Status = ServiceStatus.PendingShutdown;
                 }
             }
@@ -107,11 +106,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
             }
             else
             {
-				this.eventLogger.LogServiceFailure(
+                this.eventLogger.LogServiceFailure(
                     string.Format(CultureInfo.CurrentCulture, Resources.ServiceControllerStopException, this.distributorService.ApplicationName),
-					null,
-					TraceEventType.Error);
-			}
+                    null,
+                    TraceEventType.Error);
+            }
         }
     }
 }

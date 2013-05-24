@@ -16,7 +16,6 @@ using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.RuleEditor;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.EnvironmentalOverrides;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
@@ -225,7 +224,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                     new ValidationAttribute(typeof(FilePathExistsValidator)),
                     new ValidationAttribute(typeof(EnvironmentalOverridesSectionDeltaFileValidator)),
                     new EditorAttribute(CommonDesignTime.EditorTypes.FilteredFilePath, CommonDesignTime.EditorTypes.UITypeEditor),
-                    new FilteredFileNameEditorAttribute(typeof(Resources), "EnvironmentDeltaFileFilter") { CheckFileExists = false }
+                    new FilteredFileNameEditorAttribute(typeof(Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties.Resources), "EnvironmentDeltaFileFilter") { CheckFileExists = false }
                 })
             {
             }

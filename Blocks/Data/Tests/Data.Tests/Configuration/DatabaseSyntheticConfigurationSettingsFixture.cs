@@ -13,13 +13,11 @@ using System;
 using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
 {
@@ -34,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
         {
             configSource = new DictionaryConfigurationSource();
             configSource.Add("connectionStrings", new ConnectionStringsSection());
-            configSettings = new DatabaseSyntheticConfigSettings(configSource);
+            configSettings = new DatabaseSyntheticConfigSettings(configSource.GetSection);
         }
 
         [TestMethod]
@@ -61,7 +59,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             var configSource = new DictionaryConfigurationSource();
 
             configSource.Add(DatabaseSettings.SectionName, new DatabaseSettings());
-            configSettings = new DatabaseSyntheticConfigSettings(configSource);
+            configSettings = new DatabaseSyntheticConfigSettings(configSource.GetSection);
         }
 
         [TestMethod]
@@ -82,7 +80,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             var configSource = new DictionaryConfigurationSource();
 
             configSource.Add(DatabaseSettings.SectionName, new DatabaseSettings { DefaultDatabase = "default" });
-            configSettings = new DatabaseSyntheticConfigSettings(configSource);
+            configSettings = new DatabaseSyntheticConfigSettings(configSource.GetSection);
         }
 
         [TestMethod]
@@ -107,7 +105,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
 
             configSource.Add("connectionStrings", connectionStrings);
 
-            configSettings = new DatabaseSyntheticConfigSettings(configSource);
+            configSettings = new DatabaseSyntheticConfigSettings(configSource.GetSection);
         }
 
         [TestMethod]
@@ -137,7 +135,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
 
             configSource.Add("connectionStrings", connectionStrings);
 
-            configSettings = new DatabaseSyntheticConfigSettings(configSource);
+            configSettings = new DatabaseSyntheticConfigSettings(configSource.GetSection);
         }
 
         [TestMethod]
@@ -163,7 +161,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
 
             configSource.Add("connectionStrings", connectionStrings);
 
-            configSettings = new DatabaseSyntheticConfigSettings(configSource);
+            configSettings = new DatabaseSyntheticConfigSettings(configSource.GetSection);
         }
 
         [TestMethod]
@@ -189,7 +187,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
 
             configSource.Add("connectionStrings", connectionStrings);
 
-            configSettings = new DatabaseSyntheticConfigSettings(configSource);
+            configSettings = new DatabaseSyntheticConfigSettings(configSource.GetSection);
         }
 
         [TestMethod]
@@ -224,7 +222,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             databaseSettings.ProviderMappings.Add(new DbProviderMapping("System.Data.Odbc", typeof(SqlDatabase)));
             configSource.Add(DatabaseSettings.SectionName, databaseSettings);
 
-            configSettings = new DatabaseSyntheticConfigSettings(configSource);
+            configSettings = new DatabaseSyntheticConfigSettings(configSource.GetSection);
         }
 
         [TestMethod]
@@ -253,7 +251,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             databaseSettings.ProviderMappings.Add(new DbProviderMapping("System.Data.Odbc", typeof(TestDatabaseWithNoConfigurationElementTypeAttribute)));
             configSource.Add(DatabaseSettings.SectionName, databaseSettings);
 
-            configSettings = new DatabaseSyntheticConfigSettings(configSource);
+            configSettings = new DatabaseSyntheticConfigSettings(configSource.GetSection);
         }
 
         public class TestDatabaseWithNoConfigurationElementTypeAttribute
@@ -287,7 +285,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             databaseSettings.ProviderMappings.Add(new DbProviderMapping("System.Data.Odbc", typeof(TestDatabase)));
             configSource.Add(DatabaseSettings.SectionName, databaseSettings);
 
-            configSettings = new DatabaseSyntheticConfigSettings(configSource);
+            configSettings = new DatabaseSyntheticConfigSettings(configSource.GetSection);
         }
 
         [ConfigurationElementType(typeof(TestDatabaseData))]
@@ -297,12 +295,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
 
         public class TestDatabaseData : DatabaseData
         {
-            public TestDatabaseData(ConnectionStringSettings connectionString, IConfigurationSource configurationSource, int ignored)
+            public TestDatabaseData(ConnectionStringSettings connectionString, Func<string, ConfigurationSection> configurationSource, int ignored)
                 : base(connectionString, configurationSource)
             {
             }
 
-            public override IEnumerable<TypeRegistration> GetRegistrations()
+            public override Database BuildDatabase()
             {
                 throw new NotImplementedException();
             }
@@ -335,7 +333,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             databaseSettings.ProviderMappings.Add(new DbProviderMapping("System.Data.Odbc", typeof(TestDatabase)));
             configSource.Add(DatabaseSettings.SectionName, databaseSettings);
 
-            configSettings = new DatabaseSyntheticConfigSettings(configSource);
+            configSettings = new DatabaseSyntheticConfigSettings(configSource.GetSection);
         }
 
         [ConfigurationElementType(typeof(TestDatabaseData))]
@@ -345,7 +343,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
 
         public class TestDatabaseData
         {
-            public TestDatabaseData(ConnectionStringSettings connectionString, IConfigurationSource configurationSource)
+            public TestDatabaseData(ConnectionStringSettings connectionString, Func<string, ConfigurationSection> configurationSource)
             {
             }
         }
@@ -355,6 +353,58 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
         public void TheRequestingForConfigurationObjectThrows()
         {
             configSettings.Databases.ElementAt(0);
+        }
+    }
+
+    [TestClass]
+    public class GivenAConfigurationSourceWithAConnectionStringWithAnEmptyProviderName
+    {
+        private DatabaseSyntheticConfigSettings configSettings;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            var configSource = new DictionaryConfigurationSource();
+
+            var connectionStrings = new ConnectionStringsSection();
+            connectionStrings.ConnectionStrings.Add(
+                new ConnectionStringSettings("someSetting", "someConnectionString"));
+            configSource.Add("connectionStrings", connectionStrings);
+
+            configSettings = new DatabaseSyntheticConfigSettings(configSource.GetSection);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ConfigurationErrorsException))]
+        public void ThenGettingTheConnectionStringByNameThrows()
+        {
+            configSettings.GetDatabase("someSetting");
+        }
+    }
+
+    [TestClass]
+    public class GivenAConfigurationSourceWithAConnectionStringWithAnInvalidProviderName
+    {
+        private DatabaseSyntheticConfigSettings configSettings;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            var configSource = new DictionaryConfigurationSource();
+
+            var connectionStrings = new ConnectionStringsSection();
+            connectionStrings.ConnectionStrings.Add(
+                new ConnectionStringSettings("someSetting", "someConnectionString", "invalid provider name"));
+            configSource.Add("connectionStrings", connectionStrings);
+
+            configSettings = new DatabaseSyntheticConfigSettings(configSource.GetSection);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ConfigurationErrorsException))]
+        public void ThenGettingTheConnectionStringByNameThrows()
+        {
+            configSettings.GetDatabase("someSetting");
         }
     }
 
@@ -376,7 +426,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
 
             configSource.Add("connectionStrings", connectionStrings);
 
-            configSettings = new DatabaseSyntheticConfigSettings(configSource);
+            configSettings = new DatabaseSyntheticConfigSettings(configSource.GetSection);
         }
 
         [TestMethod]
@@ -410,7 +460,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             var oracleSettings = new OracleConnectionSettings();
             configSource.Add(OracleConnectionSettings.SectionName, oracleSettings);
 
-            configSettings = new DatabaseSyntheticConfigSettings(configSource);
+            configSettings = new DatabaseSyntheticConfigSettings(configSource.GetSection);
         }
 
         [TestMethod]
@@ -447,7 +497,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             oracleSettings.OracleConnectionsData.Add(oracleConnectionData);
             configSource.Add(OracleConnectionSettings.SectionName, oracleSettings);
 
-            configSettings = new DatabaseSyntheticConfigSettings(configSource);
+            configSettings = new DatabaseSyntheticConfigSettings(configSource.GetSection);
         }
 
         [TestMethod]
@@ -482,7 +532,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
         public void Setup()
         {
             configSource = new DictionaryConfigurationSource();
-            configSettings = new DatabaseSyntheticConfigSettings(configSource);
+            configSettings = new DatabaseSyntheticConfigSettings(configSource.GetSection);
         }
 
         [TestMethod]

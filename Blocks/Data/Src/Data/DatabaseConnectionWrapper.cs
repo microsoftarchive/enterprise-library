@@ -60,6 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// Decrement the reference count and, if refcount is 0, close the underlying connection.
         /// </summary>
         /// <filterpriority>2</filterpriority>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1816:CallGCSuppressFinalizeCorrectly", Justification = "As designed. This is a reference counting disposable.")]
         public void Dispose()
         {
             Dispose(true);
@@ -71,6 +72,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="disposing">true if called via <see cref="DatabaseConnectionWrapper.Dispose()"/> method, false
         /// if called from finalizer. Of course, since we have no finalizer this will never
         /// be false.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1816:CallGCSuppressFinalizeCorrectly", Justification = "As designed. This is a reference counting disposable.")]
         protected virtual void Dispose(bool disposing)
         {
             if(disposing)

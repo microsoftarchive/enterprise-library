@@ -14,7 +14,6 @@ using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using System.Transactions;
-using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data
@@ -36,37 +35,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         readonly DbProviderFactory dbProviderFactory;
 
         /// <summary>
-        /// The <see cref="IDataInstrumentationProvider"/> instance that defines the logical events used to instrument this <see cref="Database"/> instance.
-        /// </summary>
-        protected IDataInstrumentationProvider instrumentationProvider;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="Database"/> class with a connection string and a <see cref="DbProviderFactory"/>.
         /// </summary>
         /// <param name="connectionString">The connection string for the database.</param>
         /// <param name="dbProviderFactory">A <see cref="DbProviderFactory"/> object.</param>
-        protected Database(string connectionString,
-                           DbProviderFactory dbProviderFactory)
-            : this(connectionString, dbProviderFactory, new NullDataInstrumentationProvider())
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Database"/> class with a connection string,
-        /// a <see cref="DbProviderFactory"/> and an <see cref="IDataInstrumentationProvider"/>.
-        /// </summary>
-        /// <param name="connectionString">The connection string for the database.</param>
-        /// <param name="dbProviderFactory">A <see cref="DbProviderFactory"/> object.</param>
-        /// <param name="instrumentationProvider">Instrumentation provider to use.</param>
-        protected Database(string connectionString, DbProviderFactory dbProviderFactory, IDataInstrumentationProvider instrumentationProvider)
+        protected Database(string connectionString, DbProviderFactory dbProviderFactory)
         {
             if (string.IsNullOrEmpty(connectionString)) throw new ArgumentException(Resources.ExceptionNullOrEmptyString, "connectionString");
             if (dbProviderFactory == null) throw new ArgumentNullException("dbProviderFactory");
-            if (instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
 
             this.connectionString = new ConnectionString(connectionString, VALID_USER_ID_TOKENS, VALID_PASSWORD_TOKENS);
             this.dbProviderFactory = dbProviderFactory;
-            this.instrumentationProvider = instrumentationProvider;
         }
 
         /// <summary>
@@ -312,6 +291,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             param.SourceVersion = sourceVersion;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "The purpose of the block is to execute arbitrary SQL on behalf of the user. It is known that the users must review the use of the Database for security vulnerabilities.")]
         DbCommand CreateCommandByCommandType(CommandType commandType,
                                              string commandText)
         {
@@ -430,51 +410,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         {
             if (command == null) throw new ArgumentNullException("command");
 
-            try
-            {
-                DateTime startTime = DateTime.Now;
-                int rowsAffected = command.ExecuteNonQuery();
-                instrumentationProvider.FireCommandExecutedEvent(startTime);
-                return rowsAffected;
-            }
-            catch (Exception e)
-            {
-                instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
-                throw;
-            }
+            int rowsAffected = command.ExecuteNonQuery();
+            return rowsAffected;
         }
 
         IDataReader DoExecuteReader(DbCommand command,
                                     CommandBehavior cmdBehavior)
         {
-            try
-            {
-                DateTime startTime = DateTime.Now;
-                IDataReader reader = command.ExecuteReader(cmdBehavior);
-                instrumentationProvider.FireCommandExecutedEvent(startTime);
-                return reader;
-            }
-            catch (Exception e)
-            {
-                instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
-                throw;
-            }
+            IDataReader reader = command.ExecuteReader(cmdBehavior);
+
+            return reader;
         }
 
         object DoExecuteScalar(IDbCommand command)
         {
-            try
-            {
-                DateTime startTime = DateTime.Now;
-                object returnValue = command.ExecuteScalar();
-                instrumentationProvider.FireCommandExecutedEvent(startTime);
-                return returnValue;
-            }
-            catch (Exception e)
-            {
-                instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
-                throw;
-            }
+            object returnValue = command.ExecuteScalar();
+            return returnValue;
         }
 
         void DoLoadDataSet(IDbCommand command,
@@ -495,27 +446,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             {
                 ((IDbDataAdapter)adapter).SelectCommand = command;
 
-                try
+                string systemCreatedTableNameRoot = "Table";
+                for (int i = 0; i < tableNames.Length; i++)
                 {
-                    DateTime startTime = DateTime.Now;
-                    string systemCreatedTableNameRoot = "Table";
-                    for (int i = 0; i < tableNames.Length; i++)
-                    {
-                        string systemCreatedTableName = (i == 0)
-                                                            ? systemCreatedTableNameRoot
-                                                            : systemCreatedTableNameRoot + i;
+                    string systemCreatedTableName = (i == 0)
+                                                        ? systemCreatedTableNameRoot
+                                                        : systemCreatedTableNameRoot + i;
 
-                        adapter.TableMappings.Add(systemCreatedTableName, tableNames[i]);
-                    }
+                    adapter.TableMappings.Add(systemCreatedTableName, tableNames[i]);
+                }
 
-                    adapter.Fill(dataSet);
-                    instrumentationProvider.FireCommandExecutedEvent(startTime);
-                }
-                catch (Exception e)
-                {
-                    instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
-                    throw;
-                }
+                adapter.Fill(dataSet);
             }
         }
 
@@ -562,18 +503,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
                         adapter.DeleteCommand.UpdatedRowSource = UpdateRowSource.None;
                 }
 
-                try
-                {
-                    DateTime startTime = DateTime.Now;
-                    int rows = adapter.Update(dataSet.Tables[tableName]);
-                    instrumentationProvider.FireCommandExecutedEvent(startTime);
-                    return rows;
-                }
-                catch (Exception e)
-                {
-                    instrumentationProvider.FireCommandFailedEvent("DbDataAdapter.Update() " + tableName, ConnectionStringNoCredentials, e);
-                    throw;
-                }
+                int rows = adapter.Update(dataSet.Tables[tableName]);
+                return rows;
             }
         }
 
@@ -840,7 +771,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// </returns>        
         public virtual IDataReader ExecuteReader(DbCommand command)
         {
-            using(DatabaseConnectionWrapper wrapper = GetOpenConnection())
+            using (DatabaseConnectionWrapper wrapper = GetOpenConnection())
             {
                 PrepareCommand(command, wrapper.Connection);
                 IDataReader realReader = DoExecuteReader(command, CommandBehavior.Default);
@@ -1155,18 +1086,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             DbConnection connection = null;
             try
             {
-                try
-                {
                     connection = CreateConnection();
                     connection.Open();
-                }
-                catch (Exception e)
-                {
-                    instrumentationProvider.FireConnectionFailedEvent(ConnectionStringNoCredentials, e);
-                    throw;
-                }
-
-                instrumentationProvider.FireConnectionOpenedEvent();
             }
             catch
             {
@@ -1612,16 +1533,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             {
                 if (updateBehavior == UpdateBehavior.Transactional && Transaction.Current == null)
                 {
-                    DbTransaction trans = BeginTransaction(wrapper.Connection);
+                    DbTransaction transaction = BeginTransaction(wrapper.Connection);
                     try
                     {
-                        int rowsAffected = UpdateDataSet(dataSet, tableName, insertCommand, updateCommand, deleteCommand, trans, updateBatchSize);
-                        CommitTransaction(trans);
+                        int rowsAffected = UpdateDataSet(dataSet, tableName, insertCommand, updateCommand, deleteCommand, transaction, updateBatchSize);
+                        CommitTransaction(transaction);
                         return rowsAffected;
                     }
                     catch
                     {
-                        RollbackTransaction(trans);
+                        RollbackTransaction(transaction);
                         throw;
                     }
                 }
@@ -2299,7 +2220,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         ///		need to use a shared connection instead of a new connection for each request in order
         ///		to prevent a distributed transaction.
         /// </summary>
-        protected class OldConnectionWrapper : IDisposable
+        protected sealed class OldConnectionWrapper : IDisposable
         {
             readonly DbConnection connection;
             readonly bool disposeConnection;
@@ -2332,7 +2253,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             public void Dispose()
             {
                 if (disposeConnection)
+                {
                     connection.Dispose();
+                }
+
+                GC.SuppressFinalize(this);
             }
         }
     }

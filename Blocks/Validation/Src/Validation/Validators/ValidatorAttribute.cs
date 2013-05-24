@@ -101,9 +101,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// information.
         /// </summary>
         /// <param name="targetType">The type of object that will be validated by the validator.</param>
-        /// <remarks>This operation must be overridden by subclasses.</remarks>
+        /// <remarks>This operation must be overriden by subclasses.</remarks>
         /// <returns>The created <see cref="Validator"/>.</returns>
         protected abstract Validator DoCreateValidator(Type targetType);
-
     }
 }

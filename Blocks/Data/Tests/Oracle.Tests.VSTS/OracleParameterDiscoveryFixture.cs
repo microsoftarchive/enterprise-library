@@ -30,6 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Tests
         [TestInitialize]
         public void TestInitialize()
         {
+            EnvironmentHelper.AssertOracleClientIsInstalled();
             DatabaseProviderFactory factory = new DatabaseProviderFactory(OracleTestConfigurationSource.CreateConfigurationSource());
             db = factory.Create("OracleTest");
             storedProcedure = db.GetStoredProcCommand("CustOrdersOrders");

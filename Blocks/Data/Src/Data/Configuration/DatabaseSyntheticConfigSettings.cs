@@ -16,11 +16,8 @@ using System.Data.Common;
 using System.Data.OracleClient;
 using System.Data.SqlClient;
 using System.Globalization;
-using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.Data.Oracle;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
@@ -32,26 +29,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
     /// </summary>
     /// <remarks>
     /// As the DataAccessBlock relies on a number of configuration sections (such as connectionStrings), this
-    /// config settings provides an abstraction over all these to simplify creating <see cref="TypeRegistration"/> entries.
+    /// config settings provides an abstraction over all these to simplify creating database objects.
     /// </remarks>
-    public class DatabaseSyntheticConfigSettings : ITypeRegistrationsProvider
+    public class DatabaseSyntheticConfigSettings
     {
         private static readonly DbProviderMapping defaultSqlMapping =
             new DbProviderMapping(DbProviderMapping.DefaultSqlProviderName, typeof(SqlDatabase));
+#pragma warning disable 612, 618
         private static readonly DbProviderMapping defaultOracleMapping =
             new DbProviderMapping(DbProviderMapping.DefaultOracleProviderName, typeof(OracleDatabase));
+#pragma warning restore 612, 618
         private static readonly DbProviderMapping defaultGenericMapping =
             new DbProviderMapping(DbProviderMapping.DefaultGenericProviderName, typeof(GenericDatabase));
 
-        private IConfigurationSource configurationSource;
-
-        /// <summary>
-        /// Default constructor, used when creating registrations for containers.
-        /// </summary>
-        public DatabaseSyntheticConfigSettings()
-        {
-
-        }
+        private Func<string, ConfigurationSection> configurationSource;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DatabaseSyntheticConfigSettings"/> class
@@ -59,6 +50,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         /// </summary>
         /// <remarks>This constructor is primarily for test convenience.</remarks>
         public DatabaseSyntheticConfigSettings(IConfigurationSource configurationSource)
+            : this(configurationSource.GetSection)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DatabaseSyntheticConfigSettings"/> class
+        /// with the given configuraiton access function.
+        /// </summary>
+        public DatabaseSyntheticConfigSettings(Func<string, ConfigurationSection> configurationSource)
         {
             this.configurationSource = configurationSource;
         }
@@ -70,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         {
             get
             {
-                var databaseSettings = configurationSource.GetSection(DatabaseSettings.SectionName) as DatabaseSettings;
+                var databaseSettings = configurationSource(DatabaseSettings.SectionName) as DatabaseSettings;
                 return databaseSettings != null ? databaseSettings.DefaultDatabase : string.Empty;
             }
         }
@@ -85,7 +85,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         {
             get
             {
-                var databaseSettings = (DatabaseSettings)configurationSource.GetSection(DatabaseSettings.SectionName);
+                var databaseSettings = (DatabaseSettings)configurationSource(DatabaseSettings.SectionName);
 
                 foreach (ConnectionStringSettings connectionString in GetConnectionStrings())
                 {
@@ -96,7 +96,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
                 }
             }
         }
-
 
         /// <summary>
         /// Returns the <see cref="ConnectionStringSettings"/> object with the given name from the connection strings
@@ -112,16 +111,34 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         /// <exception cref="ConfigurationErrorsException">if the connection string object is not found, or if it does not specify a provider name.</exception>
         public ConnectionStringSettings GetConnectionStringSettings(string name)
         {
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentException(Resources.ExceptionNullOrEmptyString);
-            }
+            Guard.ArgumentNotNullOrEmpty(name, "name");
 
             ConnectionStringSettingsCollection connectionStringsCollection = GetConnectionStrings();
             ConnectionStringSettings connectionStringSettings = connectionStringsCollection[name];
 
             ValidateConnectionStringSettings(name, connectionStringSettings);
             return connectionStringSettings;
+        }
+
+        /// <summary>
+        /// Gets the object describing the database instance with name <paramref name="name"/> in the configuration source.
+        /// </summary>
+        /// <param name="name">The name of the database.</param>
+        /// <returns>A configuration object</returns>
+        public DatabaseData GetDatabase(string name)
+        {
+            var connectionStringSettings = this.GetConnectionStringSettings(name);
+            var databaseSettings = (DatabaseSettings)configurationSource(DatabaseSettings.SectionName);
+
+            if (!IsValidProviderName(connectionStringSettings.ProviderName))
+            {
+                throw new ConfigurationErrorsException(
+                    string.Format(CultureInfo.CurrentCulture, Resources.ExceptionNoValidProviderForConnectionString, name),
+                    connectionStringSettings.ElementInformation.Source,
+                    connectionStringSettings.ElementInformation.LineNumber);
+            }
+
+            return GetDatabaseData(connectionStringSettings, databaseSettings);
         }
 
         private static void ValidateConnectionStringSettings(string name, ConnectionStringSettings connectionStringSettings)
@@ -133,14 +150,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
 
             if (string.IsNullOrEmpty(connectionStringSettings.ProviderName))
             {
-                throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Resources.ExceptionNoProviderDefinedForConnectionString, name));
+                throw new ConfigurationErrorsException(
+                    string.Format(CultureInfo.CurrentCulture, Resources.ExceptionNoProviderDefinedForConnectionString, name),
+                    connectionStringSettings.ElementInformation.Source,
+                    connectionStringSettings.ElementInformation.LineNumber);
             }
         }
 
-
         private ConnectionStringSettingsCollection GetConnectionStrings()
         {
-            var section = configurationSource.GetSection("connectionStrings") as ConnectionStringsSection;
+            var section = configurationSource("connectionStrings") as ConnectionStringsSection;
 
             return section != null ? section.ConnectionStrings : ConfigurationManager.ConnectionStrings;
         }
@@ -182,7 +201,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         private static DatabaseData CreateDatabaseData(
             Type configurationElementType,
             ConnectionStringSettings settings,
-            IConfigurationSource source)
+            Func<string, ConfigurationSection> source)
         {
             object newInstance;
 
@@ -224,7 +243,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         /// <returns></returns>
         public DbProviderMapping GetProviderMapping(string dbProviderName)
         {
-            DatabaseSettings settings = (DatabaseSettings)configurationSource.GetSection(DatabaseSettings.SectionName);
+            DatabaseSettings settings = (DatabaseSettings)configurationSource(DatabaseSettings.SectionName);
             return GetProviderMapping(dbProviderName, settings);
         }
 
@@ -258,8 +277,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
             if (SqlClientFactory.Instance == providerFactory)
                 return defaultSqlMapping;
 
+#pragma warning disable 612, 618
             if (OracleClientFactory.Instance == providerFactory)
                 return defaultOracleMapping;
+#pragma warning restore 612, 618
 
             return null;
         }
@@ -267,88 +288,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         private static DbProviderMapping GetGenericMapping()
         {
             return defaultGenericMapping;
-        }
-
-        private static TypeRegistration GetInstrumentationProviderRegistration(string instanceName, IConfigurationSource configurationSource)
-        {
-            var instrumentationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
-            return new TypeRegistration<IDataInstrumentationProvider>(
-                () => new NewDataInstrumentationProvider(
-                    instanceName,
-                    instrumentationSection.PerformanceCountersEnabled,
-                    instrumentationSection.EventLoggingEnabled,
-                    instrumentationSection.ApplicationInstanceName))
-                {
-                    Name = instanceName
-                };
-        }
-
-        private TypeRegistration GetDefaultDataEventLoggerRegistration()
-        {
-            var instrumentationConfigurationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
-            return new TypeRegistration<DefaultDataEventLogger>(
-                () => new DefaultDataEventLogger(instrumentationConfigurationSection.EventLoggingEnabled))
-                {
-                    IsDefault = true
-                };
-
-        }
-
-        /// <summary>
-        /// Creates <see cref="TypeRegistration"/> entries based on <see cref="DatabaseSyntheticConfigSettings"/>
-        /// </summary>
-        /// <returns>A set of <see cref="TypeRegistration"/> entries.</returns>
-        public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
-        {
-            if (configurationSource == null) throw new ArgumentNullException("configurationSource");
-
-            this.configurationSource = configurationSource;
-
-            return DoGetRegistrations().Select(r => MarkAsPublicName<Database>(r)).ToList();
-        }
-
-        private static TypeRegistration MarkAsPublicName<TService>(TypeRegistration registration)
-        {
-            if(registration.ServiceType == typeof(TService))
-            {
-                registration.IsPublicName = true;
-            }
-            return registration;
-        }
-
-        private IEnumerable<TypeRegistration> DoGetRegistrations()
-        {
-            var defaultDatabase = DefaultDatabase;
-
-            foreach (DatabaseData data in Databases.ToList())
-            {
-                foreach (TypeRegistration typeRegistration in data.GetRegistrations().ToList())
-                {
-                    if (typeRegistration.ServiceType == typeof(Database)
-                        && String.Equals(typeRegistration.Name, defaultDatabase))
-                    {
-                        typeRegistration.IsDefault = true;
-                    }
-
-                    yield return typeRegistration;
-                    yield return GetInstrumentationProviderRegistration(typeRegistration.Name, configurationSource);
-                }
-            }
-
-            yield return GetDefaultDataEventLoggerRegistration();
-        }
-
-        /// <summary>
-        /// Return the <see cref="TypeRegistration"/> objects needed to reconfigure
-        /// the container after a configuration source has changed.
-        /// </summary>
-        /// <remarks>If there are no reregistrations, return an empty sequence.</remarks>
-        /// <param name="configurationSource">The <see cref="IConfigurationSource"/> containing
-        /// the configuration information.</param>
-        /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
-        public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
-        {
-            return GetRegistrations(configurationSource);
         }
     }
 }

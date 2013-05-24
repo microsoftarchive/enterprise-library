@@ -12,10 +12,8 @@
 using System.Reflection;
 using System.Security.Permissions;
 
-[assembly: ReflectionPermission(SecurityAction.RequestMinimum, MemberAccess = true)]
-[assembly: SecurityPermission(SecurityAction.RequestMinimum)]
-
 [assembly: AssemblyTitle("Enterprise Library Configuration Merge Tool")]
 [assembly: AssemblyDescription("Enterprise Library Configuration Merge Tool")]
-[assembly: AssemblyVersion("5.0.505.0")]
+[assembly: AssemblyVersion("6.0.0.0")]
+[assembly: AssemblyFileVersion("6.0.1304.0")]
 

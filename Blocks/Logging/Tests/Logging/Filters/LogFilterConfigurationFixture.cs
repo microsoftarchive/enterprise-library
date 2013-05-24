@@ -28,8 +28,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests
 
         private static ILogFilter GetFilter(string name, IConfigurationSource configurationSource)
         {
-            var container = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
-            return container.GetInstance<ILogFilter>(name);
+            var settings = LoggingSettings.GetLoggingSettings(configurationSource);
+            return settings.LogFilters.Get(name).BuildFilter();
         }
 
         [TestMethod]
@@ -91,9 +91,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests
         public void CanCreateCategoryFilterFromNonEmptyCategoryConfiguration()
         {
             NamedElementCollection<CategoryFilterEntry> categoryEntries = new NamedElementCollection<CategoryFilterEntry>();
-            categoryEntries.Add(new CategoryFilterEntry("foo"));
-            categoryEntries.Add(new CategoryFilterEntry("bar"));
-            categoryEntries.Add(new CategoryFilterEntry("baz"));
+            categoryEntries.Add(new CategoryFilterEntry("category1"));
+            categoryEntries.Add(new CategoryFilterEntry("category2"));
+            categoryEntries.Add(new CategoryFilterEntry("category3"));
             CategoryFilterData filterData = new CategoryFilterData("category", categoryEntries, CategoryFilterMode.AllowAllExceptDenied);
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
@@ -104,10 +104,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests
             Assert.IsNotNull(filter);
             Assert.AreEqual(filter.GetType(), typeof(CategoryFilter));
             Assert.AreEqual(3, ((CategoryFilter)filter).CategoryFilters.Count);
-            Assert.IsTrue(((CategoryFilter)filter).CategoryFilters.Contains("foo"));
-            Assert.IsTrue(((CategoryFilter)filter).CategoryFilters.Contains("bar"));
-            Assert.IsTrue(((CategoryFilter)filter).CategoryFilters.Contains("baz"));
-            Assert.IsFalse(((CategoryFilter)filter).CategoryFilters.Contains("foobar"));
+            Assert.IsTrue(((CategoryFilter)filter).CategoryFilters.Contains("category1"));
+            Assert.IsTrue(((CategoryFilter)filter).CategoryFilters.Contains("category2"));
+            Assert.IsTrue(((CategoryFilter)filter).CategoryFilters.Contains("category3"));
+            Assert.IsFalse(((CategoryFilter)filter).CategoryFilters.Contains("category4"));
             Assert.AreEqual(CategoryFilterMode.AllowAllExceptDenied, ((CategoryFilter)filter).CategoryFilterMode);
         }
 
@@ -143,7 +143,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests
         [TestMethod]
         public void PriorityFilterShouldNotLogWhenPriotityIsAboveMaxPriority()
         {
-            var filterData = new PriorityFilterData(0) {
+            var filterData = new PriorityFilterData(0)
+            {
                 MaximumPriority = 100
             };
 

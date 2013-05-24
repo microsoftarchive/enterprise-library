@@ -114,6 +114,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
         }
     }
 
+#pragma warning disable 612, 618
     [TestClass]
     public class When_PassingNullConnectionStringBuilderToOracleDatabase : Given_NamedDatabase
     {
@@ -164,6 +165,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             Assert.AreEqual(DbProviderMapping.DefaultOracleProviderName, GetConnectionStringSettings().ProviderName);
         }
     }
+#pragma warning restore 612, 618
 
     [TestClass]
     public class When_ConfiguringWithSpecifiedProviderName : Given_NamedDatabase
@@ -171,9 +173,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
         private DbConnectionStringBuilder builder;
         private string providerName = "myTestProviderName";
 
-        protected override void  Arrange()
+        protected override void Arrange()
         {
- 	        base.Arrange();
+            base.Arrange();
             builder = new DbConnectionStringBuilder();
             builder.Add("SomeConnectionKeyword", "value");
         }
@@ -219,6 +221,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
         }
     }
 
+#pragma warning disable 612, 618
     [TestClass]
     public class When_ConfiguringMultipleDatabase : Given_NamedDatabase
     {
@@ -240,6 +243,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             Assert.AreEqual("MyOtherDatabase", settings.DefaultDatabase);
         }
     }
+#pragma warning restore 612, 618
 
     [TestClass]
     public class When_PassingNullConnectionStringBuilderToOleDbDatabase : Given_NamedDatabase
@@ -341,7 +345,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             builder = new OdbcConnectionStringBuilder()
             {
                 Dsn = "OdbcDsn",
-                Driver = "OdbcDriver"  
+                Driver = "OdbcDriver"
             };
         }
 
@@ -420,6 +424,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
         }
     }
 
+#pragma warning disable 612, 618
     [TestClass]
     public class When_ConfiguringOraclePackagesPassingNullForPackageName : Given_NamedDatabase
     {
@@ -448,7 +453,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
                         .AndPrefix(null);
         }
     }
+#pragma warning restore 612, 618
 
+#pragma warning disable 612, 618
     [TestClass]
     public class When_ConfiguringOracleDatabaseWithSettings : Given_NamedDatabase
     {
@@ -548,6 +555,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
         }
 
     }
+#pragma warning restore 612, 618
 
 
     [TestClass]
@@ -604,7 +612,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
         {
             var settings = GetSectionFromBuilder<DatabaseSettings>();
             var mapping = settings.ProviderMappings.Single(m => m.Name == "CustomProvider");
-            Assert.AreEqual(typeof (Data.GenericDatabase), mapping.DatabaseType);
+            Assert.AreEqual(typeof(Data.GenericDatabase), mapping.DatabaseType);
         }
     }
 
@@ -627,6 +635,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
         }
     }
 
+#pragma warning disable 612, 618
     [TestClass]
     public class When_MultipleCustomProviderAndMappingsSupplied : Given_ConfigureDataEntryPoint
     {
@@ -656,7 +665,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
 
         }
     }
-   
+#pragma warning restore 612, 618
+
     [TestClass]
     public class When_CustomProviderMappedToIncorrectImplementorType : Given_ConfigureDataEntryPoint
     {

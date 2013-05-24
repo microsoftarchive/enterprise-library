@@ -16,7 +16,7 @@ using System.Linq;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
 {
     /// <summary>
-    /// Some utility extensions on <see cref="IEnumerable{T}"/> to supplement
+    /// Some utility extensions on <see cref="IEnumerable{T}"/> to suppliment
     /// those available from Linq.
     /// </summary>
     public static class EnumerableExtensions
@@ -42,7 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
         /// not the compression algorithm. The resulting sequence will have the same number
         /// of elements as the shorter of sequence1 and sequence2.
         /// </summary>
-        /// <typeparam name="T1">Type of the elements in the first sequence.</typeparam>
+        /// <typeparam name="T1">Type of the elments in the first sequence.</typeparam>
         /// <typeparam name="T2">Type of the elements in the second sequence.</typeparam>
         /// <typeparam name="TResult">Type of the resulting sequence elements.</typeparam>
         /// <param name="sequence1">The first sequence to combine.</param>

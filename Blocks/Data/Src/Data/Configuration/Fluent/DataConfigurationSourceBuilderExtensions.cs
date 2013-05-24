@@ -10,13 +10,11 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.Data;
-using Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
@@ -91,7 +89,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             /// <summary />
             public IDatabaseProviderConfiguration WithProviderNamed(string providerName)
             {
-                if (string.IsNullOrEmpty(providerName)) throw new ArgumentException(Properties.Resources.ExceptionStringNullOrEmpty, "providerName");
+                Guard.ArgumentNotNullOrEmpty(providerName, "providerName");
 
                 EnsureDatabaseSettings();
                 currentProviderMapping = new DbProviderMapping();
@@ -108,11 +106,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             /// <returns></returns>
             public IDataConfiguration MappedToDatabase(Type databaseType)
             {
-                if (!typeof(Database).IsAssignableFrom(databaseType)) 
+                if (!typeof(Database).IsAssignableFrom(databaseType))
                 {
                     throw new ArgumentException(Resources.ExceptionArgumentMustInheritFromDatabase, "databaseType");
                 }
-                
+
                 currentProviderMapping.DatabaseType = databaseType;
                 return this;
             }

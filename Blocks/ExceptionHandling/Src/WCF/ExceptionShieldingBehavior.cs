@@ -11,12 +11,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Collections.ObjectModel;
+using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
-using System.ServiceModel;
-using System.Collections.ObjectModel;
-using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF
 {
@@ -100,8 +98,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF
         /// <param name="endpoint">The endpoint to modify.</param>
         /// <param name="bindingParameters">The objects that binding elements require to support the behavior.</param>
         public void AddBindingParameters(
-            ContractDescription contractDescription, 
-            ServiceEndpoint endpoint, 
+            ContractDescription contractDescription,
+            ServiceEndpoint endpoint,
             System.ServiceModel.Channels.BindingParameterCollection bindingParameters)
         {
             // Not implemented.
@@ -125,11 +123,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF
         /// <param name="endpoint">The endpoint that exposes the contract.</param>
         /// <param name="dispatchRuntime">The dispatch runtime that controls service execution.</param>
         public void ApplyDispatchBehavior(
-            ContractDescription contractDescription, 
-            ServiceEndpoint endpoint, 
+            ContractDescription contractDescription,
+            ServiceEndpoint endpoint,
             DispatchRuntime dispatchRuntime)
         {
-            if(dispatchRuntime == null) throw new ArgumentNullException("dispatchRuntime");
+            if (dispatchRuntime == null) throw new ArgumentNullException("dispatchRuntime");
             AddErrorHandler(dispatchRuntime.ChannelDispatcher);
         }
 

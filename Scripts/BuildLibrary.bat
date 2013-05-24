@@ -16,7 +16,7 @@ echo      Builds Enterprise Library
 echo =========================================================
 echo.
 
-set msBuildDir=%WINDIR%\Microsoft.NET\Framework\v3.5
+set msBuildDir=%WINDIR%\Microsoft.NET\Framework\v4.0.30319
 set solutionDir="..\Blocks\"
 set buildType=Debug
 set returnErrorCode=true
@@ -79,7 +79,7 @@ if "%DevEnvDir%"=="" (
 	@ECHO ------------------------------------------
 	@ECHO Setting build environment
 	@ECHO ------------------------------------------
-	@CALL "%VS90COMNTOOLS%\vsvars32.bat" > NUL 
+	@CALL "%VS110COMNTOOLS%\vsvars32.bat" > NUL 
 	@REM Remove LIB env var to work around known VS 2008 bug
 	@SET Lib=
 )

@@ -10,10 +10,8 @@
 //===============================================================================
 
 using System;
-#if !SILVERLIGHT
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
 {
@@ -21,16 +19,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
     /// Represents a client-side log filter based on message priority. 
     /// Messages with priorities between the minimum and maximum values are allowed to be processed, all other messages are dropped.
     /// </summary>
-#if !SILVERLIGHT
 	[ConfigurationElementType(typeof(PriorityFilterData))]    
-#endif
-    public class PriorityFilter : LogFilter
+	public class PriorityFilter : LogFilter
     {
         private int minimumPriority;
         private int maximumPriority;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PriorityFilter"/> class with a minimum priority and no maximum priority.
+		/// Initializes a new instance of the <see cref="PriorityFilter"/> class with a minimum priority and no maximum priority.
         /// </summary>
         /// <param name="name">The name of the instance.</param>
         /// <param name="minimumPriority">The minimum priority value.</param>
@@ -39,18 +35,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
         {
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PriorityFilter"/> class with a minimum and maximum priority.
-        /// </summary>
-        /// <param name="name">The name of the instance.</param>
-        /// <param name="minimumPriority">The minimum priority value.</param>
-        /// <param name="maximumPriority">The maximum priority value.</param>
-        public PriorityFilter(string name, int minimumPriority, int maximumPriority)
-            : base(name)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="PriorityFilter"/> class with a minimum and maximum priority.
+		/// </summary>
+		/// <param name="name">The name of the instance.</param>
+		/// <param name="minimumPriority">The minimum priority value.</param>
+		/// <param name="maximumPriority">The maximum priority value.</param>
+		public PriorityFilter(string name, int minimumPriority, int maximumPriority)
+			: base(name)
         {
             this.minimumPriority = minimumPriority;
             this.maximumPriority = maximumPriority;
-        }
+		}
 
         /// <summary>
         /// Tests a log entry to see if its priority is within the allowed limits.
@@ -59,40 +55,40 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
         /// <returns>Returns true if the log entry passes through the category filter.</returns>
         public override bool Filter(LogEntry log)
         {
-            if (log == null) throw new ArgumentNullException("log");
-            return ShouldLog(log.Priority);
+            if(log == null) throw new ArgumentNullException("log");
+			return ShouldLog(log.Priority);
         }
 
-        /// <summary>
-        /// Tests a log entry to see if its priority is within the allowed limits.
-        /// </summary>
-        /// <param name="priority">Priority to test.</param>
-        /// <returns>Returns true if the priority passes through the category filter.</returns>
-        public bool ShouldLog(int priority)
-        {
-            if (priority < 0)
-            {
-                priority = this.minimumPriority;
-            }
-            return (this.maximumPriority >= priority && priority >= this.minimumPriority);
-        }
+		/// <summary>
+		/// Tests a log entry to see if its priority is within the allowed limits.
+		/// </summary>
+		/// <param name="priority">Priority to test.</param>
+		/// <returns>Returns true if the priority passes through the category filter.</returns>
+		public bool ShouldLog(int priority)
+		{
+			if (priority < 0)
+			{
+				priority = this.minimumPriority;
+			}
+			return (this.maximumPriority >= priority && priority >= this.minimumPriority);
+		}
 
-        /// <summary>
-        /// The minimum value for messages to be processed.  Messages with a priority
-        /// below the minimum are dropped immediately on the client.
-        /// </summary>
-        public int MinimumPriority
-        {
+		/// <summary>
+		/// The minimum value for messages to be processed.  Messages with a priority
+		/// below the minimum are dropped immediately on the client.
+		/// </summary>
+		public int MinimumPriority
+		{
             get { return minimumPriority; }
-        }
+		}
 
-        /// <summary>
-        /// The maximum value for messages to be processed. If not specified
-        /// this property defaults to Int32.MaxInt
-        /// </summary>
-        public int MaximumPriority
-        {
-            get { return maximumPriority; }
-        }
+		/// <summary>
+		/// The maximum value for messages to be processed. If not specified
+		/// this property defaults to Int32.MaxInt
+		/// </summary>
+		public int MaximumPriority
+		{
+			get { return maximumPriority; }
+		}
     }
 }

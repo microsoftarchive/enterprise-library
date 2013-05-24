@@ -25,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             string target = "";
 
             MockValidator<object> wrappedValidator = new MockValidator<object>(true, "message");
-            Validator<string> validator = new GenericValidatorWrapper<string>(wrappedValidator, new MockValidationInstrumentationProvider());
+            Validator<string> validator = new GenericValidatorWrapper<string>(wrappedValidator);
 
             ValidationResults validationResults = validator.Validate(target);
 
@@ -42,7 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             string target = "";
 
             MockValidator<object> wrappedValidator = new MockValidator<object>(false, "message");
-            Validator<string> validator = new GenericValidatorWrapper<string>(wrappedValidator, new MockValidationInstrumentationProvider());
+            Validator<string> validator = new GenericValidatorWrapper<string>(wrappedValidator);
 
             ValidationResults validationResults = validator.Validate(target);
 

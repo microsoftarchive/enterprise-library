@@ -11,22 +11,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Xml.Serialization;
-#if !SILVERLIGHT
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using System.Diagnostics;
-using System.Management.Instrumentation;
 using System.Runtime.Serialization;
 using System.Security;
 using System.Security.Permissions;
-#else
-using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+using System.Text;
+using System.Threading;
+using System.Xml.Serialization;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
-#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
@@ -34,26 +29,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// Represents a log message.  Contains the common properties that are required for all log messages.
     /// </summary>
     [XmlRoot("logEntry")]
-#if !SILVERLIGHT
     [Serializable]
-    [InstrumentationClass(InstrumentationType.Event)]
-    [ManagedName("LogEntryV20")]
     public class LogEntry : ICloneable
-#else
-    public class LogEntry
-#endif
     {
+        private static readonly bool isFullyTrusted;
+        private static readonly TextFormatter toStringFormatter;
+
         private string message = string.Empty;
         private string title = string.Empty;
 
-#if !SILVERLIGHT
         [NonSerialized]
-#endif
         private ICollection<string> categories = new List<string>(0);
-#if !SILVERLIGHT
-        private static readonly TextFormatter toStringFormatter = new TextFormatter();
         private string[] categoryStrings;
-#endif
 
         private int priority = -1;
         private int eventId = 0;
@@ -69,25 +56,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         private IDictionary<string, object> extendedProperties;
 
         private string appDomainName;
-        private string threadName;
-#if !SILVERLIGHT
         private string processId;
         private string processName;
+        private string threadName;
         private string win32ThreadId;
-#endif
 
         internal bool timeStampInitialized = false;
         internal bool appDomainNameInitialized = false;
-        internal bool threadNameInitialized = false;
-        internal bool activityIdInitialized = false;
-#if !SILVERLIGHT
         internal bool machineNameInitialized = false;
         internal bool processIdInitialized = false;
         internal bool processNameInitialized = false;
         internal bool win32ThreadIdInitialized = false;
+        internal bool threadNameInitialized = false;
+        internal bool activityIdInitialized = false;
         private bool unmanagedCodePermissionAvailable = false;
         private bool unmanagedCodePermissionAvailableInitialized = false;
-#endif
+
+        static LogEntry()
+        {
+            isFullyTrusted = typeof(LogEntry).Assembly.IsFullyTrusted;
+            toStringFormatter = new TextFormatter();
+        }
 
         /// <summary>
         /// Initialize a new instance of a <see cref="LogEntry"/> class.
@@ -132,11 +121,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
 
             this.Message = message.ToString();
             this.Priority = priority;
-#if !SILVERLIGHT
             this.Categories = categories;
-#else
-            this.Categories = categories.ToArray();
-#endif
             this.EventId = eventId;
             this.Severity = severity;
             this.Title = title;
@@ -155,9 +140,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <summary>
         /// Category name used to route the log entry to a one or more trace listeners.
         /// </summary>
-#if !SILVERLIGHT
-        [IgnoreMember]
-#endif
         public ICollection<string> Categories
         {
             get { return categories; }
@@ -186,9 +168,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <summary>
         /// Log entry severity as a <see cref="Severity"/> enumeration. (Unspecified, Information, Warning or Error).
         /// </summary>
-#if !SILVERLIGHT
-        [IgnoreMember]
-#endif
         public TraceEventType Severity
         {
             get { return this.severity; }
@@ -237,56 +216,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         }
 
         /// <summary>
-        /// The <see cref="AppDomain"/> in which the program is running
-        /// </summary>
-        public string AppDomainName
-        {
-            get
-            {
-                if (!appDomainNameInitialized)
-                {
-                    InitializeAppDomainName();
-                }
-
-                return this.appDomainName;
-            }
-            set
-            {
-                this.appDomainName = value;
-                appDomainNameInitialized = true;
-            }
-        }
-
-#if !SILVERLIGHT
-        /// <summary>
-        /// The name of the .NET thread.
-        /// </summary>
-        ///  <seealso cref="Win32ThreadId"/>
-#else
-        /// <summary>
-        /// The name of the .NET thread.
-        /// </summary>
-#endif
-        public string ManagedThreadName
-        {
-            get
-            {
-                if (!threadNameInitialized)
-                {
-                    InitializeThreadName();
-                }
-
-                return this.threadName;
-            }
-            set
-            {
-                this.threadName = value;
-                threadNameInitialized = true;
-            }
-        }
-
-#if !SILVERLIGHT
-        /// <summary>
         /// Name of the computer.
         /// </summary>
         public string MachineName
@@ -304,6 +233,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             {
                 this.machineName = value;
                 machineNameInitialized = true;
+            }
+        }
+
+
+        /// <summary>
+        /// The <see cref="AppDomain"/> in which the program is running
+        /// </summary>
+        public string AppDomainName
+        {
+            get
+            {
+                if (!appDomainNameInitialized)
+                {
+                    InitializeAppDomainName();
+                }
+
+                return this.appDomainName;
+            }
+            set
+            {
+                this.appDomainName = value;
+                appDomainNameInitialized = true;
             }
         }
 
@@ -350,6 +301,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         }
 
         /// <summary>
+        /// The name of the .NET thread.
+        /// </summary>
+        ///  <seealso cref="Win32ThreadId"/>
+        public string ManagedThreadName
+        {
+            get
+            {
+                if (!threadNameInitialized)
+                {
+                    InitializeThreadName();
+                }
+
+                return this.threadName;
+            }
+            set
+            {
+                this.threadName = value;
+                threadNameInitialized = true;
+            }
+        }
+
+        /// <summary>
         /// The Win32 Thread ID for the current thread.
         /// </summary>
         public string Win32ThreadId
@@ -369,14 +342,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                 win32ThreadIdInitialized = true;
             }
         }
-#endif
 
         /// <summary>
         /// Dictionary of key/value pairs to record.
         /// </summary>
-#if !SILVERLIGHT
-        [IgnoreMember]
-#endif
         public IDictionary<string, object> ExtendedProperties
         {
             get
@@ -405,23 +374,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             this.TimeStamp = DateTime.UtcNow;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Queries environment")]
         private void InitializeActivityId()
         {
-            if (Tracer.IsTracingAvailable())
+            try
             {
-                try
-                {
-                    this.ActivityId = LogEntryContext.GetActivityId();
-                }
-                catch (Exception)
-                {
-                    this.ActivityId = Guid.Empty;
-                }
+                this.ActivityId = LogEntryContext.GetActivityId();
             }
-            else
+            catch (Exception)
             {
                 this.ActivityId = Guid.Empty;
             }
+        }
+
+        private void InitializeMachineName()
+        {
+            this.MachineName = LogEntryContext.GetMachineNameSafe();
         }
 
         private void InitializeAppDomainName()
@@ -429,6 +397,47 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             this.AppDomainName = LogEntryContext.GetAppDomainNameSafe();
         }
 
+        private void InitializeProcessId()
+        {
+            if (!LogEntry.isFullyTrusted)
+            {
+                this.ProcessId = string.Format(CultureInfo.CurrentCulture,
+                    Properties.Resources.IntrinsicPropertyError,
+                    Properties.Resources.LogEntryIntrinsicPropertyNotFullyTrusted);
+            }
+            else if (!this.UnmanagedCodePermissionAvailable)
+            {
+                this.ProcessId = string.Format(CultureInfo.CurrentCulture,
+                    Properties.Resources.IntrinsicPropertyError,
+                    Properties.Resources.LogEntryIntrinsicPropertyNoUnmanagedCodePermissionError);
+            }
+            else
+            {
+                this.ProcessId = LogEntryContext.GetProcessIdSafe();
+            }
+        }
+
+        private void InitializeProcessName()
+        {
+            if (!LogEntry.isFullyTrusted)
+            {
+                this.ProcessName = string.Format(CultureInfo.CurrentCulture,
+                    Properties.Resources.IntrinsicPropertyError,
+                    Properties.Resources.LogEntryIntrinsicPropertyNotFullyTrusted);
+            }
+            else if (!this.UnmanagedCodePermissionAvailable)
+            {
+                this.ProcessName = string.Format(CultureInfo.CurrentCulture,
+                    Properties.Resources.IntrinsicPropertyError,
+                    Properties.Resources.LogEntryIntrinsicPropertyNoUnmanagedCodePermissionError);
+            }
+            else
+            {
+                this.ProcessName = LogEntryContext.GetProcessNameSafe();
+            }
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Queries environment")]
         private void InitializeThreadName()
         {
             try
@@ -441,61 +450,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             }
         }
 
-#if !SILVERLIGHT
-        private void InitializeMachineName()
-        {
-            this.MachineName = LogEntryContext.GetMachineNameSafe();
-        }
-
-        private void InitializeProcessId()
-        {
-            if (this.UnmanagedCodePermissionAvailable)
-            {
-                this.ProcessId = LogEntryContext.GetProcessIdSafe();
-            }
-            else
-            {
-                this.ProcessId = string.Format(CultureInfo.CurrentCulture,
-                    Properties.Resources.IntrinsicPropertyError,
-                    Properties.Resources_Desktop.LogEntryIntrinsicPropertyNoUnmanagedCodePermissionError);
-            }
-        }
-
-        private void InitializeProcessName()
-        {
-            if (this.UnmanagedCodePermissionAvailable)
-            {
-                this.ProcessName = LogEntryContext.GetProcessNameSafe();
-            }
-            else
-            {
-                this.ProcessName = string.Format(CultureInfo.CurrentCulture,
-                    Properties.Resources.IntrinsicPropertyError,
-                    Properties.Resources_Desktop.LogEntryIntrinsicPropertyNoUnmanagedCodePermissionError);
-            }
-        }
-
         private void InitializeWin32ThreadId()
         {
-            if (this.UnmanagedCodePermissionAvailable)
-            {
-                try
-                {
-                    this.Win32ThreadId = LogEntryContext.GetCurrentThreadId();
-                }
-                catch (Exception e)
-                {
-                    this.Win32ThreadId = string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, e.Message);
-                }
-            }
-            else
+            if (!LogEntry.isFullyTrusted)
             {
                 this.Win32ThreadId = string.Format(CultureInfo.CurrentCulture,
                     Properties.Resources.IntrinsicPropertyError,
-                    Properties.Resources_Desktop.LogEntryIntrinsicPropertyNoUnmanagedCodePermissionError);
+                    Properties.Resources.LogEntryIntrinsicPropertyNotFullyTrusted);
+            }
+            else if (!this.UnmanagedCodePermissionAvailable)
+            {
+                this.Win32ThreadId = string.Format(CultureInfo.CurrentCulture,
+                    Properties.Resources.IntrinsicPropertyError,
+                    Properties.Resources.LogEntryIntrinsicPropertyNoUnmanagedCodePermissionError);
+            }
+            else
+            {
+                this.Win32ThreadId = LogEntryContext.GetCurrentThreadIdSafe();
             }
         }
-#endif
 
         #endregion
 
@@ -503,9 +476,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <summary>
         /// Tracing activity id
         /// </summary>
-#if !SILVERLIGHT
-        [IgnoreMember]
-#endif
         public Guid ActivityId
         {
             get
@@ -527,9 +497,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <summary>
         /// Related activity id
         /// </summary>
-#if !SILVERLIGHT
-        [IgnoreMember]
-#endif
         public Guid? RelatedActivityId
         {
             get { return this.relatedActivityId; }
@@ -557,14 +524,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             result.Priority = this.Priority;
 
             result.TimeStamp = this.TimeStamp;
-            result.AppDomainName = this.AppDomainName;
-            result.ManagedThreadName = this.ManagedThreadName;
-            result.ActivityId = this.ActivityId;
-#if !SILVERLIGHT
             result.MachineName = this.MachineName;
+            result.AppDomainName = this.AppDomainName;
             result.ProcessId = this.ProcessId;
             result.ProcessName = this.ProcessName;
-#endif
+            result.ManagedThreadName = this.ManagedThreadName;
+            result.ActivityId = this.ActivityId;
 
             // clone categories
             result.Categories = new List<string>(this.Categories);
@@ -618,34 +583,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <returns>A <see cref="String"/> that represents the current <see cref="LogEntry"/>.</returns>
         public override string ToString()
         {
-#if !SILVERLIGHT
             return toStringFormatter.Format(this);
-#else
-            return string.Format(CultureInfo.CurrentCulture,
-                Resources.LogEntry_SimplifiedToString,
-                this.TimeStampString,
-                this.Message,
-                string.Join(", ", this.Categories),
-                this.Severity);
-#endif
         }
 
-#if !SILVERLIGHT
         private bool UnmanagedCodePermissionAvailable
         {
+            [SecuritySafeCritical]
             get
             {
                 if (!unmanagedCodePermissionAvailableInitialized)
                 {
                     // check whether the unmanaged code permission is available to avoid three potential stack walks
+                    // this optimization might prevent code with the necessary permissions to get the values after this property has been initialized
+                    // but that's a very unlikely situation which will not occur 
                     bool internalUnmanagedCodePermissionAvailable = false;
-                    SecurityPermission unmanagedCodePermission = new SecurityPermission(SecurityPermissionFlag.UnmanagedCode);
-                    // avoid a stack walk by checking for the permission on the current assembly. this is safe because there are no
-                    // stack walk modifiers before the call.
-                    if (SecurityManager.IsGranted(unmanagedCodePermission))
+                    // avoid a stack walk by checking for the permission on the current assembly
+                    if (LogEntry.isFullyTrusted)
                     {
                         try
                         {
+                            SecurityPermission unmanagedCodePermission = new SecurityPermission(SecurityPermissionFlag.UnmanagedCode);
                             unmanagedCodePermission.Demand();
                             internalUnmanagedCodePermissionAvailable = true;
                         }
@@ -664,35 +621,35 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                 unmanagedCodePermissionAvailableInitialized = true;
             }
         }
-#endif
 
         /// <summary>
         /// Set the intrinsic properties such as MachineName and UserIdentity.
         /// </summary>
         internal void CollectIntrinsicProperties()
         {
-            if (!this.timeStampInitialized) InitializeTimeStamp();
-            if (!this.activityIdInitialized) InitializeActivityId();
-            if (!this.appDomainNameInitialized) InitializeAppDomainName();
-            if (!this.threadNameInitialized) InitializeThreadName();
-#if !SILVERLIGHT
-            if (!this.machineNameInitialized) InitializeMachineName();
-            if (!this.processIdInitialized) InitializeProcessId();
-            if (!this.processNameInitialized) InitializeProcessName();
-            if (!this.win32ThreadIdInitialized) InitializeWin32ThreadId();
-#endif
+            CollectThreadSpecificIntrinsicProperties();
+            InitializeMachineName();
+            InitializeAppDomainName();
+            InitializeProcessId();
+            InitializeProcessName();
         }
 
-#if !SILVERLIGHT
+        internal void CollectThreadSpecificIntrinsicProperties()
+        {
+            InitializeTimeStamp();
+            InitializeActivityId();
+            InitializeThreadName();
+            InitializeWin32ThreadId();
+        }
+
         /// <summary>
         /// Gets the current process name.
         /// </summary>
         /// <returns>The process name.</returns>
         public static string GetProcessName()
         {
-            return LogEntryContext.GetProcessName();
+            return LogEntryContext.GetProcessNameSafe();
         }
-#endif
 
         private static ICollection<string> BuildCategoriesCollection(string category)
         {
@@ -710,7 +667,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             get { return this.ActivityId.ToString(); }
         }
 
-#if !SILVERLIGHT
         /// <summary>
         /// Category names used to route the log entry to a one or more trace listeners.
         /// This readonly property is available to support WMI queries
@@ -742,13 +698,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         private void OnDeserialized(StreamingContext context)
         {
             // We've just be deserialized, stick in our categories collection.
-            categories = categoryStrings;
+            if (categoryStrings != null)
+                categories = categoryStrings;
         }
-#endif
+
+        /// <summary>
+        /// Gets the default title for an entry.
+        /// </summary>
+        public static string DefaultTitle
+        {
+            get { return Resources.DefaultLogEntryTitle; }
+        }
     }
 
     internal static class LogEntryContext
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Queries environment")]
         internal static string GetAppDomainNameSafe()
         {
             try
@@ -761,66 +726,100 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             }
         }
 
-#if !SILVERLIGHT
         internal static string GetMachineNameSafe()
         {
             try
             {
                 return Environment.MachineName;
             }
-            catch (Exception e)
+            catch (InvalidOperationException e)
+            {
+                return string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, e.Message);
+            }
+            catch (SecurityException e)
             {
                 return string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, e.Message);
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Queries environment")]
+        [SecuritySafeCritical]
         internal static string GetProcessIdSafe()
         {
             try
             {
                 return GetCurrentProcessId();
             }
+            catch (MethodAccessException)
+            {
+                return string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, Properties.Resources.LogEntryIntrinsicPropertyNotFullyTrusted);
+            }
             catch (Exception e)
             {
                 return string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, e.Message);
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Queries environment")]
+        [SecuritySafeCritical]
         internal static string GetProcessNameSafe()
         {
             try
             {
                 return GetProcessName();
             }
+            catch (MethodAccessException)
+            {
+                return string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, Properties.Resources.LogEntryIntrinsicPropertyNotFullyTrusted);
+            }
             catch (Exception e)
             {
                 return string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, e.Message);
             }
         }
-#endif
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Queries environment")]
+        [SecuritySafeCritical]
+        internal static string GetCurrentThreadIdSafe()
+        {
+            try
+            {
+                return GetCurrentThreadId();
+            }
+            catch (MethodAccessException)
+            {
+                return string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, Properties.Resources.LogEntryIntrinsicPropertyNotFullyTrusted);
+            }
+            catch (Exception e)
+            {
+                return string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, e.Message);
+            }
+        }
+
+        [SecuritySafeCritical]
         internal static Guid GetActivityId()
         {
             return Trace.CorrelationManager.ActivityId;
         }
 
-#if !SILVERLIGHT
-        internal static string GetProcessName()
+        [SecurityCritical]
+        private static string GetProcessName()
         {
             StringBuilder buffer = new StringBuilder(1024);
             int length = NativeMethods.GetModuleFileName(NativeMethods.GetModuleHandle(null), buffer, buffer.Capacity);
             return buffer.ToString();
         }
 
-        internal static string GetCurrentProcessId()
+        [SecurityCritical]
+        private static string GetCurrentProcessId()
         {
             return NativeMethods.GetCurrentProcessId().ToString(NumberFormatInfo.InvariantInfo);
         }
 
-        internal static string GetCurrentThreadId()
+        [SecurityCritical]
+        private static string GetCurrentThreadId()
         {
             return NativeMethods.GetCurrentThreadId().ToString(NumberFormatInfo.InvariantInfo);
         }
-#endif
     }
 }

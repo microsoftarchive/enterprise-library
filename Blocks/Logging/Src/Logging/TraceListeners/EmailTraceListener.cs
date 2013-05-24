@@ -12,6 +12,7 @@
 using System;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 
@@ -74,6 +75,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             ILogFormatter formatter)
             : base(formatter)
         {
+            Guard.ArgumentNotNullOrEmpty(toAddress, "toAddress");
+            Guard.ArgumentNotNullOrEmpty(fromAddress, "fromAddress");
+            Guard.ArgumentNotNullOrEmpty(subjectLineStarter, "subjectLineStarter");
+            Guard.ArgumentNotNullOrEmpty(subjectLineEnder, "subjectLineEnder");
+            Guard.ArgumentNotNullOrEmpty(smtpServer, "smtpServer");
+
             this.toAddress = toAddress;
             this.fromAddress = fromAddress;
             this.subjectLineStarter = subjectLineStarter;
@@ -114,6 +121,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             bool useSSL)
             : base(formatter)
         {
+            Guard.ArgumentNotNullOrEmpty(toAddress, "toAddress");
+            Guard.ArgumentNotNullOrEmpty(fromAddress, "fromAddress");
+            Guard.ArgumentNotNullOrEmpty(subjectLineStarter, "subjectLineStarter");
+            Guard.ArgumentNotNullOrEmpty(subjectLineEnder, "subjectLineEnder");
+            Guard.ArgumentNotNullOrEmpty(smtpServer, "smtpServer");
+
+            if (authenticationMode == EmailAuthenticationMode.UserNameAndPassword)
+            {
+                Guard.ArgumentNotNullOrEmpty(userName, "userName");
+            }
+
             this.toAddress = toAddress;
             this.fromAddress = fromAddress;
             this.subjectLineStarter = subjectLineStarter;
@@ -125,7 +143,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             this.password = password;
             this.useSSL = useSSL;
         }
-        
+
         /// <summary>
         /// Initializes a new instance of <see cref="EmailTraceListener"/> with a toaddress, fromaddress, 
         /// subjectlinestarter, subjectlinender, smtpserver, smtpport, and a formatter
@@ -177,6 +195,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         public EmailTraceListener(string toAddress, string fromAddress, string subjectLineStarter, string subjectLineEnder, string smtpServer, int smtpPort,
             EmailAuthenticationMode authenticationMode, string userName, string password, bool useSSL)
         {
+            Guard.ArgumentNotNullOrEmpty(toAddress, "toAddress");
+            Guard.ArgumentNotNullOrEmpty(fromAddress, "fromAddress");
+            Guard.ArgumentNotNullOrEmpty(subjectLineStarter, "subjectLineStarter");
+            Guard.ArgumentNotNullOrEmpty(subjectLineEnder, "subjectLineEnder");
+            Guard.ArgumentNotNullOrEmpty(smtpServer, "smtpServer");
+
+            if (authenticationMode == EmailAuthenticationMode.UserNameAndPassword)
+            {
+                Guard.ArgumentNotNullOrEmpty(userName, "userName");
+            }
+
             this.toAddress = toAddress;
             this.fromAddress = fromAddress;
             this.subjectLineStarter = subjectLineStarter;

@@ -23,6 +23,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
     [TestClass]
     public class ObjectCollectionValidatorFixture
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
+        }
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void ValidatorCreatedWithNullTypeThrows()
@@ -292,7 +304,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             object target = new object[] { instance1, instance2 };
 
             Validator validator =
-                new ObjectCollectionValidator(EnterpriseLibraryContainer.Current.GetInstance<AttributeValidatorFactory>());
+                new ObjectCollectionValidator(new AttributeValidatorFactory());
 
             ValidationResults validationResults = new ValidationResults();
             validator.DoValidate(target, this, "key", validationResults); // setting the currentTarget and the key

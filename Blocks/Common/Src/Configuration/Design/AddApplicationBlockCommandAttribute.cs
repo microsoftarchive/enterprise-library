@@ -10,11 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.Unity;
-using System.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
 {
@@ -33,7 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         /// <param name="sectionName">The name of the configuration section that belongs to the application block that will be added.</param>
         /// <param name="configurationSectionType">The type of the configuration section that belongs to the application block that will be added.</param>
         public AddApplicationBlockCommandAttribute(string sectionName, Type configurationSectionType)
-            :base(CommonDesignTime.CommandTypeNames.AddApplicationBlockCommand)
+            : base(CommonDesignTime.CommandTypeNames.AddApplicationBlockCommand)
         {
             CommandPlacement = CommandPlacement.BlocksMenu;
 

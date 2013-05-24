@@ -16,6 +16,7 @@ using System.Security;
 using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TestSupport;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
 {
@@ -33,11 +34,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
         {
             File.Delete("trace.log");
 
-            FlatFileTraceListener listener = new FlatFileTraceListener("trace.log", new TextFormatter("DUMMY{newline}DUMMY"));
+            FlatFileTraceListener listener = new FlatFileTraceListener("trace.log", formatter: new TextFormatter("DUMMY{newline}DUMMY"));
 
             // need to go through the source to get a TraceEventCache
-            LogSource source = new LogSource("notfromconfig", SourceLevels.All);
-            source.Listeners.Add(listener);
+            LogSource source = new LogSource("notfromconfig", new[] { listener }, SourceLevels.All);
             source.TraceData(TraceEventType.Error, 0, new LogEntry("message", "cat1", 0, 0, TraceEventType.Error, "title", null));
             listener.Dispose();
 
@@ -54,8 +54,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             FlatFileTraceListener listener = new FlatFileTraceListener("tracewithheaderandfooter.log", "--------header------", "=======footer===========", new TextFormatter("DUMMY{newline}DUMMY"));
 
             // need to go through the source to get a TraceEventCache
-            LogSource source = new LogSource("notfromconfig", SourceLevels.All);
-            source.Listeners.Add(listener);
+            LogSource source = new LogSource("notfromconfig", new[] { listener }, SourceLevels.All);
             source.TraceData(TraceEventType.Error, 0, new LogEntry("message", "cat1", 0, 0, TraceEventType.Error, "title", null));
             listener.Dispose();
 
@@ -72,8 +71,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             FlatFileTraceListener listener = new FlatFileTraceListener(writer);
 
             // need to go through the source to get a TraceEventCache
-            LogSource source = new LogSource("notfromconfig", SourceLevels.All);
-            source.Listeners.Add(listener);
+            LogSource source = new LogSource("notfromconfig", new[] { listener }, SourceLevels.All);
             source.TraceData(TraceEventType.Error, 0, testLogEntry);
             listener.Dispose();
 
@@ -179,8 +177,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             FlatFileTraceListener listener = new FlatFileTraceListener("tracewithheaderandfootermultiplewrites.log", header, "=======footer===========", new TextFormatter("DUMMY{newline}DUMMY"));
 
             // need to go through the source to get a TraceEventCache
-            LogSource source = new LogSource("notfromconfig", SourceLevels.All);
-            source.Listeners.Add(listener);
+            LogSource source = new LogSource("notfromconfig", new[] { listener }, SourceLevels.All);
             for (int writeLoop = 0; writeLoop < numberOfWrites; writeLoop++)
                 source.TraceData(TraceEventType.Error, 0, new LogEntry("message", "cat1", 0, 0, TraceEventType.Error, "title", null));
             listener.Dispose();
@@ -189,6 +186,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             int headersFound = NumberOfItems("tracewithheaderandfootermultiplewrites.log", header);
 
             Assert.AreEqual(numberOfWrites, headersFound);
+        }
+
+        [TestMethod]
+        public void VerifyCtor()
+        {
+            AssertEx.Throws<ArgumentNullException>(() => new FlatFileTraceListener(null, header: "header", footer: "footer"));
+        }
+
+        [TestMethod]
+        public void VerifyCtor2()
+        {
+            FileStream fs = null;
+
+            AssertEx.Throws<ArgumentNullException>(() => new FlatFileTraceListener(fs));
+        }
+
+        [TestMethod]
+        public void VerifyCtor3()
+        {
+            StreamWriter writer = null;
+
+            AssertEx.Throws<ArgumentNullException>(() => new FlatFileTraceListener(writer));
         }
 
         string GetFileContents(string fileName)

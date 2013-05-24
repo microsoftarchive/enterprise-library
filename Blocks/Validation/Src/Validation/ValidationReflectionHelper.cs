@@ -10,16 +10,12 @@
 //===============================================================================
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-#if !SILVERLIGHT
-using System.ComponentModel.DataAnnotations;
-#else
-using Microsoft.Practices.EnterpriseLibrary.Validation.DataAnnotations;
-#endif
-using System.Linq;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation
 {
@@ -179,7 +175,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <param name="attributeType">The type, or a base type, of the custom attribute to search for.</param>
         /// <param name="inherit">If <see langword="true"/>, specifies to also search the ancestors of element for 
         /// custom attributes.</param>
-        /// <returns>An <see cref="Attribute"/> array that contains the custom attributes of type applied to 
+        /// <returns>An <see cref="Attribute"/> array that contains the custom attributes of type type applied to 
         /// element, or an empty array if no such custom attributes exist.</returns>
         /// <seealso cref="MetadataTypeAttribute"/>
         public static Attribute[] GetCustomAttributes(MemberInfo element, Type attributeType, bool inherit)

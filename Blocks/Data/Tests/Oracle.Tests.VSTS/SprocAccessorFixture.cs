@@ -14,10 +14,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Tests.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Tests
 {
+#pragma warning disable 612, 618
     [TestClass]
     public class WhenSprocAccessorIsCreatedForOracleDatabase : ArrangeActAssert
     {
@@ -25,6 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Tests
 
         protected override void Arrange()
         {
+            EnvironmentHelper.AssertOracleClientIsInstalled();
             database = new OracleDatabase("server=entlib;user id=testuser;password=testuser");
         }
 
@@ -43,4 +46,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Tests
             public string ContactName { get; set; }
         }
     }
+#pragma warning restore 612, 618
 }

@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation
 {
@@ -22,10 +21,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         ///<summary>
         /// Initializes an AttributeValidatorFactory
         ///</summary>
-        /// <param name="instrumentationProvider">The <see cref="IValidationInstrumentationProvider"/> 
-        /// to provide to validators for instrumentation purposes.</param>
-        public AttributeValidatorFactory(IValidationInstrumentationProvider instrumentationProvider)
-            : base(instrumentationProvider)
+        public AttributeValidatorFactory()
         { }
 
         /// <summary>

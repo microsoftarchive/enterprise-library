@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System.ServiceModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.Tests.VSTS.Hosting;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.Tests.VSTS.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.Tests.VSTS.TestService;
@@ -28,6 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.Tests
         [TestInitialize]
         public void Setup()
         {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
             host =
                 new TestServiceHost<TestServiceImplementation, ITestService>(
                     Settings.Default.TestServiceAddress);
@@ -38,6 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.Tests
         {
             if (host != null)
                 host.Dispose();
+            ValidationFactory.Reset();
         }
 
         [TestMethod]

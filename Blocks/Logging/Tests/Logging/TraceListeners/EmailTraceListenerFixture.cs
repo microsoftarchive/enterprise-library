@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Net.Mail;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
@@ -30,6 +31,36 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
         }
 
         [TestMethod]
+        public void ShouldThrowArgumentNullIfFromEmailIsNull()
+        {
+            AssertEx.Throws<ArgumentNullException>(() => new EmailTraceListener(null, "test@test.com", "line starter", "line ender", "smtp.server"));
+        }
+
+        [TestMethod]
+        public void ShouldThrowArgumentNullIfToEmailIsNull()
+        {
+            AssertEx.Throws<ArgumentNullException>(() => new EmailTraceListener("toaddress@email.com", null, "line starter", "line ender", "smtp.server"));
+        }
+
+        [TestMethod]
+        public void ShouldThrowArgumentNullIfLineStarterIsNull()
+        {
+            AssertEx.Throws<ArgumentNullException>(() => new EmailTraceListener("toaddress@email.com", "fromaddress@email.com", null, "line ender", "smtp.server"));
+        }
+
+        [TestMethod]
+        public void ShouldThrowArgumentNullIfLineEnderIsNull()
+        {
+            AssertEx.Throws<ArgumentNullException>(() => new EmailTraceListener("toaddress@email.com", "fromaddress@email.com", "line starter", null, "smtp.server"));
+        }
+
+        [TestMethod]
+        public void ShouldThrowArgumentNullIfUserNameIsNullwithUserPassAuth()
+        {
+            AssertEx.Throws<ArgumentNullException>(() => new EmailTraceListener("toaddress@email.com", "fromaddress@email.com", "line starter", "line ender", "smtp.server", 23, EmailAuthenticationMode.UserNameAndPassword, null, "password", false));
+        }
+
+        [TestMethod]
         public void ListenerWillUseFormatterIfExists()
         {
             MockEmailTraceListener listener = new MockEmailTraceListener(new TextFormatter("DUMMY\r\nTime:{timestamp}\r\nMessage:{message}DUMMY"));
@@ -38,8 +69,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             DateTime messageTimestamp = DateTime.UtcNow;
 
             // need to go through the source to get a TraceEventCache
-            LogSource source = new LogSource("notfromconfig", SourceLevels.All);
-            source.Listeners.Add(listener);
+            LogSource source = new LogSource("notfromconfig", new[] { listener }, SourceLevels.All);
             source.TraceData(TraceEventType.Error, 0, entry);
 
             Assert.AreEqual("EntLib-Logging: Information has occurred", lastMailMessageSent.Subject);
@@ -58,8 +88,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             LogEntry entry = new LogEntry("Test Message", "Test Category", 42, 999, TraceEventType.Error, "Test Title", null);
             DateTime messageTimestamp = DateTime.UtcNow;
 
-            LogSource source = new LogSource("notfromconfig", SourceLevels.All);
-            source.Listeners.Add(listener);
+            LogSource source = new LogSource("notfromconfig", new[] { listener }, SourceLevels.All);
             source.TraceData(TraceEventType.Error, 0, entry);
 
             Assert.AreEqual("EntLib-Logging -> Error has occurred", lastMailMessageSent.Subject);
@@ -78,8 +107,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             LogEntry entry = new LogEntry("Test Message", "Test Category", 42, 999, TraceEventType.Error, "Test Title", null);
             DateTime messageTimestamp = DateTime.UtcNow;
 
-            LogSource source = new LogSource("notfromconfig", SourceLevels.All);
-            source.Listeners.Add(listener);
+            LogSource source = new LogSource("notfromconfig", new[] { listener }, SourceLevels.All);
             source.TraceData(TraceEventType.Error, 0, entry);
 
             Assert.AreEqual("EntLib-Logging -> Error has occurred", lastMailMessageSent.Subject);
@@ -161,7 +189,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             int numberMessagesSent = 0;
 
             public MockEmailTraceListener(ILogFormatter formatter)
-                : this(mockToAddress, mockFromAddress, mockSubjectLineStarter, mockSubjectLineEnder, mockSmtpServer, mockSmtpPort, formatter) {}
+                : this(mockToAddress, mockFromAddress, mockSubjectLineStarter, mockSubjectLineEnder, mockSmtpServer, mockSmtpPort, formatter) { }
 
             public MockEmailTraceListener(string toAddress,
                                           string fromAddress,
@@ -249,7 +277,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
                                     LogEntry logEntry,
                                     ILogFormatter formatter)
                 :
-                    base(emailParameters, logEntry, formatter) {}
+                    base(emailParameters, logEntry, formatter) { }
 
             public MockEmailMessage(string toAddress,
                                     string fromAddress,
@@ -259,7 +287,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
                                     int smtpPort,
                                     string message,
                                     ILogFormatter formatter)
-                : base(toAddress, fromAddress, subjectLineStarter, subjectLineEnder, smtpServer, smtpPort, message, formatter) {}
+                : base(toAddress, fromAddress, subjectLineStarter, subjectLineEnder, smtpServer, smtpPort, message, formatter) { }
 
             public override void Send()
             {

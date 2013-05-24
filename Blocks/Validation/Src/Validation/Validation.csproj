@@ -9,33 +9,15 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Validation</RootNamespace>
-    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Validation</AssemblyName>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <FileUpgradeFlags>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Validation</AssemblyName><FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+    <RestorePackages>true</RestorePackages>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,11 +28,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <CodeAnalysisRules>
-    </CodeAnalysisRules>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <DocumentationFile>..\..\..\bin\Debug\Microsoft.Practices.EnterpriseLibrary.Validation.xml</DocumentationFile>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>..\..\..\EnterpriseLibrary.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -62,30 +43,11 @@
     <DocumentationFile>..\..\..\bin\Release\Microsoft.Practices.EnterpriseLibrary.Validation.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <CodeAnalysisRules>
-    </CodeAnalysisRules>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=2.1.505.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.Interception.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
@@ -99,71 +61,21 @@
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <None Include="..\..\..\GlobalAssemblyInfo.2010.cs">
-      <Link>GlobalAssemblyInfo.2010.cs</Link>
-    </None>
     <Compile Include="AttributeValidatorFactory.cs" />
     <Compile Include="ConfigurationValidatorFactory.cs" />
     <Compile Include="Configuration\ConfigurationCultureInfoConverter.cs" />
-    <Compile Include="Configuration\AndCompositeValidatorData.Desktop.cs" />
-    <Compile Include="Configuration\ContainsCharactersValidatorData.Desktop.cs" />
-    <Compile Include="Configuration\ValidationCallHandlerData.Desktop.cs" />
-    <Compile Include="Configuration\TypeConversionValidatorData.Desktop.cs" />
-    <Compile Include="Configuration\PropertyComparisonValidatorData.Desktop.cs" />
-    <Compile Include="Configuration\EnumConversionValidatorData.Desktop.cs" />
-    <Compile Include="Configuration\RelativeDateTimeValidatorData.Desktop.cs" />
-    <Compile Include="Configuration\RegexValidatorData.Desktop.cs" />
-    <Compile Include="Configuration\ObjectCollectionValidatorData.Desktop.cs" />
-    <Compile Include="Configuration\ObjectValidatorData.Desktop.cs" />
-    <Compile Include="Configuration\DomainValidatorData.Desktop.cs" />
-    <Compile Include="Configuration\RangeValidatorData.Desktop.cs" />
-    <Compile Include="Configuration\CustomValidatorData.Desktop.cs" />
-    <Compile Include="Configuration\DateTimeRangeValidatorData.Desktop.cs" />
-    <Compile Include="Configuration\OrCompositeValidatorData.Desktop.cs" />
-    <Compile Include="Configuration\NotNullValidatorData.Desktop.cs" />
-    <Compile Include="Configuration\ValueValidatorData.Desktop.cs" />
-    <Compile Include="Configuration\ValidatorData.Desktop.cs" />
     <Compile Include="Configuration\DesignResources.Designer.cs">
       <DependentUpon>DesignResources.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Configuration\PropertyComparisonValidatorData.cs" />
-    <Compile Include="Configuration\RangeValidatorData.Generic.Desktop.cs" />
-    <Compile Include="Configuration\StringLengthValidatorData.Desktop.cs" />
-    <Compile Include="Configuration\Unity\InjectionValidationSource.cs" />
-    <Compile Include="Configuration\Unity\ValidationBlockExtension.cs" />
-    <Compile Include="Configuration\Unity\ValidationConfigExtension.cs" />
-    <Compile Include="Configuration\Unity\ValidationSourceElement.cs" />
-    <Compile Include="Configuration\Unity\ValidationSpecificationSourcePolicy.cs" />
-    <Compile Include="Configuration\Unity\ValidatorCreationStrategy.cs" />
-    <Compile Include="Configuration\Unity\ValidatorDependencyAttribute.cs" />
-    <Compile Include="Configuration\Unity\ValidatorParameter.cs" />
-    <Compile Include="Configuration\Unity\ValidatorResolver.cs" />
-    <Compile Include="Configuration\ValidationCallHandlerData.cs" />
     <Compile Include="Configuration\ValidationDesignTime.cs" />
-    <Compile Include="Configuration\ValidationTypeRegistrationProvider.cs" />
     <Compile Include="DataErrorInfoHelper.cs" />
-    <Compile Include="PolicyInjection\ArgumentValidationException.cs" />
-    <Compile Include="PolicyInjection\ValidationCallHandler.cs" />
-    <Compile Include="PolicyInjection\ValidationCallHandlerAttribute.cs" />
-    <Compile Include="Properties\AssemblyInfo.Desktop.cs" />
-    <Compile Include="Properties\Resources.Desktop.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.Desktop.resx</DependentUpon>
-    </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ValidationAttributeValidatedElement.cs" />
     <Compile Include="ValidationAttributeValidatedType.cs" />
     <Compile Include="ValidationAttributeValidatorBuilder.cs" />
-    <Compile Include="Instrumentation\ValidationInstrumentationInstaller.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Instrumentation\ValidationInstrumentationInstaller.Designer.cs">
-      <DependentUpon>ValidationInstrumentationInstaller.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Instrumentation\ValidationInstrumentationProvider.cs" />
-    <Compile Include="Instrumentation\IValidationInstrumentationProvider.cs" />
     <Compile Include="MemberValueAccessBuilder.cs" />
     <Compile Include="MetadataValidatedParameterElement.cs" />
     <Compile Include="ParameterValidatorFactory.cs" />
@@ -174,7 +86,6 @@
     <Compile Include="ValidatorCacheKey.cs" />
     <Compile Include="ValidatorFactory.cs" />
     <Compile Include="Validators\BaseValidationAttribute.cs" />
-    <Compile Include="Validators\BaseValidationAttribute.Desktop.cs" />
     <Compile Include="Validators\ComparisonOperator.cs" />
     <Compile Include="CompositeValidatorBuilder.cs" />
     <Compile Include="ConfigurationValidatedElement.cs" />
@@ -208,7 +119,7 @@
     <Compile Include="Configuration\ValidationRulesetData.cs" />
     <Compile Include="Configuration\ValidationRulesetDataCollection.cs" />
     <Compile Include="Configuration\ValidationSettings.cs" />
-    <Compile Include="Configuration\ValidatedTypeReference.Desktop.cs" />
+    <Compile Include="Configuration\ValidatedTypeReference.cs" />
     <Compile Include="Configuration\ValidatedTypeReferenceCollection.cs" />
     <Compile Include="Configuration\ValidatorData.cs" />
     <Compile Include="Configuration\ValidatorDataCollection.cs" />
@@ -231,7 +142,6 @@
     <Compile Include="Validators\ContainsCharactersValidator.cs" />
     <Compile Include="Validators\ContainsCharactersValidatorAttribute.cs" />
     <Compile Include="Validators\NullIgnoringValidatorWrapper.cs" />
-    <Compile Include="Validators\PropertyComparisonValidatorAttribute.Desktop.cs" />
     <Compile Include="Validators\ValidationAttributeValidator.cs" />
     <Compile Include="Validators\FieldValueValidator.cs" />
     <Compile Include="Validators\MemberAccessValidator.cs" />
@@ -297,18 +207,12 @@
     <Compile Include="Validators\ValueAccess.cs" />
     <Compile Include="Validators\ValueAccessValidator.cs" />
     <Compile Include="Validators\ValueValidator.Generic.cs" />
-    <Compile Include="Validators\ValueValidatorAttribute.Desktop.cs" />
     <Compile Include="ValueAccessValidatorBuilder.cs" />
-    <None Include="Migrated rules for Validation.ruleset" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Configuration\DesignResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.Desktop.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Desktop.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
@@ -325,24 +229,10 @@
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\..\.nuget\nuget.targets" />
+  <!-- Cannot remove the following because NuGet will re-add it, and will break relative paths -->
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" Condition="False" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

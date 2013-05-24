@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Security;
 using System.Security.Permissions;
+using System.Security.Policy;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -40,8 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
                     new TextFormatter("DUMMY{newline}DUMMY"));
 
                 // need to go through the source to get a TraceEventCache
-                LogSource source = new LogSource("notfromconfig", SourceLevels.All);
-                source.Listeners.Add(listener);
+                LogSource source = new LogSource("notfromconfig", new[] { listener }, SourceLevels.All);
                 source.TraceData(TraceEventType.Error, 0,
                     new LogEntry("message", "cat1", 0, 0, TraceEventType.Error, "title", null));
                 listener.Dispose();
@@ -57,24 +57,36 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
         [ExpectedException(typeof(InvalidOperationException))]
         public void FlatFileListenerReplacedEnviromentVariablesWillFallBackIfNotPrivilegesToRead()
         {
-            string environmentVariable = "%USERPROFILE%";
-            string fileName = Path.Combine(environmentVariable, "foo.log");
+            var evidence = new Evidence();
+            evidence.AddHostEvidence(new Zone(SecurityZone.Internet));
+            var set = SecurityManager.GetStandardSandbox(evidence);
+            set.AddPermission(new ReflectionPermission(ReflectionPermissionFlag.MemberAccess));
+            set.RemovePermission(typeof(EnvironmentPermission));
 
-            EnvironmentPermission denyPermission = new EnvironmentPermission(PermissionState.Unrestricted);
-            denyPermission.Deny();
+            var domain = AppDomain.CreateDomain("partial trust", null, AppDomain.CurrentDomain.SetupInformation, set);
 
             try
             {
-                FlatFileTraceListener listener = new FlatFileTraceListener(fileName);
-                listener.TraceData(new TraceEventCache(), "source", TraceEventType.Error, 1, "This is a test");
-                listener.Dispose();
+                domain.DoCallBack(CheckListener);
+            }
+            catch
+            {
+                throw;
             }
             finally
             {
-                EnvironmentPermission.RevertAll();
+                AppDomain.Unload(domain);
             }
+        }
 
-            Assert.Fail("Permission was not denied.");
+        public static void CheckListener()
+        {
+            string environmentVariable = "%USERPROFILE%";
+            string fileName = Path.Combine(environmentVariable, "test.log");
+
+            FlatFileTraceListener listener = new FlatFileTraceListener(fileName);
+            listener.TraceData(new TraceEventCache(), "source", TraceEventType.Error, 1, "This is a test");
+            listener.Dispose();
         }
     }
 }

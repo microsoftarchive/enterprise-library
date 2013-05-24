@@ -13,9 +13,14 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.Linq;
 using System.Messaging;
+using System.Security;
+using System.Security.Permissions;
+using System.Security.Policy;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
@@ -31,16 +36,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
         const MessagePriority priority = MessagePriority.VeryHigh;
         const string formatterName = "BinnaryFormatter";
 
-
         [TestInitialize]
         public void SetUp()
         {
             AppDomain.CurrentDomain.SetData("APPBASE", Environment.CurrentDirectory);
+            ConfigurationTestHelper.ConfigurationFileName = "test.exe.config";
         }
+
         private static TraceListener GetListener(string name, IConfigurationSource configurationSource)
         {
-            var container = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
-            return container.GetInstance<TraceListener>(name);
+            var settings = LoggingSettings.GetLoggingSettings(configurationSource);
+            return settings.TraceListeners.Get(name).BuildTraceListener(settings);
         }
 
         [TestMethod]
@@ -209,13 +215,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             helper.loggingSettings.TraceListeners.Add(listenerData);
             helper.loggingSettings.Formatters.Add(new BinaryLogFormatterData(formatterName));
 
-            TraceListener listener = GetListener("listener\u200cimplementation", helper.configurationSource);
+            TraceListener listener = GetListener("listener", helper.configurationSource);
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(MsmqTraceListener));
 
             MsmqTraceListener msmqTraceListener = listener as MsmqTraceListener;
-            Assert.AreEqual("listener\u200cimplementation", listener.Name);
+            Assert.AreEqual("listener", listener.Name);
             Assert.IsNotNull(msmqTraceListener.Formatter);
             Assert.AreEqual(msmqTraceListener.Formatter.GetType(), typeof(BinaryLogFormatter));
             Assert.AreEqual(CommonUtil.MessageQueuePath, msmqTraceListener.QueuePath);
@@ -228,8 +234,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             loggingSettings.Formatters.Add(new FormatterData(formatterName, typeof(BinaryLogFormatter)));
             loggingSettings.TraceListeners.Add(new MsmqTraceListenerData("listener", CommonUtil.MessageQueuePath, formatterName));
 
-            TraceListener listener = 
-                GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+            TraceListener listener =
+                GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(MsmqTraceListener));
@@ -238,6 +244,94 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             Assert.IsNotNull(msmqTraceListener.Formatter);
             Assert.AreEqual(msmqTraceListener.Formatter.GetType(), typeof(BinaryLogFormatter));
             Assert.AreEqual(CommonUtil.MessageQueuePath, msmqTraceListener.QueuePath);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void CreatingInstanceWithNullFormatterThrows()
+        {
+            var settings = new LoggingSettings() { Formatters = { new BinaryLogFormatterData("formatter") } };
+            new MsmqTraceListenerData() { QueuePath = "queue", Formatter = null }.BuildTraceListener(settings);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void CreatingInstanceWithEmptyFormatterThrows()
+        {
+            var settings = new LoggingSettings() { Formatters = { new BinaryLogFormatterData("formatter") } };
+            new MsmqTraceListenerData() { QueuePath = "queue", Formatter = "" }.BuildTraceListener(settings);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void CreatingInstanceWithNullQueuePathThrows()
+        {
+            var settings = new LoggingSettings() { Formatters = { new BinaryLogFormatterData("formatter") } };
+            new MsmqTraceListenerData() { QueuePath = null, Formatter = "formatter" }.BuildTraceListener(settings);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void CreatingInstanceWithEmptyQueuePathThrows()
+        {
+            var settings = new LoggingSettings() { Formatters = { new BinaryLogFormatterData("formatter") } };
+            new MsmqTraceListenerData() { QueuePath = "", Formatter = "formatter" }.BuildTraceListener(settings);
+        }
+
+        [TestMethod]
+        public void CannotCreateInstanceFromConfigurationFileInPartialTrustIfLoggingIsFullyTrusted()
+        {
+            LoggingSettings loggingSettings = new LoggingSettings();
+            loggingSettings.Formatters.Add(new FormatterData(formatterName, typeof(BinaryLogFormatter)));
+            loggingSettings.TraceListeners.Add(new MsmqTraceListenerData("listener", CommonUtil.MessageQueuePath, formatterName));
+            var source = CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings);
+
+            var commonAssembly = typeof(Guard).Assembly.GetName();
+            var loggingAssembly = typeof(LogWriter).Assembly.GetName();
+
+            var fullyTrustedAssemblies = new[] { 
+                    new StrongName(new StrongNamePublicKeyBlob(commonAssembly.GetPublicKey()), commonAssembly.Name, commonAssembly.Version),
+                    new StrongName(new StrongNamePublicKeyBlob(loggingAssembly.GetPublicKey()), loggingAssembly.Name, loggingAssembly.Version)
+                };
+            var unsignedAssemblies = fullyTrustedAssemblies.Where(sn => sn.PublicKey.ToString() == "");
+            if (unsignedAssemblies.Any())
+            {
+                Assert.Inconclusive("Full trust assemblies must be signed. This test will be ignored. Unsigned assemblies: " + unsignedAssemblies.Aggregate("", (a, sn) => a + sn.Name + " "));
+            }
+
+            var evidence = new Evidence();
+            evidence.AddHostEvidence(new Zone(SecurityZone.Intranet));
+            var set = SecurityManager.GetStandardSandbox(evidence);
+            set.AddPermission(new SecurityPermission(SecurityPermissionFlag.ControlEvidence | SecurityPermissionFlag.ControlPolicy | SecurityPermissionFlag.SerializationFormatter));
+            set.AddPermission(new ReflectionPermission(ReflectionPermissionFlag.MemberAccess));
+            set.AddPermission(new FileIOPermission(PermissionState.Unrestricted));
+            var appDomain =
+                AppDomain.CreateDomain(
+                    "partial trust",
+                    null,
+                    AppDomain.CurrentDomain.SetupInformation,
+                    set,
+                    fullyTrustedAssemblies);
+
+            try
+            {
+                appDomain.DoCallBack(LoadConfiguration);
+
+                Assert.Fail("Should have thrown");
+            }
+            catch (ConfigurationErrorsException)
+            {
+            }
+            finally
+            {
+                AppDomain.Unload(appDomain);
+            }
+        }
+
+        private static void LoadConfiguration()
+        {
+            var configurationSource = new FileConfigurationSource(ConfigurationTestHelper.ConfigurationFileName, false);
+            configurationSource.GetSection(LoggingSettings.SectionName);
         }
     }
 }

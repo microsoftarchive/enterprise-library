@@ -12,7 +12,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Security;
 using System.Security.Permissions;
+using System.Security.Policy;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -24,24 +26,36 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners
         [ExpectedException(typeof(InvalidOperationException))]
         public void RollingFlatFileTraceListenerReplacedEnviromentVariablesWillFallBackIfNotPrivilegesToRead()
         {
-            string environmentVariable = "%USERPROFILE%";
-            string fileName = Path.Combine(environmentVariable, "foo.log");
+            var evidence = new Evidence();
+            evidence.AddHostEvidence(new Zone(SecurityZone.Internet));
+            var set = SecurityManager.GetStandardSandbox(evidence);
+            set.AddPermission(new ReflectionPermission(ReflectionPermissionFlag.MemberAccess));
+            set.RemovePermission(typeof(EnvironmentPermission));
 
-            EnvironmentPermission denyPermission = new EnvironmentPermission(PermissionState.Unrestricted);
-            denyPermission.Deny();
+            var domain = AppDomain.CreateDomain("partial trust", null, AppDomain.CurrentDomain.SetupInformation, set);
 
             try
             {
-                RollingFlatFileTraceListener listener = new RollingFlatFileTraceListener(fileName, "header", "footer", null, 1, "", RollFileExistsBehavior.Increment, RollInterval.Day);
-                listener.TraceData(new TraceEventCache(), "source", TraceEventType.Error, 1, "This is a test");
-                listener.Dispose();
+                domain.DoCallBack(CheckListener);
+            }
+            catch
+            {
+                throw;
             }
             finally
             {
-                EnvironmentPermission.RevertAll();
+                AppDomain.Unload(domain);
             }
+        }
 
-            Assert.Fail("Permission was not denied.");
+        public static void CheckListener()
+        {
+            string environmentVariable = "%USERPROFILE%";
+            string fileName = Path.Combine(environmentVariable, "test.log");
+
+            RollingFlatFileTraceListener listener = new RollingFlatFileTraceListener(fileName, "header", "footer", null, 1, "", RollFileExistsBehavior.Increment, RollInterval.Day);
+            listener.TraceData(new TraceEventCache(), "source", TraceEventType.Error, 1, "This is a test");
+            listener.Dispose();
         }
     }
 }

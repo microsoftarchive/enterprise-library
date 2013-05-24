@@ -16,6 +16,7 @@ using System.Messaging;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Tests;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -24,6 +25,42 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
     [TestClass]
     public class MsmqTraceListenerFixture
     {
+        [TestMethod]
+        public void ThrowsArgumentNullExceptionIfFormatterIsNull()
+        {
+            AssertEx.Throws<ArgumentNullException>(() => 
+                            new MsmqTraceListener("name",
+                                CommonUtil.MessageQueuePath,
+                                null /* formatter */,
+                                MessagePriority.Low,
+                                true,
+                                MsmqTraceListenerData.DefaultTimeToBeReceived,
+                                MsmqTraceListenerData.DefaultTimeToReachQueue, 
+                                false,
+                                false,
+                                false, 
+                                MsmqTraceListenerData.DefaultTransactionType, 
+                                new MockMsmqInterfaceFactory()));
+        }
+
+        [TestMethod]
+        public void ThrowsArgumentNullExceptionIfQueuePathIsNull()
+        {
+            AssertEx.Throws<ArgumentNullException>(() =>
+                            new MsmqTraceListener("name",
+                                null,
+                                new BinaryLogFormatter(),
+                                MessagePriority.Low,
+                                true,
+                                MsmqTraceListenerData.DefaultTimeToBeReceived,
+                                MsmqTraceListenerData.DefaultTimeToReachQueue,
+                                false,
+                                false,
+                                false,
+                                MsmqTraceListenerData.DefaultTransactionType,
+                                new MockMsmqInterfaceFactory()));
+        }
+
         [TestMethod]
         public void CanSendMessageToQueue()
         {
@@ -164,8 +201,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
                 new MsmqTraceListener("unnamed", CommonUtil.MessageQueuePath, formatter, MessagePriority.Low, true,
                                       MsmqTraceListenerData.DefaultTimeToBeReceived, MsmqTraceListenerData.DefaultTimeToReachQueue,
                                       false, false, false, MessageQueueTransactionType.Single, new MockMsmqInterfaceFactory());
-            LogSource source = new LogSource("unnamed", SourceLevels.All);
-            source.Listeners.Add(listener);
+            LogSource source = new LogSource("unnamed", new[] { listener }, SourceLevels.All);
 
             MockMsmqInterface.Instance.transactional = true;
             LogEntry entry = CommonUtil.GetDefaultLogEntry();
@@ -260,9 +296,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             get { return transactional; }
         }
 
-        public void Close() {}
+        public void Close() { }
 
-        public void Dispose() {}
+        public void Dispose() { }
 
         public void ResetMessageCount()
         {

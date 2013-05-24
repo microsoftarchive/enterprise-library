@@ -9,28 +9,21 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
     [TestClass]
-    [DeploymentItem("test.exe.config")]
     public class CustomAttributeMatchingRuleDataFixture : MatchingRuleDataFixtureBase
     {
-#if !SILVERLIGHT
         [TestMethod]
         public void CanSerializeTypeMatchingRule()
         {
-            CustomAttributeMatchingRuleData customAttributeMatchingRule = new CustomAttributeMatchingRuleData
-                {
-                    Name =  "MatchesMyAttribute", 
-                    AttributeTypeName = "Namespace.MyAttribute, Assembly", 
-                    SearchInheritanceChain = true
-                };
+            CustomAttributeMatchingRuleData customAttributeMatchingRule = new CustomAttributeMatchingRuleData("MatchesMyAttribure", "Namespace.MyAttribute, Assembly", true);
 
             CustomAttributeMatchingRuleData deserializedRule = SerializeAndDeserializeMatchingRule(customAttributeMatchingRule) as CustomAttributeMatchingRuleData;
 
@@ -39,20 +32,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.AreEqual(customAttributeMatchingRule.TypeName, deserializedRule.TypeName);
             Assert.AreEqual(customAttributeMatchingRule.SearchInheritanceChain, deserializedRule.SearchInheritanceChain);
         }
-#endif
 
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {
-            CustomAttributeMatchingRuleData customAttributeMatchingRule = new CustomAttributeMatchingRuleData
-                {
-                    Name =  "MatchesMyAttribute", 
-                    AttributeTypeName = "Namespace.MyAttribute, Assembly", 
-                    SearchInheritanceChain = true
-                };
-            TypeRegistration registration = customAttributeMatchingRule.GetRegistrations("").First();
+            CustomAttributeMatchingRuleData customAttributeMatchingRule = new CustomAttributeMatchingRuleData("MatchesMyAttribure", typeof(InjectionConstructorAttribute).AssemblyQualifiedName, true);
 
-            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+            using (var container = new UnityContainer())
+            {
+                customAttributeMatchingRule.ConfigureContainer(container, "-test");
+                var registration = container.Registrations.Single(r => r.Name == "MatchesMyAttribure-test");
+                Assert.AreSame(typeof(IMatchingRule), registration.RegisteredType);
+                Assert.AreSame(typeof(CustomAttributeMatchingRule), registration.MappedToType);
+                Assert.AreSame(typeof(TransientLifetimeManager), registration.LifetimeManagerType);
+            }
         }
     }
 }

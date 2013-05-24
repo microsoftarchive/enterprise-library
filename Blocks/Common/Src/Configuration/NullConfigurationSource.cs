@@ -17,7 +17,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
     /// <summary>
     /// Represents a null configuration source that always returns null for a section.
     /// </summary>
-    public class NullConfigurationSource : IConfigurationSource
+    public sealed class NullConfigurationSource : IConfigurationSource
     {
         /// <summary>
         /// Event raised when configuration source contents have changed.
@@ -74,7 +74,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         {
         }
 
-        void IDisposable.Dispose()
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
         {
         }
     }

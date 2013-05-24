@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddLoggingSettings" xml:space="preserve">
     <value>Add Logging Settings</value>
@@ -1035,47 +1035,6 @@ Each Category defines how log messages assigned that category will be handled.</
   <data name="TraceSourceDataTraceListenersDisplayName" xml:space="preserve">
     <value>Listeners</value>
   </data>
-  <data name="WmiTraceListenerDataDescription" xml:space="preserve">
-    <value>A logging target listener that raises a WMI event for each log message.</value>
-  </data>
-  <data name="WmiTraceListenerDataDisplayName" xml:space="preserve">
-    <value>WMI Trace Listener</value>
-  </data>
-  <data name="WmiTraceListenerDataFilterDescription" xml:space="preserve">
-    <value>The minimum severity of messages that will be sent to the logging target. 
-Valid values are All (the default), Off, Critical, Error, Warning, Information, Verbose, and Activity Tracing. 
-The behavior is for messages with the selected severity and all higher severities to be included. 
-For example, the Warning setting will allow warning, error, and critical messages to be written to the logging target.</value>
-  </data>
-  <data name="WmiTraceListenerDataFilterDisplayName" xml:space="preserve">
-    <value>Severity Filter</value>
-  </data>
-  <data name="WmiTraceListenerDataListenerDataTypeNameDescription" xml:space="preserve">
-    <value>The fully qualified type name of the Listener.</value>
-  </data>
-  <data name="WmiTraceListenerDataListenerDataTypeNameDisplayName" xml:space="preserve">
-    <value>Listener Data Type</value>
-  </data>
-  <data name="WmiTraceListenerDataNameDescription" xml:space="preserve">
-    <value>The name of the WMI Trace Listener.</value>
-  </data>
-  <data name="WmiTraceListenerDataNameDisplayName" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="WmiTraceListenerDataTraceOutputOptionsDescription" xml:space="preserve">
-    <value>Listeners that do not output to a Text Formatter use this property to determine which options, or elements, should be included in the trace output. 
-Possible values are: CallStack, DateTime, LogicalOperationStack, None, ProcessId, ThreadId, and Timestamp. 
-The default is None. This property is optional.</value>
-  </data>
-  <data name="WmiTraceListenerDataTraceOutputOptionsDisplayName" xml:space="preserve">
-    <value>Trace Output Options</value>
-  </data>
-  <data name="WmiTraceListenerDataTypeNameDescription" xml:space="preserve">
-    <value>The fully qualified type name of the WMI Trace Listener.</value>
-  </data>
-  <data name="WmiTraceListenerDataTypeNameDisplayName" xml:space="preserve">
-    <value>Type</value>
-  </data>
   <data name="XmlTraceListenerDataDescription" xml:space="preserve">
     <value>A logging target listener that writes log messages in XML format to a specified text file.</value>
   </data>
@@ -1121,106 +1080,6 @@ The default is None. This property is optional.</value>
     <value>The fully qualified type name of the XML Trace Listener.</value>
   </data>
   <data name="XmlTraceListenerDataTypeNameDisplayName" xml:space="preserve">
-    <value>Type</value>
-  </data>
-  <data name="LogCallHandlerCategoryEntryDescription" xml:space="preserve">
-    <value>A single Category in the list of Categories for the log message.</value>
-  </data>
-  <data name="LogCallHandlerCategoryEntryDisplayName" xml:space="preserve">
-    <value>Category Entry</value>
-  </data>
-  <data name="LogCallHandlerCategoryEntryNameDescription" xml:space="preserve">
-    <value>The name of the Category Entry.</value>
-  </data>
-  <data name="LogCallHandlerCategoryEntryNameDisplayName" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="LogCallHandlerDataAfterMessageDescription" xml:space="preserve">
-    <value>The message that the Logging Handler will add to the log entry after the target method executes.</value>
-  </data>
-  <data name="LogCallHandlerDataAfterMessageDisplayName" xml:space="preserve">
-    <value>After Message</value>
-  </data>
-  <data name="LogCallHandlerDataBeforeMessageDescription" xml:space="preserve">
-    <value>The message that the Logging Handler will add to the log entry before the target method executes.</value>
-  </data>
-  <data name="LogCallHandlerDataBeforeMessageDisplayName" xml:space="preserve">
-    <value>Before Message</value>
-  </data>
-  <data name="LogCallHandlerDataCategoriesDescription" xml:space="preserve">
-    <value>The list of categories to which the Logging Handler will write events. 
-Each category can be a literal value, and/or include the tokens {method}, {type}, {namespace}, and {assembly}.</value>
-  </data>
-  <data name="LogCallHandlerDataCategoriesDisplayName" xml:space="preserve">
-    <value>Categories</value>
-  </data>
-  <data name="LogCallHandlerDataDescription" xml:space="preserve">
-    <value>A Call Handler that provides the capability to write log messages and trace messages as the client code invokes the selected method or accesses the selected property of the target object. This handler uses the Logging Application Block to create and write log messages.</value>
-  </data>
-  <data name="LogCallHandlerDataDisplayName" xml:space="preserve">
-    <value>Logging Call Handler</value>
-  </data>
-  <data name="LogCallHandlerDataEventIdDescription" xml:space="preserve">
-    <value>The ID of the event to include in the log message.</value>
-  </data>
-  <data name="LogCallHandlerDataEventIdDisplayName" xml:space="preserve">
-    <value>Event Id</value>
-  </data>
-  <data name="LogCallHandlerDataIncludeCallStackDescription" xml:space="preserve">
-    <value>Determines whether the call stack will be included in the log message. </value>
-  </data>
-  <data name="LogCallHandlerDataIncludeCallStackDisplayName" xml:space="preserve">
-    <value>Include Call Stack</value>
-  </data>
-  <data name="LogCallHandlerDataIncludeCallTimeDescription" xml:space="preserve">
-    <value>Determines whether the duration of the call will be included in After Message section of the log message. </value>
-  </data>
-  <data name="LogCallHandlerDataIncludeCallTimeDisplayName" xml:space="preserve">
-    <value>Include Call Time</value>
-  </data>
-  <data name="LogCallHandlerDataIncludeParameterValuesDescription" xml:space="preserve">
-    <value>Determines whether the values of the parameters passed to the target method will be included in the log message. </value>
-  </data>
-  <data name="LogCallHandlerDataIncludeParameterValuesDisplayName" xml:space="preserve">
-    <value>Include Parameter Values</value>
-  </data>
-  <data name="LogCallHandlerDataLogBehaviorDescription" xml:space="preserve">
-    <value>Determines if the handler will write log messages before, after, or both before and after the call to the target object. 
-A value from the HandlerLogBehavior enumeration. 
-Valid values are Before, After, and BeforeAndAfter.</value>
-  </data>
-  <data name="LogCallHandlerDataLogBehaviorDisplayName" xml:space="preserve">
-    <value>Log Behavior</value>
-  </data>
-  <data name="LogCallHandlerDataNameDescription" xml:space="preserve">
-    <value>The name of the Logging Call Handler.</value>
-  </data>
-  <data name="LogCallHandlerDataNameDisplayName" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="LogCallHandlerDataOrderDescription" xml:space="preserve">
-    <value>The position of the handler within the policy handler chain, starting from 1. 
-The default value is zero, which means that there is no explicit order specified for the handler in relation to other handlers in the same handler chain.</value>
-  </data>
-  <data name="LogCallHandlerDataOrderDisplayName" xml:space="preserve">
-    <value>Order</value>
-  </data>
-  <data name="LogCallHandlerDataPriorityDescription" xml:space="preserve">
-    <value>The priority value of the exception to include in the log message.</value>
-  </data>
-  <data name="LogCallHandlerDataPriorityDisplayName" xml:space="preserve">
-    <value>Priority</value>
-  </data>
-  <data name="LogCallHandlerDataSeverityDescription" xml:space="preserve">
-    <value>The severity value of the exception to include in the log message; using values from the TraceEventType enumeration such as Critical, Error, and Warning.</value>
-  </data>
-  <data name="LogCallHandlerDataSeverityDisplayName" xml:space="preserve">
-    <value>Severity</value>
-  </data>
-  <data name="LogCallHandlerDataTypeNameDescription" xml:space="preserve">
-    <value>The fully qualified type name of the Logging Call Handler.</value>
-  </data>
-  <data name="LogCallHandlerDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>
   </data>
   <data name="LogFileDialogFilter" xml:space="preserve">
@@ -1294,5 +1153,54 @@ Possible values are: AboveNormal, High, Highest, Low, Lowest, Normal, VeryHigh, 
   </data>
   <data name="MsmqTraceListenerDataQueuePathDisplayName" xml:space="preserve">
     <value>Queue Path</value>
+  </data>
+  <data name="JsonLogFormatterDataDescription" xml:space="preserve">
+    <value>A Log Message Formatter that generates the output for a log message in a JSON format. </value>
+  </data>
+  <data name="JsonLogFormatterDataDisplayName" xml:space="preserve">
+    <value>JSON Log Message Formatter</value>
+  </data>
+  <data name="JsonLogFormatterDataNameDescription" xml:space="preserve">
+    <value>The name of the JSON Log Message Formatter.</value>
+  </data>
+  <data name="JsonLogFormatterDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="JsonLogFormatterDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the JSON Log Message Formatter.</value>
+  </data>
+  <data name="JsonLogFormatterDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="JsonLogFormatterDataFormattingDescription" xml:space="preserve">
+    <value>A Log Message Formatter that generates the output for a log message in a JSON text format suitable for use with listeners such as the 
+Flat File, Rolling Flat File, Email, and Event Log Trace Listeners. Accepted values: None (Default), Indented</value>
+  </data>
+  <data name="JsonLogFormatterDataFormattingDisplayName" xml:space="preserve">
+    <value>JSON Formatting</value>
+  </data>
+  <data name="TraceListenerDataAsynchronousDescription" xml:space="preserve">
+    <value>The flag indicating whether the listener should be used asynchronously.</value>
+  </data>
+  <data name="TraceListenerDataAsynchronousDisplayName" xml:space="preserve">
+    <value>Asynchronous</value>
+  </data>
+  <data name="TraceListenerDataAsynchronousDisposeTimeoutDescription" xml:space="preserve">
+    <value>The period of time to wait for an asynchronous trace listener to finish processing buffered asynchronous requests, or infinite (expressed as "infinite").</value>
+  </data>
+  <data name="TraceListenerDataAsynchronousDisposeTimeoutDisplayName" xml:space="preserve">
+    <value>Dispose Timeout (asynchronous)</value>
+  </data>
+  <data name="TraceListenerDataAsynchronousBufferSizeDescription" xml:space="preserve">
+    <value>The size of the buffer for asynchronous requests. Requests that do not fit in the buffer result in logging errors and are dropped.</value>
+  </data>
+  <data name="TraceListenerDataAsynchronousBufferSizeDisplayName" xml:space="preserve">
+    <value>Buffer size (asynchronous)</value>
+  </data>
+  <data name="TraceListenerDataAsynchronousMaxDegreeOfParallelismDescription" xml:space="preserve">
+    <value>The maximum degree of parallelism for processing asynchronous requests for thread safe Trace Listeners. Leave empty to use the processor count.</value>
+  </data>
+  <data name="TraceListenerDataAsynchronousMaxDegreeOfParallelismDisplayName" xml:space="preserve">
+    <value>Degree of parallelism (asynchronous)</value>
   </data>
 </root>

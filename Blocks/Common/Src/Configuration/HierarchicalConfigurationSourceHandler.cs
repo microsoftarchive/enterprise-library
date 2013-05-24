@@ -159,7 +159,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 if (parentSection.GetType() != localSection.GetType())
                 {
                     string message = String.Format(CultureInfo.CurrentCulture,
-                        Resources_Desktop.ExceptionIncompaitbleMergeElementType,
+                        Resources.ExceptionIncompaitbleMergeElementType,
                         localSection.GetType(),
                         parentSection.GetType());
 
@@ -190,7 +190,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 if (parentElement.GetType() != localElement.GetType())
                 {
                     string message = String.Format(CultureInfo.CurrentCulture,
-                        Resources_Desktop.ExceptionIncompaitbleMergeElementType,
+                        Resources.ExceptionIncompaitbleMergeElementType,
                         localElement.GetType(),
                         parentElement.GetType());
 

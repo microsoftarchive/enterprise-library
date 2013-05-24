@@ -117,18 +117,39 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ErrorFormatterTypeNameNotSet" xml:space="preserve">
-    <value>The formatter type name was not set for logging exception handler {0}.</value>
+  <data name="ExceptionFormatterTypeNotFormatter" xml:space="preserve">
+    <value>The type specified for the formatter is not a formatter type.</value>
   </data>
-  <data name="ErrorLogCategoryNotSet" xml:space="preserve">
-    <value>The log category was not set for logging exception handler {0}.</value>
+  <data name="ExceptionFormatterTypeNotSetOrInvalid" xml:space="preserve">
+    <value>The formatter type is not set or does not represent a type.</value>
   </data>
-  <data name="ErrorTitleNotSet" xml:space="preserve">
-    <value>The title was not set for logging exception handler {0}.</value>
+  <data name="HandlerPartNameTemplate" xml:space="preserve">
+    <value>Handler: '{0}'</value>
+  </data>
+  <data name="LoggingHandlerCategoryPartName" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="LoggingHandlerEventIdPartName" xml:space="preserve">
+    <value>Event ID</value>
+  </data>
+  <data name="LoggingHandlerFormatterPartName" xml:space="preserve">
+    <value>Formatter</value>
+  </data>
+  <data name="LoggingHandlerPriorityPartName" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="LoggingHandlerSeverityPartName" xml:space="preserve">
+    <value>Severity</value>
+  </data>
+  <data name="LoggingHandlerTitlePartName" xml:space="preserve">
+    <value>Title</value>
   </data>
   <data name="MissingConstructor" xml:space="preserve">
     <value>The configured exception formatter '{0}' must expose a public constructor that takes a TextWriter object, an Exception object and a GUID instance as parameters.</value>
     <comment>.
  Parameters: 0 - formatterName (string) </comment>
+  </data>
+  <data name="MustSetLoggerWriterException" xml:space="preserve">
+    <value>The Logger.Writer property must be set before building a LoggingExceptionHandler.</value>
   </data>
 </root>

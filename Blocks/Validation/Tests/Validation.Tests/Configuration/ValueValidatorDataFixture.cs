@@ -12,6 +12,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Configuration;
@@ -23,7 +24,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
     [TestClass]
     public class ValueValidatorDataFixture
     {
-#if !SILVERLIGHT
         [TestMethod]
         public void CanDeserializeSerializedInstanceWithNameOnly()
         {
@@ -34,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -61,7 +61,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -75,12 +75,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 Assert.AreEqual(ContainsCharacters.All, ((ContainsCharactersValidatorData)roSettings.Validators.Get(0)).ContainsCharacters);
             }
         }
-#endif
 
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObject()
         {
-            ContainsCharactersValidatorData rwValidatorData = new ContainsCharactersValidatorData { Name = "validator1" };
+            ContainsCharactersValidatorData rwValidatorData = new ContainsCharactersValidatorData("validator1");
             rwValidatorData.CharacterSet = "abc";
             rwValidatorData.ContainsCharacters = ContainsCharacters.All;
 
@@ -96,7 +95,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObjectWithMessageTemplateOverride()
         {
-            ContainsCharactersValidatorData rwValidatorData = new ContainsCharactersValidatorData { Name = "validator1" };
+            ContainsCharactersValidatorData rwValidatorData = new ContainsCharactersValidatorData("validator1");
             rwValidatorData.CharacterSet = "abc";
             rwValidatorData.ContainsCharacters = ContainsCharacters.All;
             rwValidatorData.MessageTemplate = "message template override";

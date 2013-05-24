@@ -9,12 +9,13 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using System.Security;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
-using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
@@ -34,6 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="value">Value.  Objects will be serialized.</param>
         /// <example>The following example demonstrates use of the AddContextItem method.
         /// <code>Logger.SetContextItem("SessionID", myComponent.SessionId);</code></example>
+        [SecurityCritical]
         public static void SetContextItem(object key, object value)
         {
             Writer.SetContextItem(key, value);
@@ -42,6 +44,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <summary>
         /// Empty the context items dictionary.
         /// </summary>
+        [SecurityCritical]
         public static void FlushContextItems()
         {
             Writer.FlushContextItems();
@@ -359,11 +362,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         }
 
         /// <summary>
-        /// Public for testing purposes.
         /// Reset the writer used by the <see cref="Logger"/> facade.
         /// </summary>
         /// <remarks>
+        /// <para>
+        /// Resetting the writer disposes the current writer and sets the reference to <see langword="null"/> so further attempts to use the facade
+        /// will fail until it is re-initialized.
+        /// </para>
+        /// <para>
+        /// This method should be invoked only when no other operations are being performed through the facade.
+        /// </para>
+        /// <para>
         /// Threads that already acquired the reference to the old writer will fail when it gets disposed.
+        /// </para>
         /// </remarks>
         public static void Reset()
         {
@@ -384,45 +395,42 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <summary>
         /// Gets the instance of <see cref="LogWriter"/> used by the facade.
         /// </summary>
-        /// <remarks>
-        /// The lifetime of this instance is managed by the facade.
-        /// </remarks>
         public static LogWriter Writer
         {
             get
             {
-                if (writer == null)
+                var currentWriter = writer;
+                if (currentWriter == null)
                 {
-                    lock (sync)
-                    {
-                        if (writer == null)
-                        {
-                            try
-                            {
-                                writer = EnterpriseLibraryContainer.Current.GetInstance<LogWriter>();
-                            }
-                            catch (ActivationException configurationException)
-                            {
-                                TryLogConfigurationFailure(configurationException);
-
-                                throw;
-                            }
-                        }
-                    }
+                    throw new InvalidOperationException(Resources.ExceptionLogWriterNotSet);
                 }
-                return writer;
+
+                return currentWriter;
             }
         }
 
-        internal static void TryLogConfigurationFailure(ActivationException configurationException)
+        /// <summary>
+        /// Sets the log writer.
+        /// </summary>
+        /// <param name="logWriter">The log writer.</param>
+        /// <param name="throwIfSet"><see langword="true"/> to throw an exception if the writer is already set; otherwise <see langword="false"/>. Defaults to <see langword="true"/>.</param>
+        /// <exception cref="InvalidOperationException">The factory is already set, and <paramref name="throwIfSet"/> is <see langword="true"/>.</exception>
+        public static void SetLogWriter(LogWriter logWriter, bool throwIfSet = true)
         {
-            try
+            Guard.ArgumentNotNull(logWriter, "logWriter");
+
+            var currentWriter = writer;
+            if (currentWriter != null && throwIfSet)
             {
-                var logger = EnterpriseLibraryContainer.Current.GetInstance<DefaultLoggingEventLogger>();
-                logger.LogConfigurationError(configurationException);
+                throw new InvalidOperationException(Resources.ExceptionLogWriterAlreadySet);
             }
-            catch
-            { }
+
+            writer = logWriter;
+
+            if (currentWriter != null)
+            {
+                currentWriter.Dispose();
+            }
         }
     }
 }

@@ -23,6 +23,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
     [TestClass]
     public class ValidationFactoryFixture
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
+        }
+
         [TestMethod]
         public void ShouldCacheGenericValidatorWhenUsingUnspecifiedConfigSource()
         {
@@ -118,17 +130,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
             ValidationSettings settings = new ValidationSettings();
             configurationSource.Add(ValidationSettings.SectionName, settings);
-            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(BaseTestDomainObject));
+            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(BaseTestDomainObject));
             settings.Types.Add(typeReference);
-            ValidationRulesetData ruleData = new ValidationRulesetData { Name = "RuleA" };
+            ValidationRulesetData ruleData = new ValidationRulesetData("RuleA");
             typeReference.Rulesets.Add(ruleData);
-            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference { Name = "Property1" };
+            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference("Property1");
             ruleData.Properties.Add(propertyReference1);
             MockValidatorData validator11 = new MockValidatorData("validator1", true);
             propertyReference1.Validators.Add(validator11);
             validator11.MessageTemplate = "message-from-config1-RuleA";
 
-            ValidatedPropertyReference propertyReference2 = new ValidatedPropertyReference { Name = "Property2" };
+            ValidatedPropertyReference propertyReference2 = new ValidatedPropertyReference("Property2");
             ruleData.Properties.Add(propertyReference2);
             propertyReference2.Validators.Add(validator11);
 
@@ -224,7 +236,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         }
 
         [TestMethod]
-        public void CanGetValidatorFromConfigurationOnly()
+        public void CanGetValidatorFromConfigurationOly()
         {
             var validator =
                 ValidationFactory.CreateValidator<TestObjectWithMultipleSourceValidationAttributesOnProperties>(
@@ -245,6 +257,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithDataAnnotationsAttributes" && vr.Message == "configuration1"));
             Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithVABOnlyAttributes" && vr.Message == "configuration2"));
         }
+
         #endregion
     }
 }

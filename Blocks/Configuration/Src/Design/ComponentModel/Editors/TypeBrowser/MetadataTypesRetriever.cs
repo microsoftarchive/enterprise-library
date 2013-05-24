@@ -106,7 +106,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
 
             while (token != 0)
             {
-                currentTypeName.Clear();
+                currentTypeName.Length = 0;
 
                 import.GetTypeDefProps(token, currentTypeName, MaxClassNameLength, out actualNameLength, out typeDefFlags, out baseTypeToken);
 

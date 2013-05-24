@@ -9,10 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -37,17 +36,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         { }
 
         /// <summary>
-        /// Returns the <see cref="TypeRegistration"/> entry for this data section.
+        /// Builds the <see cref="ILogFormatter" /> object represented by this configuration object.
         /// </summary>
-        /// <returns>The type registration for this data section</returns>
-        public override IEnumerable<TypeRegistration> GetRegistrations()
+        /// <returns>
+        /// A formatter.
+        /// </returns>
+        public override ILogFormatter BuildFormatter()
         {
-            yield return
-                new TypeRegistration<ILogFormatter>(() => new BinaryLogFormatter())
-               {
-                   Name = this.Name,
-                   Lifetime = TypeRegistrationLifetime.Transient
-               };
+            return new BinaryLogFormatter();
         }
     }
 }

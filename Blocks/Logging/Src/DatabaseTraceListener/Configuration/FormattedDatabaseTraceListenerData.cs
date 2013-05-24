@@ -9,16 +9,13 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Configuration;
 using System.Diagnostics;
-using System.Linq.Expressions;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Data;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
 {
@@ -38,7 +35,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
         /// <summary>
         /// Initializes a <see cref="FormattedDatabaseTraceListenerData"/>.
         /// </summary>
-        public FormattedDatabaseTraceListenerData() : base(typeof(FormattedDatabaseTraceListener))
+        public FormattedDatabaseTraceListenerData()
+            : base(typeof(FormattedDatabaseTraceListener))
         {
             this.ListenerDataType = typeof(FormattedDatabaseTraceListenerData);
         }
@@ -122,7 +120,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
         /// <summary>
         /// Gets and sets the stored procedure name for adding a category for this log.
         /// </summary>
-        [ConfigurationProperty(addCategoryStoredProcNameProperty, IsRequired = true, DefaultValue="AddCategory")]
+        [ConfigurationProperty(addCategoryStoredProcNameProperty, IsRequired = true, DefaultValue = "AddCategory")]
         [ResourceDescription(typeof(DesignResources), "FormattedDatabaseTraceListenerDataAddCategoryStoredProcNameDescription")]
         [ResourceDisplayName(typeof(DesignResources), "FormattedDatabaseTraceListenerDataAddCategoryStoredProcNameDisplayName")]
         public string AddCategoryStoredProcName
@@ -145,18 +143,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
         }
 
         /// <summary>
-        /// Returns a lambda expression that represents the creation of the trace listener described by this
-        /// configuration object.
+        /// Builds the <see cref="TraceListener" /> object represented by this configuration object.
         /// </summary>
-        /// <returns>A lambda expression to create a trace listener.</returns>
-        protected override Expression<Func<TraceListener>> GetCreationExpression()
+        /// <param name="settings">The configuration settings for logging.</param>
+        /// <returns>
+        /// A trace listener.
+        /// </returns>
+        protected override TraceListener CoreBuildTraceListener(LoggingSettings settings)
         {
-            return () =>
-                   new FormattedDatabaseTraceListener(
-                       Container.Resolved<Data.Database>(DatabaseInstanceName),
-                       WriteLogStoredProcName,
-                       AddCategoryStoredProcName,
-                       Container.ResolvedIfNotNull<ILogFormatter>(Formatter));
+            var database = DatabaseFactory.CreateDatabase(this.DatabaseInstanceName);
+            var formatter = this.BuildFormatterSafe(settings, this.Formatter);
+
+            return new FormattedDatabaseTraceListener(database, WriteLogStoredProcName, AddCategoryStoredProcName, formatter);
         }
     }
 }

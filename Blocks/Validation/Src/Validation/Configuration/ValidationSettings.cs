@@ -10,13 +10,8 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
@@ -31,29 +26,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     public class ValidationSettings : SerializableConfigurationSection
     {
         ///<summary>
-        /// Tries to retrieve the <see cref="ValidationSettings"/> and notifies the provided <see cref="IValidationInstrumentationProvider"/>
-        /// if there is a <see cref="ConfigurationErrorsException"/>.  The exception is rethrown.
+        /// Tries to retrieve the <see cref="ValidationSettings"/>.
         ///</summary>
         ///<param name="configurationSource"></param>
-        ///<param name="instrumentationProvider"></param>
         ///<returns></returns>
-        public static ValidationSettings TryGet(
-            IConfigurationSource configurationSource,
-            IValidationInstrumentationProvider instrumentationProvider
-            )
+        public static ValidationSettings TryGet(IConfigurationSource configurationSource)
         {
             if (configurationSource == null) throw new ArgumentNullException("configurationSource");
-            if (instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
 
-            try
-            {
-                return configurationSource.GetSection(ValidationSettings.SectionName) as ValidationSettings;
-            }
-            catch(ConfigurationErrorsException e)
-            {
-                instrumentationProvider.NotifyConfigurationFailure(e);
-                throw;
-            }
+            return configurationSource.GetSection(ValidationSettings.SectionName) as ValidationSettings;
         }
 
         /// <summary>

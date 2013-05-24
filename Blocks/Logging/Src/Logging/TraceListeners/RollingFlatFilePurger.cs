@@ -188,7 +188,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                 else
                 {
                     // compare the sequence part of the file name as plain strings
-                    return this.SequenceString.CompareTo(other.SequenceString);
+                    return string.CompareOrdinal(this.SequenceString, other.SequenceString);
                 }
             }
         }
@@ -214,7 +214,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <returns>The sequence part of the file name.</returns>
         public static string GetSequence(string fileName)
         {
-            if(fileName == null) throw new ArgumentNullException(fileName, "fileName");
+            if (fileName == null) throw new ArgumentNullException("fileName");
 
             int extensionDotIndex = fileName.LastIndexOf('.');
             if (extensionDotIndex <= 0)

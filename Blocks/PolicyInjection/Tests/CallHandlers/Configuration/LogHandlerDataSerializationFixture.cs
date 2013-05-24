@@ -13,7 +13,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport;
@@ -21,13 +21,10 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.ObjectsU
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests.Configuration
 {
     [TestClass]
-    [DeploymentItem("test.exe.config")]
     public class LogHandlerDataSerializationFixture : CallHandlerDataFixtureBase
     {
         [TestMethod]
@@ -90,11 +87,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         }
 
         [TestMethod]
-        [DeploymentItem("LogCallHandler.config")]
         public void AssembledCorrectlyLogCallHandler()
         {
             using (var configSource = new FileConfigurationSource("LogCallHandler.config", false))
             {
+                Logger.SetLogWriter(new LogWriterFactory(configSource.GetSection).Create(), false);
+
                 PolicyInjectionSettings settings = new PolicyInjectionSettings();
 
                 PolicyData policyData = new PolicyData("policy");
@@ -110,12 +108,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
                 settings.Policies.Add(policyData);
 
                 IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
-                settings.ConfigureContainer(container, configSource);
-                new UnityContainerConfigurator(container)
-                    .RegisterAll(configSource,
-                                 (ITypeRegistrationsProvider)configSource.GetSection(LoggingSettings.SectionName));
+                settings.ConfigureContainer(container);
 
-                InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("policy");
+                var policy = container.Resolve<RuleDrivenPolicy>("policy");
 
                 LogCallHandler handler = (LogCallHandler)
                                          (policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
@@ -131,12 +126,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             }
         }
 
-      
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            Logger.Reset();
+        }
+
         private static MethodImplementationInfo GetMethodImpl(MethodBase method)
         {
             return new MethodImplementationInfo(null, ((MethodInfo)method));
         }
     }
-
-   
 }

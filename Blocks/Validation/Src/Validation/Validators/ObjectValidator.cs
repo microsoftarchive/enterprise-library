@@ -10,6 +10,8 @@
 //===============================================================================
 
 using System;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
@@ -18,9 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
     /// Performs validation on objects by applying the validation rules specified for a supplied type.
     /// </summary>
     /// <seealso cref="ValidationFactory"/>
-#if !SILVERLIGHT
-    [Common.Configuration.ConfigurationElementType(typeof(Configuration.ObjectValidatorData))]
-#endif
+    [ConfigurationElementType(typeof(ObjectValidatorData))]
     public class ObjectValidator : Validator
     {
         private readonly Type targetType;
@@ -138,7 +138,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <remarks>
         /// If <paramref name="objectToValidate"/> is <see langword="null"/> validation is ignored.
         /// <para/>
-        /// A reference to an instance of a type not compatible with the configured target type
+        /// A referece to an instance of a type not compatible with the configured target type
         /// causes a validation failure.
         /// </remarks>
         public override void DoValidate(object objectToValidate,

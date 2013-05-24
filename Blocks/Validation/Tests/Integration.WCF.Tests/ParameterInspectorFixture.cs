@@ -12,6 +12,7 @@
 using System;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.Tests.VSTS.TestService;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -23,6 +24,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.Tests
     [TestClass]
     public class ParameterInspectorFixture
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
+        }
+
         [TestMethod]
         public void CanCreateGivenValidOperation()
         {

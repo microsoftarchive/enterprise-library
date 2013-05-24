@@ -10,10 +10,8 @@
 //===============================================================================
 
 using System.Collections.Generic;
-#if !SILVERLIGHT
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
 {
@@ -21,9 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
 	/// Represents a client-side log filter based on message category.  
 	/// Either specific categories can be explicitly allowed, or specific categories can be denied.
 	/// </summary>
-#if !SILVERLIGHT
 	[ConfigurationElementType(typeof(CategoryFilterData))]
-#endif
 	public class CategoryFilter : LogFilter
 	{
 		private ICollection<string> categoryFilters;
@@ -80,7 +76,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
 		/// <param name="category">The category.</param>
 		/// <returns><b>true</b> if the category passes through the category filter, <b>false</b> otherwise.</returns>
 		/// <remarks>A log entry for an allowed category may be rejected if the log entry has other denied categories
-		/// in its categories list.</remarks>
+		/// in its categories liset.</remarks>
 		public bool ShouldLog(string category)
 		{
 			return ShouldLog(new string[] { category });

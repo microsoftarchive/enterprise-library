@@ -10,27 +10,28 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF
 {
     /// <summary>
     /// Class that wraps a FaultContract exception.
     /// </summary>
-    public class FaultContractWrapperException : Exception 
+    [Serializable]
+    public class FaultContractWrapperException : Exception
     {
+        [NonSerialized]
         private object faultContract;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:FaultContractWrapperException"/> class.
         /// </summary>
         /// <param name="faultContract">The fault contract.</param>
-        public FaultContractWrapperException(object faultContract) : this(faultContract, Guid.NewGuid(), null)
+        public FaultContractWrapperException(object faultContract)
+            : this(faultContract, Guid.NewGuid(), null)
         {
         }
 
-                /// <summary>
+        /// <summary>
         /// Initializes a new instance of the <see cref="T:FaultContractWrapperException"/> class.
         /// </summary>
         /// <param name="faultContract">The fault contract.</param>

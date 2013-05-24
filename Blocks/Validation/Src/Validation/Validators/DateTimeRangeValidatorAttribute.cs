@@ -81,7 +81,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             RangeBoundaryType lowerBoundType,
             string upperBound,
             RangeBoundaryType upperBoundType)
-            : this(lowerBound, ConvertToISO8601Date(lowerBound), lowerBoundType, upperBound, ConvertToISO8601Date(upperBound), upperBoundType)
+            : this(lowerBound, ConvertToISO8601Date(lowerBound, "lowerBound"), lowerBoundType, upperBound, ConvertToISO8601Date(upperBound, "upperBound"), upperBoundType)
         { }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                 Negated);
         }
 
-        private static DateTime ConvertToISO8601Date(string iso8601DateString)
+        private static DateTime ConvertToISO8601Date(string iso8601DateString, string paramName)
         {
             if (string.IsNullOrEmpty(iso8601DateString))
             {
@@ -174,11 +174,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             }
             catch (FormatException e)
             {
-                throw new ArgumentException(Resources.ExceptionInvalidDate, e);
+                throw new ArgumentException(Resources.ExceptionInvalidDate, "paramName", e);
             }
         }
 
-#if !SILVERLIGHT
         private readonly Guid typeId = Guid.NewGuid();
 
         /// <summary>
@@ -191,6 +190,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                 return this.typeId;
             }
         }
-#endif
     }
 }

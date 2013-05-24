@@ -9,13 +9,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers;
+using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
@@ -183,31 +182,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         }
 
         /// <summary>
-        /// Get the set of <see cref="TypeRegistration"/> objects needed to
-        /// register the call handler represented by this config element and its associated objects.
+        /// Configures an <see cref="IUnityContainer"/> to resolve the represented call handler by using the specified name.
         /// </summary>
-        /// <param name="nameSuffix">A suffix for the names in the generated type registration objects.</param>
-        /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
-        public override IEnumerable<TypeRegistration> GetRegistrations(string nameSuffix)
+        /// <param name="container">The container to configure.</param>
+        /// <param name="registrationName">The name of the registration.</param>
+        protected override void DoConfigureContainer(IUnityContainer container, string registrationName)
         {
-            yield return
-                new TypeRegistration<ICallHandler>(() =>
-                                                   new PerformanceCounterCallHandler(
-                                                       this.CategoryName,
-                                                       this.InstanceName,
-                                                       this.UseTotalCounter,
-                                                       this.IncrementNumberOfCalls,
-                                                       this.IncrementCallsPerSecond,
-                                                       this.IncrementAverageCallDuration,
-                                                       this.IncrementTotalExceptions,
-                                                       this.IncrementExceptionsPerSecond)
-                                                       {
-                                                           Order = this.Order
-                                                       })
-                    {
-                        Name = this.Name + nameSuffix,
-                        Lifetime = TypeRegistrationLifetime.Transient
-                    };
+            container.RegisterType<ICallHandler, PerformanceCounterCallHandler>(
+                registrationName,
+                new InjectionConstructor(
+                    this.CategoryName,
+                    this.InstanceName,
+                    this.UseTotalCounter,
+                    this.IncrementNumberOfCalls,
+                    this.IncrementCallsPerSecond,
+                    this.IncrementAverageCallDuration,
+                    this.IncrementTotalExceptions,
+                    this.IncrementExceptionsPerSecond),
+                new InjectionProperty("Order", this.Order));
         }
     }
 }

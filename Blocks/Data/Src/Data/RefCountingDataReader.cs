@@ -10,7 +10,7 @@
 //===============================================================================
 
 using System.Data;
-using Microsoft.Practices.Unity.Utility;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data
 {
@@ -47,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <filterpriority>2</filterpriority>
         public override void Close()
         {
-            if(!IsClosed)
+            if (!IsClosed)
             {
                 base.Close();
                 connectionWrapper.Dispose();
@@ -61,9 +61,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// so this will never be false.</param>
         protected override void Dispose(bool disposing)
         {
-            if(disposing)
+            if (disposing)
             {
-                if(!IsClosed)
+                if (!IsClosed)
                 {
                     base.Dispose(true);
                     connectionWrapper.Dispose();

@@ -45,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             ConnectionStringSettings data = settings.GetConnectionStringSettings("DbWithSqlServerAuthn");
             SqlDatabase sqlDatabase = new SqlDatabase(data.ConnectionString);
 
-            Assert.AreEqual(@"server=(local)\sqlexpress;database=northwind;", sqlDatabase.ConnectionStringWithoutCredentials);
+            Assert.AreEqual(@"server=(localdb)\v11.0;database=northwind;", sqlDatabase.ConnectionStringWithoutCredentials);
         }
 
         [TestMethod]
@@ -55,7 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             ConnectionStringSettings data = settings.GetConnectionStringSettings("NewDatabase");
             SqlDatabase sqlDatabase = new SqlDatabase(data.ConnectionString);
 
-            Assert.AreEqual(@"server=(local)\sqlexpress;database=northwind;integrated security=true;", sqlDatabase.ConnectionStringWithoutCredentials);
+            Assert.AreEqual(@"server=(localdb)\v11.0;database=northwind;integrated security=true;", sqlDatabase.ConnectionStringWithoutCredentials);
         }
 
         [TestMethod]
@@ -151,7 +151,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             {
                 CreateUser();
                 ConnectionString testString =
-                    new ConnectionString(@"server=(local)\SQLEXPRESS;database=Northwind;uid=entlib;pwd=hdf7&834k(*KA;Persist Security Info=false", "UserId,UId", "Password,Pwd");
+                    new ConnectionString(@"server=(localdb)\v11.0;database=Northwind;uid=entlib;pwd=hdf7&834k(*KA;Persist Security Info=false", "UserId,UId", "Password,Pwd");
                 SqlDatabase sqlDatabase = new SqlDatabase(testString.ToString());
                 DbConnection dbConnection = sqlDatabase.CreateConnection();
                 dbConnection.Open();

@@ -9,6 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -17,6 +18,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
     [TestClass]
     public class DataErrorInfoHelperFixture
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
+        }
+
         [TestMethod]
         public void MessageForEntireObjectIsEmpty()
         {

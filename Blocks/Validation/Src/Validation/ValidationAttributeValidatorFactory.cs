@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation
@@ -26,9 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <summary>
         /// Initializes a new instance of the <see cref="ValidationAttributeValidatorFactory"/> class.
         /// </summary>
-        ///<param name="instrumentationProvider">The <see cref="IValidationInstrumentationProvider"/> provider to use for instrumentation purposes.</param>
-        public ValidationAttributeValidatorFactory(IValidationInstrumentationProvider instrumentationProvider)
-            : base(instrumentationProvider)
+        public ValidationAttributeValidatorFactory()
         { }
 
         /// <summary>

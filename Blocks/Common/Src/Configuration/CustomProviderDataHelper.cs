@@ -182,7 +182,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 				{
 					if (attributes == null)
 					{
-						attributes = new NameValueCollection(StringComparer.InvariantCulture);
+						attributes = new NameValueCollection(StringComparer.Ordinal);
 						AddAttributesFromConfigurationProperties();
 					}
 				}

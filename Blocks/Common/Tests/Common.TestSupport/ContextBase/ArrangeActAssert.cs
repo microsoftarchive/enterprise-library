@@ -23,11 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase
     /// encapsulated by the [TestMethod]s themselves.
     /// </summary>
     public abstract class ArrangeActAssert
-#if SILVERLIGHT
-    : Microsoft.Silverlight.Testing.SilverlightTest
-#endif
     {
-
         /// <summary>
         /// When overridden in a derived class, this method is used to
         /// set up the current state of the specs context.
@@ -62,32 +58,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase
 
         #region MSTEST integration methods
 
-#if !SILVERLIGHT
         [TestInitialize]
         public void MainSetup()
         {
-            Arrange();
-            Act();
-        }
-#else
-        protected Exception initializeException;
-        [TestInitialize]
-        public void MainSetup()
-        {
-            this.initializeException = null;
-
             try
             {
                 Arrange();
                 Act();
             }
-            catch (Exception e)
+            catch
             {
-                this.initializeException = e;
+                this.MainTeardown();
                 throw;
             }
         }
-#endif
 
         [TestCleanup]
         public void MainTeardown()

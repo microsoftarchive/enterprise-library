@@ -9,12 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Configuration;
 using System.Data.Common;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
 {
@@ -31,7 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         ///<param name="connectionStringSettings">The <see cref="ConnectionStringSettings"/> for the represented database.</param>
         ///<param name="configurationSource">The <see cref="IConfigurationSource"/> from which additional information can 
         /// be retrieved if necessary.</param>
-        public GenericDatabaseData(ConnectionStringSettings connectionStringSettings, IConfigurationSource configurationSource)
+        public GenericDatabaseData(ConnectionStringSettings connectionStringSettings, Func<string, ConfigurationSection> configurationSource)
             : base(connectionStringSettings, configurationSource)
         {
         }
@@ -45,20 +43,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         }
 
         /// <summary>
-        /// Creates a <see cref="TypeRegistration"/> instance describing the <see cref="GenericDatabase"/> represented by 
-        /// this configuration object.
+        /// Builds the <see cref="Database" /> represented by this configuration object.
         /// </summary>
-        /// <returns>A <see cref="TypeRegistration"/> instance describing a database.</returns>
-        public override IEnumerable<TypeRegistration> GetRegistrations()
+        /// <returns>
+        /// A database.
+        /// </returns>
+        public override Database BuildDatabase()
         {
-            yield return new TypeRegistration<Database>(
-                () => new GenericDatabase(ConnectionString,
-                    DbProviderFactories.GetFactory(ProviderName),
-                    Container.Resolved<IDataInstrumentationProvider>(Name)))
-                {
-                    Name = Name,
-                    Lifetime = TypeRegistrationLifetime.Transient
-                };
+            return new GenericDatabase(this.ConnectionString, DbProviderFactories.GetFactory(this.ProviderName));
         }
     }
 }

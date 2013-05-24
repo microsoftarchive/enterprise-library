@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -54,15 +53,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.AreEqual(3, descriptors.Count);
             // reflection doesn't preserve ordering of attributes. Therefore,
             // it doesn't preserve ordering of validators. Is this an issue?
-            Assert.IsTrue(descriptors.Any(delegate(IValidatorDescriptor d)
+            Assert.IsTrue(descriptors.Exists(delegate(IValidatorDescriptor d)
                                              {
                                                  return d is NotNullValidatorAttribute;
                                              }));
-            Assert.IsTrue(descriptors.Any(delegate(IValidatorDescriptor d)
+            Assert.IsTrue(descriptors.Exists(delegate(IValidatorDescriptor d)
                                              {
                                                  return d is StringLengthValidatorAttribute;
                                              }));
-            Assert.IsTrue(descriptors.Any(delegate(IValidatorDescriptor d)
+            Assert.IsTrue(descriptors.Exists(delegate(IValidatorDescriptor d)
                                              {
                                                  return d is RegexValidatorAttribute;
                                              }));

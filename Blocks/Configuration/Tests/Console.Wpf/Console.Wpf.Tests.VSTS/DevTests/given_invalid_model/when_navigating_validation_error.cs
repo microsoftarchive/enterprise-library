@@ -9,32 +9,29 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
 {
     [TestClass]
-    public class when_navigating_validation_error : CachingElementModelContext
+    public class when_navigating_validation_error : LoggingElementModelContext
     {
         private ValidationModel validationModel;
         private ValidationResult result;
-        private ElementViewModel cacheManager;
+        private ElementViewModel traceListener;
 
         protected override void Arrange()
         {
             base.Arrange();
             validationModel = Container.Resolve<ValidationModel>();
-            cacheManager = CachingSettingsViewModel.DescendentElements(x => x.ConfigurationType == typeof(CacheManagerData)).First();
+            traceListener = LoggingSettingsViewModel.DescendentElements(x => x.ConfigurationType == typeof(FormattedEventLogTraceListenerData)).First();
 
-            var bindableProperty = cacheManager.Property("ExpirationPollFrequencyInSeconds").BindableProperty;
+            var bindableProperty = traceListener.Property("TraceOutputOptions").BindableProperty;
             bindableProperty.BindableValue = "Invalid";
 
             result = bindableProperty.Property.ValidationResults.First();
@@ -48,19 +45,19 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
         [TestMethod]
         public void then_element_is_selected()
         {
-            Assert.IsTrue(cacheManager.IsSelected);
+            Assert.IsTrue(traceListener.IsSelected);
         }
 
         [TestMethod]
         public void then_section_is_exanded()
         {
-            Assert.IsTrue(cacheManager.ContainingSection.IsExpanded);
+            Assert.IsTrue(traceListener.ContainingSection.IsExpanded);
         }
 
         [TestMethod]
         public void then_element_properties_are_shown()
         {
-            Assert.IsTrue(cacheManager.PropertiesShown);
+            Assert.IsTrue(traceListener.PropertiesShown);
         }
     }
 }

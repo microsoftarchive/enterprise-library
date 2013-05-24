@@ -94,7 +94,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationRulesetData rulesetData = new ValidationRulesetData();
             ValidatedPropertyReference nonExistingPropertyReference
-                = new ValidatedPropertyReference { Name = "NonExistingProperty" };
+                = new ValidatedPropertyReference("NonExistingProperty");
             rulesetData.Properties.Add(nonExistingPropertyReference);
             nonExistingPropertyReference.Validators.Add(new MockValidatorData("validator1", false));
 
@@ -111,7 +111,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationRulesetData rulesetData = new ValidationRulesetData();
             ValidatedPropertyReference publicPropertyWithoutValidatorsReference
-                = new ValidatedPropertyReference { Name = "PublicPropertyWithoutValidators" };
+                = new ValidatedPropertyReference("PublicPropertyWithoutValidators");
             rulesetData.Properties.Add(publicPropertyWithoutValidatorsReference);
 
             ConfigurationValidatedType validatedType
@@ -127,7 +127,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationRulesetData rulesetData = new ValidationRulesetData();
             ValidatedPropertyReference writeOnlyPublicPropertyReference
-                = new ValidatedPropertyReference { Name = "WriteOnlyPublicProperty" };
+                = new ValidatedPropertyReference("WriteOnlyPublicProperty");
             rulesetData.Properties.Add(writeOnlyPublicPropertyReference);
             writeOnlyPublicPropertyReference.Validators.Add(new MockValidatorData("validator1", false));
 
@@ -144,7 +144,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationRulesetData rulesetData = new ValidationRulesetData();
             ValidatedPropertyReference writeOnlyPublicPropertyReference
-                = new ValidatedPropertyReference { Name = "Item" };
+                = new ValidatedPropertyReference("Item");
             rulesetData.Properties.Add(writeOnlyPublicPropertyReference);
             writeOnlyPublicPropertyReference.Validators.Add(new MockValidatorData("validator1", false));
 
@@ -161,7 +161,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationRulesetData rulesetData = new ValidationRulesetData();
             ValidatedPropertyReference nonPublicPropertyReference
-                = new ValidatedPropertyReference { Name = "NonPublicProperty" };
+                = new ValidatedPropertyReference("NonPublicProperty");
             rulesetData.Properties.Add(nonPublicPropertyReference);
             nonPublicPropertyReference.Validators.Add(new MockValidatorData("validator1", false));
 
@@ -178,7 +178,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationRulesetData rulesetData = new ValidationRulesetData();
             ValidatedPropertyReference publicPropertyReference
-                = new ValidatedPropertyReference { Name = "PublicProperty" };
+                = new ValidatedPropertyReference("PublicProperty");
             rulesetData.Properties.Add(publicPropertyReference);
             publicPropertyReference.Validators.Add(new MockValidatorData("validator1", false));
 
@@ -201,31 +201,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             ValidationRulesetData rulesetData = new ValidationRulesetData();
 
             ValidatedPropertyReference nonExistingPropertyReference
-                = new ValidatedPropertyReference { Name = "NonExistingProperty" };
+                = new ValidatedPropertyReference("NonExistingProperty");
             rulesetData.Properties.Add(nonExistingPropertyReference);
             nonExistingPropertyReference.Validators.Add(new MockValidatorData("validator1", false));
 
             ValidatedPropertyReference publicPropertyWithoutValidatorsReference
-                = new ValidatedPropertyReference { Name = "PublicPropertyWithoutValidators" };
+                = new ValidatedPropertyReference("PublicPropertyWithoutValidators");
             rulesetData.Properties.Add(publicPropertyWithoutValidatorsReference);
 
             ValidatedPropertyReference writeOnlyPublicPropertyReference
-                = new ValidatedPropertyReference { Name = "WriteOnlyPublicProperty" };
+                = new ValidatedPropertyReference("WriteOnlyPublicProperty");
             rulesetData.Properties.Add(writeOnlyPublicPropertyReference);
             writeOnlyPublicPropertyReference.Validators.Add(new MockValidatorData("validator1", false));
 
             ValidatedPropertyReference nonPublicPropertyReference
-                = new ValidatedPropertyReference { Name = "NonPublicProperty" };
+                = new ValidatedPropertyReference("NonPublicProperty");
             rulesetData.Properties.Add(nonPublicPropertyReference);
             nonPublicPropertyReference.Validators.Add(new MockValidatorData("validator1", false));
 
             ValidatedPropertyReference publicPropertyReference
-                = new ValidatedPropertyReference { Name = "PublicProperty" };
+                = new ValidatedPropertyReference("PublicProperty");
             rulesetData.Properties.Add(publicPropertyReference);
             publicPropertyReference.Validators.Add(new MockValidatorData("validator1", false));
 
             ValidatedPropertyReference secondPublicPropertyReference
-                = new ValidatedPropertyReference { Name = "SecondPublicProperty" };
+                = new ValidatedPropertyReference("SecondPublicProperty");
             rulesetData.Properties.Add(secondPublicPropertyReference);
             secondPublicPropertyReference.Validators.Add(new MockValidatorData("validator1", false));
 
@@ -267,7 +267,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationRulesetData rulesetData = new ValidationRulesetData();
             ValidatedFieldReference nonExistingFieldReference
-                = new ValidatedFieldReference { Name = "NonExistingField" };
+                = new ValidatedFieldReference("NonExistingField");
             rulesetData.Fields.Add(nonExistingFieldReference);
             nonExistingFieldReference.Validators.Add(new MockValidatorData("validator1", false));
 
@@ -284,7 +284,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationRulesetData rulesetData = new ValidationRulesetData();
             ValidatedFieldReference publicFieldWithoutValidatorsReference
-                = new ValidatedFieldReference { Name = "PublicFieldWithoutValidators" };
+                = new ValidatedFieldReference("PublicFieldWithoutValidators");
             rulesetData.Fields.Add(publicFieldWithoutValidatorsReference);
 
             ConfigurationValidatedType validatedType
@@ -300,7 +300,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationRulesetData rulesetData = new ValidationRulesetData();
             ValidatedFieldReference nonPublicFieldReference
-                = new ValidatedFieldReference { Name = "NonPublicField" };
+                = new ValidatedFieldReference("NonPublicField");
             rulesetData.Fields.Add(nonPublicFieldReference);
             nonPublicFieldReference.Validators.Add(new MockValidatorData("validator1", false));
 
@@ -317,7 +317,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationRulesetData rulesetData = new ValidationRulesetData();
             ValidatedFieldReference publicFieldReference
-                = new ValidatedFieldReference { Name = "PublicField" };
+                = new ValidatedFieldReference("PublicField");
             rulesetData.Fields.Add(publicFieldReference);
             publicFieldReference.Validators.Add(new MockValidatorData("validator1", false));
 
@@ -340,26 +340,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             ValidationRulesetData rulesetData = new ValidationRulesetData();
 
             ValidatedFieldReference nonExistingFieldReference
-                = new ValidatedFieldReference { Name = "NonExistingField" };
+                = new ValidatedFieldReference("NonExistingField");
             rulesetData.Fields.Add(nonExistingFieldReference);
             nonExistingFieldReference.Validators.Add(new MockValidatorData("validator1", false));
 
             ValidatedFieldReference publicFieldWithoutValidatorsReference
-                = new ValidatedFieldReference { Name = "PublicFieldWithoutValidators" };
+                = new ValidatedFieldReference("PublicFieldWithoutValidators");
             rulesetData.Fields.Add(publicFieldWithoutValidatorsReference);
 
             ValidatedFieldReference nonPublicFieldReference
-                = new ValidatedFieldReference { Name = "NonPublicField" };
+                = new ValidatedFieldReference("NonPublicField");
             rulesetData.Fields.Add(nonPublicFieldReference);
             nonPublicFieldReference.Validators.Add(new MockValidatorData("validator1", false));
 
             ValidatedFieldReference publicFieldReference
-                = new ValidatedFieldReference { Name = "PublicField" };
+                = new ValidatedFieldReference("PublicField");
             rulesetData.Fields.Add(publicFieldReference);
             publicFieldReference.Validators.Add(new MockValidatorData("validator1", false));
 
             ValidatedFieldReference secondPublicFieldReference
-                = new ValidatedFieldReference { Name = "SecondPublicField" };
+                = new ValidatedFieldReference("SecondPublicField");
             rulesetData.Fields.Add(secondPublicFieldReference);
             secondPublicFieldReference.Validators.Add(new MockValidatorData("validator1", false));
 
@@ -401,7 +401,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationRulesetData rulesetData = new ValidationRulesetData();
             ValidatedMethodReference nonExistingMethodReference
-                = new ValidatedMethodReference { Name = "NonExistingMethod" };
+                = new ValidatedMethodReference("NonExistingMethod");
             rulesetData.Methods.Add(nonExistingMethodReference);
             nonExistingMethodReference.Validators.Add(new MockValidatorData("validator1", false));
 
@@ -418,7 +418,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationRulesetData rulesetData = new ValidationRulesetData();
             ValidatedMethodReference publicMethodWithoutValidatorsReference
-                = new ValidatedMethodReference { Name = "PublicMethodWithoutValidators" };
+                = new ValidatedMethodReference("PublicMethodWithoutValidators");
             rulesetData.Methods.Add(publicMethodWithoutValidatorsReference);
 
             ConfigurationValidatedType validatedType
@@ -434,7 +434,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationRulesetData rulesetData = new ValidationRulesetData();
             ValidatedMethodReference nonPublicMethodReference
-                = new ValidatedMethodReference { Name = "VoidPublicMethod" };
+                = new ValidatedMethodReference("VoidPublicMethod");
             rulesetData.Methods.Add(nonPublicMethodReference);
             nonPublicMethodReference.Validators.Add(new MockValidatorData("validator1", false));
 
@@ -451,7 +451,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationRulesetData rulesetData = new ValidationRulesetData();
             ValidatedMethodReference nonPublicMethodReference
-                = new ValidatedMethodReference { Name = "PublicMethodWithParameters" };
+                = new ValidatedMethodReference("PublicMethodWithParameters");
             rulesetData.Methods.Add(nonPublicMethodReference);
             nonPublicMethodReference.Validators.Add(new MockValidatorData("validator1", false));
 
@@ -468,7 +468,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationRulesetData rulesetData = new ValidationRulesetData();
             ValidatedMethodReference nonPublicMethodReference
-                = new ValidatedMethodReference { Name = "NonPublicMethod" };
+                = new ValidatedMethodReference("NonPublicMethod");
             rulesetData.Methods.Add(nonPublicMethodReference);
             nonPublicMethodReference.Validators.Add(new MockValidatorData("validator1", false));
 
@@ -485,7 +485,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationRulesetData rulesetData = new ValidationRulesetData();
             ValidatedMethodReference publicMethodReference
-                = new ValidatedMethodReference { Name = "PublicMethod" };
+                = new ValidatedMethodReference("PublicMethod");
             rulesetData.Methods.Add(publicMethodReference);
             publicMethodReference.Validators.Add(new MockValidatorData("validator1", false));
 
@@ -508,26 +508,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             ValidationRulesetData rulesetData = new ValidationRulesetData();
 
             ValidatedMethodReference nonExistingMethodReference
-                = new ValidatedMethodReference { Name = "NonExistingMethod" };
+                = new ValidatedMethodReference("NonExistingMethod");
             rulesetData.Methods.Add(nonExistingMethodReference);
             nonExistingMethodReference.Validators.Add(new MockValidatorData("validator1", false));
 
             ValidatedMethodReference publicMethodWithoutValidatorsReference
-                = new ValidatedMethodReference { Name = "PublicMethodWithoutValidators" };
+                = new ValidatedMethodReference("PublicMethodWithoutValidators");
             rulesetData.Methods.Add(publicMethodWithoutValidatorsReference);
 
             ValidatedMethodReference nonPublicMethodReference
-                = new ValidatedMethodReference { Name = "NonPublicMethod" };
+                = new ValidatedMethodReference("NonPublicMethod");
             rulesetData.Methods.Add(nonPublicMethodReference);
             nonPublicMethodReference.Validators.Add(new MockValidatorData("validator1", false));
 
             ValidatedMethodReference publicMethodReference
-                = new ValidatedMethodReference { Name = "PublicMethod" };
+                = new ValidatedMethodReference("PublicMethod");
             rulesetData.Methods.Add(publicMethodReference);
             publicMethodReference.Validators.Add(new MockValidatorData("validator1", false));
 
             ValidatedMethodReference secondPublicMethodReference
-                = new ValidatedMethodReference { Name = "SecondPublicMethod" };
+                = new ValidatedMethodReference("SecondPublicMethod");
             rulesetData.Methods.Add(secondPublicMethodReference);
             secondPublicMethodReference.Validators.Add(new MockValidatorData("validator1", false));
 

@@ -32,8 +32,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Formatters
 
         private static ILogFormatter GetFormatter(string name, IConfigurationSource configurationSource)
         {
-            var container = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
-            return container.GetInstance<ILogFormatter>(name);
+            var settings = LoggingSettings.GetLoggingSettings(configurationSource);
+            return settings.Formatters.Get(name).BuildFormatter();
         }
 
         [TestMethod]

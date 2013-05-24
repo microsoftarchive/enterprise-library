@@ -359,7 +359,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 throw new FileNotFoundException(
                     string.Format(
                         CultureInfo.CurrentCulture,
-                        Resources_Desktop.ExceptionConfigurationLoadFileNotFound,
+                        Resources.ExceptionConfigurationLoadFileNotFound,
                         configurationFile));
             }
 

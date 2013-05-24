@@ -45,6 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
         /// Populates an <see cref="IDictionary{TKey,TValue}"/> with helpful diagnostic information.
         /// </summary>
         /// <param name="dict">Dictionary used to populate the <see cref="DebugInformationProvider"></see></param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "As designed")]
         public void PopulateDictionary(IDictionary<string, object> dict)
         {
             string value;
@@ -55,14 +56,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
             }
             catch (SecurityException)
             {
-                value = String.Format(CultureInfo.CurrentCulture, Resources_Desktop.ExtendedPropertyError, Resources_Desktop.DebugInfo_StackTraceSecurityException);
+                value = String.Format(CultureInfo.CurrentCulture, Resources.ExtendedPropertyError, Resources.DebugInfo_StackTraceSecurityException);
             }
             catch
             {
-                value = String.Format(CultureInfo.CurrentCulture, Resources_Desktop.ExtendedPropertyError, Resources_Desktop.DebugInfo_StackTraceException);
+                value = String.Format(CultureInfo.CurrentCulture, Resources.ExtendedPropertyError, Resources.DebugInfo_StackTraceException);
             }
 
-            dict.Add(Resources_Desktop.DebugInfo_StackTrace, value);
+            dict.Add(Resources.DebugInfo_StackTrace, value);
         }
     }
 }

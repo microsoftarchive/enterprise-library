@@ -15,111 +15,111 @@ using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation
 {
-    /// <summary>
-    /// Represents the result of validating an object.
-    /// </summary>
-#if !SILVERLIGHT
-    [Serializable]
-#endif
-    public class ValidationResults : IEnumerable<ValidationResult>
-    {
-        private readonly List<ValidationResult> validationResults = new List<ValidationResult>();
+	/// <summary>
+	/// Represents the result of validating an object.
+	/// </summary>
+	[Serializable]
+	public class ValidationResults : IEnumerable<ValidationResult>
+	{
+		private List<ValidationResult> validationResults;
 
-        /// <summary>
-        /// <para>Adds a <see cref="ValidationResult"/>.</para>
-        /// </summary>
-        /// <param name="validationResult">The validation result to add.</param>
-        public void AddResult(ValidationResult validationResult)
-        {
-            this.validationResults.Add(validationResult);
-        }
+		/// <summary>
+		/// <para>Initializes a new instance of the <see cref="ValidationResults"/> class with the section name.</para>
+		/// </summary>
+		public ValidationResults()
+		{
+			validationResults = new List<ValidationResult>();
+		}
 
-        /// <summary>
-        /// <para>Adds all the <see cref="ValidationResult"/> instances from <paramref name="sourceValidationResults"/>.</para>
-        /// </summary>
-        /// <param name="sourceValidationResults">The source for validation results to add.</param>
-        public void AddAllResults(IEnumerable<ValidationResult> sourceValidationResults)
-        {
-            this.validationResults.AddRange(sourceValidationResults);
-        }
+		/// <summary>
+		/// <para>Adds a <see cref="ValidationResult"/>.</para>
+		/// </summary>
+		/// <param name="validationResult">The validation result to add.</param>
+		public void AddResult(ValidationResult validationResult)
+		{
+			this.validationResults.Add(validationResult);
+		}
 
-        /// <summary>
-        /// Returns a new instance of <see cref="ValidationResults"/> that includes the results from the receiver that
-        /// match the provided tag names.
-        /// </summary>
-        /// <param name="tagFilter">The indication of whether to include or ignore the matching results.</param>
-        /// <param name="tags">The list of tag names to match.</param>
-        /// <returns>A <see cref="ValidationResults"/> containing the filtered results.</returns>
-        public ValidationResults FindAll(TagFilter tagFilter, params string[] tags)
-        {
-            // workaround for params behavior - a single null parameter will be interpreted 
-            // as null array, not as an array with null as element
-            if (tags == null)
-            {
-                tags = new string[] { null };
-            }
+		/// <summary>
+		/// <para>Adds all the <see cref="ValidationResult"/> instances from <paramref name="sourceValidationResults"/>.</para>
+		/// </summary>
+		/// <param name="sourceValidationResults">The source for validation results to add.</param>
+		public void AddAllResults(IEnumerable<ValidationResult> sourceValidationResults)
+		{
+			this.validationResults.AddRange(sourceValidationResults);
+		}
 
-            ValidationResults filteredValidationResults = new ValidationResults();
+		/// <summary>
+		/// Returns a new instance of <see cref="ValidationResults"/> that includes the results from the receiver that
+		/// match the provided tag names.
+		/// </summary>
+		/// <param name="tagFilter">The indication of whether to include or ignore the matching results.</param>
+		/// <param name="tags">The list of tag names to match.</param>
+		/// <returns>A <see cref="ValidationResults"/> containing the filtered results.</returns>
+		public ValidationResults FindAll(TagFilter tagFilter, params string[] tags)
+		{
+			// workaround for params behavior - a single null parameter will be interpreted 
+			// as null array, not as an array with null as element
+			if (tags == null)
+			{
+				tags = new string[] { null };
+			}
 
-            foreach (ValidationResult validationResult in this)
-            {
-                bool matches = false;
+			ValidationResults filteredValidationResults = new ValidationResults();
 
-                foreach (string tag in tags)
-                {
-                    if ((tag == null && validationResult.Tag == null)
-                        || (tag != null && tag.Equals(validationResult.Tag)))
-                    {
-                        matches = true;
-                        break;
-                    }
-                }
+			foreach (ValidationResult validationResult in this)
+			{
+				bool matches = false;
 
-                // if ignore, look for !match
-                // if include, look for match
-                if (matches ^ (tagFilter == TagFilter.Ignore))
-                {
-                    filteredValidationResults.AddResult(validationResult);
-                }
-            }
+				foreach (string tag in tags)
+				{
+					if ((tag == null && validationResult.Tag == null)
+						|| (tag != null && tag.Equals(validationResult.Tag)))
+					{
+						matches = true;
+						break;
+					}
+				}
 
-            return filteredValidationResults;
-        }
+				// if ignore, look for !match
+				// if include, look for match
+				if (matches ^ (tagFilter == TagFilter.Ignore))
+				{
+					filteredValidationResults.AddResult(validationResult);
+				}
+			}
 
-        /// <summary>
-        /// Gets the indication of whether the validation represented by the receiver was successful.
-        /// </summary>
-        /// <remarks>
-        /// An unsuccessful validation will be represented by a <see cref="ValidationResult"/> instance with
-        /// <see cref="ValidationResult"/> elements, regardless of these elements' tags.
-        /// </remarks>
-        public bool IsValid
-        {
-            get { return validationResults.Count == 0; }
-        }
+			return filteredValidationResults;
+		}
 
-        /// <summary>
-        /// Gets the count of results.
-        /// </summary>
-        public int Count
-        {
-            get { return this.validationResults.Count; }
-        }
+		/// <summary>
+		/// Gets the indication of whether the validation represented by the receiver was successful.
+		/// </summary>
+		/// <remarks>
+		/// An unsuccessful validation will be represented by a <see cref="ValidationResult"/> instance with
+		/// <see cref="ValidationResult"/> elements, regardless of these elements' tags.
+		/// </remarks>
+		public bool IsValid
+		{
+			get { return validationResults.Count == 0; }
+		}
 
-        /// <summary>
-        /// Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
-        /// </returns>
-        public IEnumerator<ValidationResult> GetEnumerator()
-        {
-            return validationResults.GetEnumerator();
-        }
+		/// <summary>
+		/// Gets the count of results.
+		/// </summary>
+		public int Count
+		{
+			get { return this.validationResults.Count; }
+		}
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
-        }
-    }
+		IEnumerator<ValidationResult> IEnumerable<ValidationResult>.GetEnumerator()
+		{
+			return validationResults.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return validationResults.GetEnumerator();
+		}
+	}
 }

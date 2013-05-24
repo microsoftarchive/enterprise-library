@@ -20,7 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
     /// <summary>
     /// Entry point for the container infrastructure for Enterprise Library.
     /// </summary>
-    public partial class EnterpriseLibraryContainer
+    public class EnterpriseLibraryContainer
     {
         private static volatile IServiceLocator currentContainer;
         private static readonly object currentContainerLock = new object();
@@ -55,20 +55,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <param name="configSource">Configuration information.</param>
         public static void ConfigureContainer(IContainerConfigurator configurator, IConfigurationSource configSource)
         {
-#if !SILVERLIGHT
             var reconfiguringEventSource = configurator as IContainerReconfiguringEventSource ??
                                            new NullContainerReconfiguringEventSource();
+
 
             ConfigureContainer(
                 TypeRegistrationsProvider.CreateDefaultProvider(configSource, reconfiguringEventSource),
                 configurator,
                 configSource);
-#else
-            ConfigureContainer(
-                TypeRegistrationsProvider.CreateDefaultProvider(configSource),
-                configurator,
-                configSource);
-#endif
         }
 
         /// <summary>

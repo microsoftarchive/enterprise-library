@@ -10,14 +10,13 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
-using Microsoft.Practices.Unity.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
 {
@@ -36,16 +35,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
     /// </remarks>
     public class PolicyInjector : IDisposable
     {
-        private IServiceLocator serviceLocator;
         private IUnityContainer container;
         private readonly bool ownsContainer;
         private InstanceInterceptionPolicySettingInjectionMember instanceInterceptionPolicySettingInjectionMember;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PolicyInjector"/> class with the supplied configuration source.
+        /// Initializes a new instance of the <see cref="PolicyInjector"/> class with the specified configuration source.
         /// </summary>
         /// <param name="configurationSource">The configuration source from which to retrieve configuration information.</param>
-        /// <exception cref="ArgumentNullException">when <paramref name="configurationSource"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="configurationSource"/> is <see langword="null"/>.</exception>
         public PolicyInjector(IConfigurationSource configurationSource)
         {
             if (configurationSource == null)
@@ -54,16 +52,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
             }
 
             this.ownsContainer = true;
-            Initialize(CreateServiceLocator(configurationSource));
+            Initialize(CreateContainer(configurationSource));
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PolicyInjector"/> class with the supplied service locator.
+        /// Initializes a new instance of the <see cref="PolicyInjector"/> class with the specified service locator.
         /// </summary>
         /// <param name="serviceLocator">The service locator from which an <see cref="IUnityContainer"/> can be resolved
         /// to perform interception.</param>
-        /// <exception cref="ArgumentNullException">when <paramref name="serviceLocator"/> is <see langword="null"/>.</exception>
-        /// <exception cref="InvalidOperationException">when an <see cref="IUnityContainer"/> cannot be resolved from the 
+        /// <exception cref="ArgumentNullException"><paramref name="serviceLocator"/> is <see langword="null"/>.</exception>
+        /// <exception cref="InvalidOperationException">An <see cref="IUnityContainer"/> cannot be resolved from the 
         /// <paramref name="serviceLocator"/>, or the resolved container does not have the <see cref="Interception"/>
         /// extension.</exception>
         public PolicyInjector(IServiceLocator serviceLocator)
@@ -73,39 +71,39 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
                 throw new ArgumentNullException("serviceLocator");
             }
 
-            Initialize(serviceLocator);
+            Initialize(GetUnityContainer(serviceLocator));
         }
 
-        private void Initialize(IServiceLocator providedServiceLocator)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PolicyInjector"/> class with the specified container.
+        /// </summary>
+        /// <param name="container">The container to perform interception.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="container"/> is <see langword="null"/>.</exception>
+        /// <exception cref="InvalidOperationException">The container does not have the <see cref="Interception"/>
+        /// extension.</exception>
+        public PolicyInjector(IUnityContainer container)
         {
-            this.serviceLocator = providedServiceLocator;
-            try
+            Guard.ArgumentNotNull(container, "container");
+
+            Initialize(container);
+        }
+
+        private void Initialize(IUnityContainer container)
+        {
+            if (container.Configure<Interception>() == null)
             {
-                this.container = providedServiceLocator.GetInstance<IUnityContainer>();
-            }
-            catch (ActivationException e)
-            {
-                throw new InvalidOperationException("Cannot resolve container", e);
+                throw new ArgumentException("Container does not have the interception extension", "container");
             }
 
-            if (this.container.Configure<Interception>() == null)
+            if (container.Configure<TransientPolicyBuildUpExtension>() == null)
             {
-                throw new InvalidOperationException("Container does not have the interception extension");
+                throw new ArgumentException("Container does not have the transient buildup extension", "container");
             }
+
+            this.container = container;
 
             this.instanceInterceptionPolicySettingInjectionMember =
-                new InstanceInterceptionPolicySettingInjectionMember(
-#if !SILVERLIGHT
-                    new TransparentProxyInterceptor()
-#else
-                    new InterfaceInterceptor()
-#endif
-                    );
-        }
-
-        private static IServiceLocator CreateServiceLocator(IConfigurationSource configurationSource)
-        {
-            return EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
+                new InstanceInterceptionPolicySettingInjectionMember(new TransparentProxyInterceptor());
         }
 
         /// <summary>
@@ -134,6 +132,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         {
             Guard.ArgumentNotNull(typeToReturn, "typeToReturn");
             Guard.ArgumentNotNull(instance, "instance");
+            Microsoft.Practices.Unity.Utility.Guard.InstanceIsAssignable(typeToReturn, instance, "instance");
 
             if (this.container == null)
             {
@@ -148,7 +147,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
                     this.instanceInterceptionPolicySettingInjectionMember);
         }
 
-#if !SILVERLIGHT
         /// <summary>
         /// Creates a new object of type <typeparamref name="TObject"/> and
         /// adds interception as needed to match the policies specified for the injector.
@@ -160,7 +158,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         {
             return (TObject)Create(typeof(TObject), args);
         }
-#endif
 
         /// <summary>
         /// Creates a new object of type <typeparamref name="TObject"/> and
@@ -176,7 +173,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
             return (TInterface)Create(typeof(TObject), typeof(TInterface), args);
         }
 
-#if !SILVERLIGHT
         /// <summary>
         /// Creates a new object of type <paramref name="typeToCreate"/> and
         /// adds interception as needed to match the policies specified for the injector.
@@ -188,7 +184,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         {
             return Create(typeToCreate, typeToCreate, args);
         }
-#endif
 
         /// <summary>
         /// Creates a new object of type <paramref name="typeToCreate"/> and
@@ -212,6 +207,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         public void Dispose()
         {
             this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -223,16 +219,43 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         {
             if (disposing)
             {
-                if (this.serviceLocator != null)
+                if (this.container != null)
                 {
-                    IServiceLocator serviceLocatorForDisposal = this.serviceLocator;
-                    this.serviceLocator = null;
+                    var containerForDisposal = this.container;
                     this.container = null;
                     if (this.ownsContainer)
                     {
-                        serviceLocatorForDisposal.Dispose();
+                        containerForDisposal.Dispose();
                     }
                 }
+            }
+        }
+
+        private static IUnityContainer CreateContainer(IConfigurationSource configurationSource)
+        {
+            var container = new UnityContainer();
+            container
+                .AddNewExtension<Interception>()
+                .AddNewExtension<TransientPolicyBuildUpExtension>();
+
+            var settings = configurationSource.GetSection(PolicyInjectionSettings.SectionName) as PolicyInjectionSettings;
+            if (settings != null)
+            {
+                settings.ConfigureContainer(container);
+            }
+
+            return container;
+        }
+
+        private static IUnityContainer GetUnityContainer(IServiceLocator serviceLocator)
+        {
+            try
+            {
+                return serviceLocator.GetInstance<IUnityContainer>();
+            }
+            catch (ActivationException e)
+            {
+                throw new InvalidOperationException("Cannot resolve container", e);
             }
         }
     }

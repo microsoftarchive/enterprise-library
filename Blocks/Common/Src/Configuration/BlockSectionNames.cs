@@ -18,37 +18,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
     public static class BlockSectionNames
     {
         /// <summary>
-        /// Crypto block section name
-        /// </summary>
-        public const string Cryptography = "securityCryptographyConfiguration";
-
-        /// <summary>
         /// Data Access Application Block custom settings
         /// </summary>
         public const string Data = "dataConfiguration";
-
-        /// <summary>
-        /// Exception Handling Application Block section name
-        /// </summary>
-        public const string ExceptionHandling = "exceptionHandling";
-
-        
-#if !SILVERLIGHT
-        /// <summary>
-        /// Caching Application Block section name
-        /// </summary>
-        public const string Caching = "cachingConfiguration";
-#else
-        /// <summary>
-        /// Caching Application Block section name
-        /// </summary>
-        public const string Caching = "cachingSilverlightConfiguration";
-#endif
-
-        /// <summary>
-        /// Security Application Block section name
-        /// </summary>
-        public const string Security = "securityConfiguration";
 
         /// <summary>
         /// Logging Application Block section name
@@ -56,39 +28,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         public const string Logging = "loggingConfiguration";
 
         /// <summary>
-        /// Instrumentation section name
+        /// Exception Handling Application Block section name
         /// </summary>
-        public const string Instrumentation = "instrumentationConfiguration";
+        public const string ExceptionHandling = "exceptionHandling";
 
         /// <summary>
         /// Policy injection section name
         /// </summary>
         public const string PolicyInjection = "policyInjection";
 
-
         ///<summary>
         /// Validation section name
         ///</summary>
         public const string Validation = "validation";
-
-        /// <summary>
-        /// Not actually a section name, this is the type name used to get the
-        /// TypeRegistrationProviderLocatorStrategy used to retrieve information
-        /// for the Data Access Application Block.
-        /// </summary>
-        public const string DataRegistrationProviderLocatorType =
-            "Microsoft.Practices.EnterpriseLibrary.Data.Configuration.DatabaseSyntheticConfigSettings, Microsoft.Practices.EnterpriseLibrary.Data";
-
-        /// <summary>
-        /// Not actually a section name, this is the type name used to get the
-        /// TypeRegistrationProviderLocatorStrategy used to retrieve information
-        /// for the Validation Application Block.
-        /// </summary>
-        public const string ValidationRegistrationProviderLocatorType =
-#if !SILVERLIGHT
-            "Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.ValidationTypeRegistrationProvider, Microsoft.Practices.EnterpriseLibrary.Validation";
-#else
-            "{clr-namespace:Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;assembly=Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight}ValidationTypeRegistrationProvider";
-#endif
     }
 }

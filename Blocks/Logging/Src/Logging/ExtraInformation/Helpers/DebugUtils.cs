@@ -21,8 +21,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation.Helpers
     {
         public string GetStackTraceWithSourceInfo(StackTrace stackTrace)
         {
-            string atString = Properties.Resources_Desktop.DebugInfo_SchemaHelperAtString;
-            string unknownTypeString = Properties.Resources_Desktop.DebugInfo_SchemaHelperUnknownType;
+            string atString = Properties.Resources.DebugInfo_SchemaHelperAtString;
+            string unknownTypeString = Properties.Resources.DebugInfo_SchemaHelperUnknownType;
             string newLine = Environment.NewLine;
             StringBuilder stringBuilder = new StringBuilder(255);
 
@@ -77,8 +77,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation.Helpers
                     {
 						stringBuilder.Append(
 							String.Format(
-                                CultureInfo.CurrentCulture,
-                                Properties.Resources_Desktop.DebugInfo_SchemaHelperLine, 
+                                CultureInfo.CurrentCulture, 
+								Properties.Resources.DebugInfo_SchemaHelperLine, 
 								fileName, 
 								stackFrame.GetFileLineNumber()));
                     }

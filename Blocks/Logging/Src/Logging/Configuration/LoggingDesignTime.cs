@@ -37,6 +37,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 
             public const string SourceLevelsProperty =
                 "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.Logging.SourceLevelsProperty, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
+
+            public const string TimeSpanElementConfigurationProperty =
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.TimeSpanElementConfigurationProperty, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
         }
 
         internal static class EditorTypeNames

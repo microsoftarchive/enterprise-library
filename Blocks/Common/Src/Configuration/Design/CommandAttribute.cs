@@ -10,12 +10,8 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 using System.Resources;
+using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
 {
@@ -60,7 +56,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         /// </remarks>
         /// <param name="commandModelType">The Command Model Type.</param>
         public CommandAttribute(Type commandModelType)
-            :this(commandModelType != null ? commandModelType.AssemblyQualifiedName : string.Empty)
+            : this(commandModelType != null ? commandModelType.AssemblyQualifiedName : string.Empty)
         {
         }
 
@@ -85,7 +81,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
                 {
                     EnsureTitleLoaded();
                 }
-                return title;    
+                return title;
             }
             set
             {

@@ -15,12 +15,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.OracleClient;
 using System.Globalization;
-using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
 
@@ -41,8 +36,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
     /// ref cursors.
     /// </para>
     /// </remarks>
-    [OraclePermission(SecurityAction.Demand)]
     [ConfigurationElementType(typeof(OracleDatabaseData))]
+    [Obsolete("OracleDatabase has been deprecated. http://go.microsoft.com/fwlink/?LinkID=144260", false)]
     public class OracleDatabase : Database
     {
         private const string RefCursorName = "cur_OUT";
@@ -65,25 +60,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
         /// </summary>
         /// <param name="connectionString">The connection string for the database.</param>
         /// <param name="packages">A list of <see cref="IOraclePackage"/> objects.</param>
+#pragma warning disable 612, 618
         public OracleDatabase(string connectionString, IEnumerable<IOraclePackage> packages)
-            : this(connectionString, packages, new NullDataInstrumentationProvider())
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="OracleDatabase"/> class with a connection string,
-        /// a list of Oracle packages, and an instrumentation provider.
-        /// </summary>
-        /// <param name="connectionString">The connection string for the database.</param>
-        /// <param name="packages">A list of <see cref="IOraclePackage"/> objects.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider.</param>
-        public OracleDatabase(string connectionString, IEnumerable<IOraclePackage> packages, IDataInstrumentationProvider instrumentationProvider)
-            : base(connectionString, OracleClientFactory.Instance, instrumentationProvider)
+            : base(connectionString, OracleClientFactory.Instance)
         {
             if (packages == null) throw new ArgumentNullException("packages");
 
             this.packages = packages;
         }
+#pragma warning restore 612, 618
 
         /// <summary>
         /// <para>Adds a new instance of a <see cref="DbParameter"/> object to the command.</para>
@@ -107,8 +92,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
             {
                 object convertedValue = ConvertGuidToByteArray(value);
 
+#pragma warning disable 612, 618
                 AddParameter((OracleCommand)command, name, OracleType.Raw, 16, direction, nullable, precision,
                     scale, sourceColumn, sourceVersion, convertedValue);
+#pragma warning restore 612, 618
 
                 RegisterParameterType(command, name, dbType);
             }
@@ -133,6 +120,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
         /// <param name="sourceColumn"><para>The name of the source column mapped to the DataSet and used for loading or returning the <paramref name="value"/>.</para></param>
         /// <param name="sourceVersion"><para>One of the <see cref="DataRowVersion"/> values.</para></param>
         /// <param name="value"><para>The value of the parameter.</para></param>      
+#pragma warning disable 612, 618
         public void AddParameter(OracleCommand command, string name, OracleType oracleType, int size,
             ParameterDirection direction, bool nullable, byte precision, byte scale, string sourceColumn,
             DataRowVersion sourceVersion, object value)
@@ -143,6 +131,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
             param.OracleType = oracleType;
             command.Parameters.Add(param);
         }
+#pragma warning restore 612, 618
 
         /// <summary>
         /// Creates an <see cref="OracleDataReader"/> based on the <paramref name="command"/>.
@@ -168,7 +157,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
         /// <returns>The new reader.</returns>
         protected override IDataReader CreateWrappedReader(DatabaseConnectionWrapper connection, IDataReader innerReader)
         {
-            return new RefCountingOracleDataReaderWrapper(connection, (OracleDataReader) innerReader);
+            return new RefCountingOracleDataReaderWrapper(connection, (OracleDataReader)innerReader);
         }
 
         /// <summary>
@@ -185,7 +174,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
         public override IDataReader ExecuteReader(DbCommand command, DbTransaction transaction)
         {
             PrepareCWRefCursor(command);
-            return new OracleDataReaderWrapper((OracleDataReader) base.ExecuteReader(command, transaction));
+            return new OracleDataReaderWrapper((OracleDataReader)base.ExecuteReader(command, transaction));
         }
 
         /// <summary>
@@ -341,7 +330,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
                 // of "cur_OUT"
                 if (QueryProcedureNeedsCursorParameter(command))
                 {
+#pragma warning disable 612, 618
                     AddParameter(command as OracleCommand, RefCursorName, OracleType.Cursor, 0, ParameterDirection.Output, true, 0, 0, String.Empty, DataRowVersion.Default, Convert.DBNull);
+#pragma warning restore 612, 618
                 }
             }
         }
@@ -429,7 +420,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
         /// </remarks>
         protected override void DeriveParameters(DbCommand discoveryCommand)
         {
+#pragma warning disable 612, 618
             OracleCommandBuilder.DeriveParameters((OracleCommand)discoveryCommand);
+#pragma warning restore 612, 618
         }
 
         /// <summary>
@@ -493,7 +486,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
             {
                 foreach (IOraclePackage oraPackage in packages)
                 {
-                    if ((oraPackage.Prefix == allPrefix) || (storedProcedureName.StartsWith(oraPackage.Prefix)))
+                    if ((oraPackage.Prefix == allPrefix) || (storedProcedureName.StartsWith(oraPackage.Prefix, StringComparison.Ordinal)))
                     {
                         //use the package name for the matching prefix
                         packageName = oraPackage.Name;
@@ -517,7 +510,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
         /// <remarks>The <see cref="DbDataAdapter"/> must be an <see cref="OracleDataAdapter"/>.</remarks>
         protected override void SetUpRowUpdatedEvent(DbDataAdapter adapter)
         {
+#pragma warning disable 612, 618
             ((OracleDataAdapter)adapter).RowUpdated += OnOracleRowUpdated;
+#pragma warning restore 612, 618
         }
     }
 

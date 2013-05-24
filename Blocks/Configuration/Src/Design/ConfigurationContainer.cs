@@ -11,11 +11,12 @@
 
 using System;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Buildup;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ContainerUtility;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services.PlatformProfile;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
 {
@@ -33,22 +34,34 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
         /// Initializes an instance of <see cref="ConfigurationContainer"/>
         /// </summary>
         public ConfigurationContainer()
-            : this(null)
-        {
-            ConfigurationContainerRegistration.Registration(this);
-        }
+            : this(null, new Profile())
+        { }
 
         /// <summary>
         /// Initializes an instance of <see cref="ConfigurationContainer"/>
         /// </summary>
-        /// <param name="serviceProvider">A service provider to resolve services.</param>
         public ConfigurationContainer(IServiceProvider serviceProvider)
+            : this(serviceProvider, new Profile())
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConfigurationContainer"/> class.
+        /// </summary>
+        /// <param name="profile">The profile.</param>
+        public ConfigurationContainer(Profile profile)
+            : this(null, profile)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConfigurationContainer"/> class.
+        /// </summary>
+        /// <param name="serviceProvider">A service provider to resolve services.</param>
+        /// <param name="profile">The profile.</param>
+        public ConfigurationContainer(IServiceProvider serviceProvider, Profile profile)
         {
-            ConfigurationContainerRegistration.Registration(this);
+            ConfigurationContainerRegistration.Registration(this, profile);
             this.parentServiceProvider = serviceProvider;
         }
-
-
         /// <summary>
         /// Discovers types via the <see cref="AnnotationService"/> that
         /// provide the design-time metadata for another class.
@@ -58,7 +71,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
             AnnotationService annotationService = (AnnotationService)Resolve(typeof(AnnotationService), null);
             annotationService.DiscoverSubstituteTypesFromAssemblies();
         }
-
 
         /// <summary>
         /// Gets the service object of the specified type.
@@ -84,7 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
 
         private static class ConfigurationContainerRegistration
         {
-            public static void Registration(ConfigurationContainer container)
+            public static void Registration(ConfigurationContainer container, Profile profile)
             {
                 container.RegisterType<AssemblyLocator, BinPathProbingAssemblyLocator>(new ContainerControlledLifetimeManager());
                 container.RegisterType<ConfigurationSectionLocator, AssemblyAttributeSectionLocator>(new ContainerControlledLifetimeManager());
@@ -98,6 +110,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
                 container.RegisterType(typeof(IResolver<>), typeof(GenericResolver<>));
                 container.RegisterType<SaveOperation>(new ContainerControlledLifetimeManager());
                 container.RegisterInstance<IServiceProvider>(container);
+                container.RegisterInstance(profile);
             }
         }
     }

@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Text.RegularExpressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Configuration;
@@ -28,7 +29,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         const string RegexResourceName2 = "Regex2";
         const string RegexResourceName3 = "Regex3";
 
-#if !SILVERLIGHT
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
+        }
+
         [TestMethod]
         public void CanDeserializeSerializedInstanceWithNameOnly()
         {
@@ -39,7 +51,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -72,7 +84,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -89,12 +101,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 Assert.AreEqual(true, ((RegexValidatorData)roSettings.Validators.Get(0)).Negated);
             }
         }
-#endif
 
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObject()
         {
-            RegexValidatorData rwValidatorData = new RegexValidatorData { Name = "validator1" };
+            RegexValidatorData rwValidatorData = new RegexValidatorData("validator1");
             rwValidatorData.Pattern = "pattern";
             rwValidatorData.PatternResourceName = RegexResourceName1;
             rwValidatorData.PatternResourceType = typeof(Resources);
@@ -115,7 +126,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateNegatedValidatorFromConfigurationObject()
         {
-            RegexValidatorData rwValidatorData = new RegexValidatorData { Name = "validator1" };
+            RegexValidatorData rwValidatorData = new RegexValidatorData("validator1");
             rwValidatorData.Pattern = "pattern";
             rwValidatorData.PatternResourceName = RegexResourceName1;
             rwValidatorData.PatternResourceType = typeof(Resources);
@@ -137,7 +148,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObjectWithMessageTemplateOverride()
         {
-            RegexValidatorData rwValidatorData = new RegexValidatorData { Name = "validator1" };
+            RegexValidatorData rwValidatorData = new RegexValidatorData("validator1");
             rwValidatorData.Pattern = "pattern";
             rwValidatorData.Options = RegexOptions.Multiline | RegexOptions.IgnoreCase;
             rwValidatorData.PatternResourceName = RegexResourceName1;
@@ -159,7 +170,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateNegatedValidatorFromConfigurationObjectWithMessageTemplateOverride()
         {
-            RegexValidatorData rwValidatorData = new RegexValidatorData { Name = "validator1" };
+            RegexValidatorData rwValidatorData = new RegexValidatorData("validator1");
             rwValidatorData.Pattern = "pattern";
             rwValidatorData.PatternResourceName = RegexResourceName1;
             rwValidatorData.PatternResourceType = typeof(Resources);

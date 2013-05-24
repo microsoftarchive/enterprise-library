@@ -34,8 +34,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners
         [TestMethod]
         public void InitializesTallyForNewFile()
         {
-            using (RollingFlatFileTraceListener.TallyKeepingFileStreamWriter writer
-                = new RollingFlatFileTraceListener.TallyKeepingFileStreamWriter(File.Open(fileName, FileMode.Append, FileAccess.Write, FileShare.Read)))
+            using (var writer
+                = new TallyKeepingFileStreamWriter(File.Open(fileName, FileMode.Append, FileAccess.Write, FileShare.Read)))
             {
                 Assert.AreEqual(0L, writer.Tally);
             }
@@ -45,22 +45,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners
         public void InitializesTallyForExistingFile()
         {
             File.WriteAllText(fileName, "12345");
-            using (RollingFlatFileTraceListener.TallyKeepingFileStreamWriter writer
-                = new RollingFlatFileTraceListener.TallyKeepingFileStreamWriter(File.Open(fileName, FileMode.Append, FileAccess.Write, FileShare.Read)))
+            using (var writer
+                = new TallyKeepingFileStreamWriter(File.Open(fileName, FileMode.Append, FileAccess.Write, FileShare.Read)))
             {
                 Assert.AreEqual(5L, writer.Tally);
             }
 
             File.WriteAllText(fileName, "12345");
-            using (RollingFlatFileTraceListener.TallyKeepingFileStreamWriter writer
-                = new RollingFlatFileTraceListener.TallyKeepingFileStreamWriter(File.Open(fileName, FileMode.Create, FileAccess.Write, FileShare.Read)))
+            using (var writer
+                = new TallyKeepingFileStreamWriter(File.Open(fileName, FileMode.Create, FileAccess.Write, FileShare.Read)))
             {
                 Assert.AreEqual(0L, writer.Tally);
             }
 
             File.WriteAllText(fileName, "12345");
-            using (RollingFlatFileTraceListener.TallyKeepingFileStreamWriter writer
-                = new RollingFlatFileTraceListener.TallyKeepingFileStreamWriter(File.Open(fileName, FileMode.Truncate, FileAccess.Write, FileShare.Read)))
+            using (var writer
+                = new TallyKeepingFileStreamWriter(File.Open(fileName, FileMode.Truncate, FileAccess.Write, FileShare.Read)))
             {
                 Assert.AreEqual(0L, writer.Tally);
             }
@@ -69,8 +69,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners
         [TestMethod]
         public void WritingToFileUpdatesTally()
         {
-            using (RollingFlatFileTraceListener.TallyKeepingFileStreamWriter writer
-                = new RollingFlatFileTraceListener.TallyKeepingFileStreamWriter(File.Open(fileName, FileMode.Append, FileAccess.Write, FileShare.Read)))
+            using (var writer
+                = new TallyKeepingFileStreamWriter(File.Open(fileName, FileMode.Append, FileAccess.Write, FileShare.Read)))
             {
                 writer.Write("12345");
                 writer.Flush();
@@ -82,8 +82,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners
         [TestMethod]
         public void WritingToFileWithEncodingUpdatesTally()
         {
-            using (RollingFlatFileTraceListener.TallyKeepingFileStreamWriter writer
-                = new RollingFlatFileTraceListener.TallyKeepingFileStreamWriter(File.Open(fileName, FileMode.Append, FileAccess.Write, FileShare.Read),
+            using (var writer
+                = new TallyKeepingFileStreamWriter(File.Open(fileName, FileMode.Append, FileAccess.Write, FileShare.Read),
                                                                                 Encoding.UTF32))
             {
                 writer.Write("12345");

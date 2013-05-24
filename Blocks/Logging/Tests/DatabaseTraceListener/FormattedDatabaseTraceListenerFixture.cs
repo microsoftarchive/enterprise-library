@@ -24,8 +24,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests
     [TestClass]
     public class FormattedDatabaseTraceListenerFixture
     {
-        public const string connectionString = @"server=(local)\SQLEXPRESS;database=Logging;Integrated Security=true";
-        public const string wrongConnectionString = @"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true";
+        public const string connectionString = @"server=(localdb)\v11.0;database=Logging;Integrated Security=true";
+        public const string wrongConnectionString = @"server=(localdb)\v11.0;database=Northwind;Integrated Security=true";
 
         void ClearLogs()
         {
@@ -33,7 +33,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests
             DatabaseProviderFactory factory = new DatabaseProviderFactory();
             Data.Database db = factory.CreateDefault();
             DbCommand command = db.GetStoredProcCommand("ClearLogs");
-            db.ExecuteNonQuery(command);
+            try
+            {
+                db.ExecuteNonQuery(command);
+            }
+            catch (SqlException ex)
+            {
+                Assert.Inconclusive("Cannot access the database. Make sure to run the LoggingDatabase.sql script to install the appropriate database. " + Environment.NewLine + ex.Message);
+            }
         }
 
         string GetLastLogMessage(string databaseName)

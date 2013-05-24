@@ -13,7 +13,7 @@ using System;
 using System.Configuration;
 using System.Globalization;
 using System.Reflection;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
@@ -22,8 +22,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     /// <summary>
     /// Represents a <see cref="PropertyComparisonValidator"/>.
     /// </summary>
-    public partial class PropertyComparisonValidatorData : ValueValidatorData
+    [ResourceDescription(typeof(DesignResources), "PropertyComparisonValidatorDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "PropertyComparisonValidatorDataDisplayName")]
+    public class PropertyComparisonValidatorData : ValueValidatorData
     {
+        /// <summary>
+        /// <para>Initializes a new instance of the <see cref="PropertyComparisonValidator"/> class.</para>
+        /// </summary>
+        public PropertyComparisonValidatorData() { Type = typeof(PropertyComparisonValidator); }
+
+        /// <summary>
+        /// <para>Initializes a new instance of the <see cref="PropertyComparisonValidator"/> class with a name.</para>
+        /// </summary>
+        /// <param name="name"></param>
+        public PropertyComparisonValidatorData(string name)
+            : base(name, typeof(PropertyComparisonValidator))
+        { }
+
         /// <summary>
         /// Creates the <see cref="PropertyComparisonValidator"/> described by the configuration object.
         /// </summary>
@@ -57,6 +72,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
             return new PropertyComparisonValidator(memberValueAccessBuilder.GetPropertyValueAccess(propertyInfo),
                 this.ComparisonOperator,
                 this.Negated);
+        }
+
+        private const string ComparisonOperatorPropertyName = "operator";
+        /// <summary>
+        /// Gets or sets the <see cref="ComparisonOperator"/> describing the comparison that the represented <see cref="PropertyComparisonValidator"/>.
+        /// </summary>
+        [ConfigurationProperty(ComparisonOperatorPropertyName)]
+        [ResourceDescription(typeof(DesignResources), "PropertyComparisonValidatorDataComparisonOperatorDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "PropertyComparisonValidatorDataComparisonOperatorDisplayName")]
+        public ComparisonOperator ComparisonOperator
+        {
+            get { return (ComparisonOperator)this[ComparisonOperatorPropertyName]; }
+            set { this[ComparisonOperatorPropertyName] = value; }
+        }
+
+        private const string PropertyToComparePropertyName = "propertyToCompare";
+        /// <summary>
+        /// Gets or sets the name of the property that the represented <see cref="PropertyComparisonValidator"/> will use to retrieve the value to compare.
+        /// </summary>
+        [ConfigurationProperty(PropertyToComparePropertyName, DefaultValue = "")]
+        [ResourceDescription(typeof(DesignResources), "PropertyComparisonValidatorDataPropertyToCompareDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "PropertyComparisonValidatorDataPropertyToCompareDisplayName")]
+        public string PropertyToCompare
+        {
+            get { return (string)this[PropertyToComparePropertyName]; }
+            set { this[PropertyToComparePropertyName] = value; }
         }
     }
 }

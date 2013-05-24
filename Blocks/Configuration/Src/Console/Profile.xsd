@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Profile">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Platform" type="xs:string" />
+        <xs:element name="ApplicationTitleFormat" type="xs:string" />
+        <xs:element name="TypeFilters">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:choice maxOccurs="unbounded">
+                <xs:element name="Assembly">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="matchKind" type="MatchKind" use="optional" default="Deny" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="Type">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="matchKind" type="MatchKind" use="optional" default="Deny" />
+                    <xs:attribute name="matchSubclasses" type="xs:boolean" use="optional" default="true" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="Command">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="matchKind" type="MatchKind" use="optional" default="Deny" />
+                    <xs:attribute name="matchSubclasses" type="xs:boolean" use="optional" default="true" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="AddBlockCommand">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="matchKind" type="MatchKind" use="optional" default="Deny" />
+                    <xs:attribute name="matchSubclasses" type="xs:boolean" use="optional" default="true" />
+                    <xs:attribute name="sectionName" type="xs:string" use="optional"/>
+                  </xs:complexType>
+                </xs:element>
+              </xs:choice>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="environmentCommandsEnabled" type="xs:boolean" use="optional" default="true"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="MatchKind">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="Deny"></xs:enumeration>
+      <xs:enumeration value="Allow"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

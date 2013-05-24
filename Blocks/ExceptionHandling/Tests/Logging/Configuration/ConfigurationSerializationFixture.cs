@@ -10,15 +10,14 @@
 //===============================================================================
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
+using System.IO;
+using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration.Tests
@@ -79,29 +78,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         }
 
         [TestMethod]
-        public void ReturnsTypeRegistrationForLoggingHandlerData()
+        [ExpectedException(typeof(ConfigurationErrorsException))]
+        public void DeserializingLoggingHandlerDataWithoutFormatterThrows()
         {
-            var handlerData = new LoggingExceptionHandlerData(
-                handlerName111, handlerCategory111, 100, TraceEventType.Information, handlerMessage111,
-                typeof (ExceptionFormatter), 101);
-
-            var registration = handlerData.GetRegistrations("prefix").First();
-
-            registration.AssertForServiceType(typeof(IExceptionHandler))
-                .ForName("prefix." + handlerName111)
-                .ForImplementationType(typeof (LoggingExceptionHandler));
-
-
-
-            registration.AssertConstructor()
-                .WithValueConstructorParameter(handlerCategory111)
-                .WithValueConstructorParameter(100)
-                .WithValueConstructorParameter(TraceEventType.Information)
-                .WithValueConstructorParameter(handlerMessage111)
-                .WithValueConstructorParameter(101)
-                .WithValueConstructorParameter(typeof(ExceptionFormatter))                
-                .WithContainerResolvedParameter<LogWriter>(null)
-                .VerifyConstructorParameters();
+            var xml = @"<?xml version=""1.0"" encoding=""utf-16""?><exceptionHandling>
+<exceptionPolicies>
+<add name=""Policy"">
+<exceptionTypes>
+<add name=""All Exceptions"" type=""System.Exception, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089""
+postHandlingAction=""NotifyRethrow"">
+<exceptionHandlers>
+<add name=""Logging Exception Handler"" type=""Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.LoggingExceptionHandler, Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging""
+logCategory=""General"" eventId=""100"" severity=""Error"" title=""Enterprise Library Exception Handling""
+priority=""0"" />
+</exceptionHandlers>
+</add>
+</exceptionTypes>
+</add>
+</exceptionPolicies>
+</exceptionHandling>
+";
+            using (var reader = XmlReader.Create(new StringReader(xml), new XmlReaderSettings { CloseInput = true }))
+            {
+                new ExceptionHandlingSettings().ReadXml(reader);
+            }
         }
     }
 }

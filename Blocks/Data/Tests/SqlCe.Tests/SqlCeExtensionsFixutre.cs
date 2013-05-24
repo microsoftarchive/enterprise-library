@@ -187,7 +187,7 @@ namespace Data.SqlCe.Tests.VSTS
         public void TableExists_ShouldFindTable()
         {
             Assert.IsTrue(db.TableExists("region"));
-            Assert.IsFalse(db.TableExists("junk"));
+            Assert.IsFalse(db.TableExists("missing"));
         }
 
         [TestMethod]

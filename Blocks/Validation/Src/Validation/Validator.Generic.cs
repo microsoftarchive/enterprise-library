@@ -73,7 +73,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <param name="key">The key that identifies the source of <paramref name="objectToValidate"/>.</param>
         /// <param name="validationResults">The validation results to which the outcome of the validation should be stored.</param>
         /// <remarks>
-        /// The implementation for this method will perform type checking and conversation before forwarding the 
+        /// The implementation for this method will perform type checking and converstion before forwarding the 
         /// validation request to method <see cref="Validator{T}.DoValidate(T, object, string, ValidationResults)"/>.
         /// </remarks>
         /// <see cref="Validator.DoValidate"/>

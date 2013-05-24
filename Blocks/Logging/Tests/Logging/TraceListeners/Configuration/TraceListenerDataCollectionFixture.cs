@@ -28,7 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             LoggingSettings rwLoggingSettings = new LoggingSettings();
             rwLoggingSettings.TraceListeners.Add(new FormattedEventLogTraceListenerData("listener1", CommonUtil.EventLogSourceName, "formatter"));
             rwLoggingSettings.TraceListeners.Add(new SystemDiagnosticsTraceListenerData("listener2", typeof(FormattedEventLogTraceListener), CommonUtil.EventLogSourceName));
-            rwLoggingSettings.TraceListeners.Add(new SystemDiagnosticsTraceListenerData("listener3", typeof(XmlWriterTraceListener), "foobar.txt"));
+            rwLoggingSettings.TraceListeners.Add(new SystemDiagnosticsTraceListenerData("listener3", typeof(XmlWriterTraceListener), "log.txt"));
 
             ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
             fileMap.ExeConfigFilename = "test.exe.config";

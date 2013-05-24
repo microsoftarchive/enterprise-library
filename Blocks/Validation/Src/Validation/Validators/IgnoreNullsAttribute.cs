@@ -26,7 +26,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         Inherited = false)]
     public sealed class IgnoreNullsAttribute : BaseValidationAttribute
     {
-#if !SILVERLIGHT
         private readonly Guid typeId = Guid.NewGuid();
 
         /// <summary>
@@ -39,6 +38,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                 return this.typeId;
             }
         }
-#endif
     }
 }

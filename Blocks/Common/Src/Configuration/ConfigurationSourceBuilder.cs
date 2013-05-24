@@ -15,8 +15,9 @@ using System.Configuration;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
     /// <summary>
-    /// Entry point that is used for programmatically building up a configuration source.
+    /// Entry point that is used for programatically building up a configution source.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Justification = "Using config source as a dictionary")]
     public class ConfigurationSourceBuilder : IConfigurationSourceBuilder, IFluentInterface
     {
         readonly DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();

@@ -46,8 +46,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
             isCompleted = val;
         }
 
-        public MockMsmqLogDistributor(LogWriter logWriter, string msmqPath) :
-			base(logWriter, msmqPath, new DistributorEventLogger())
+        public MockMsmqLogDistributor(string msmqPath)
+            : base(msmqPath, new DistributorEventLogger())
         {
         }
 

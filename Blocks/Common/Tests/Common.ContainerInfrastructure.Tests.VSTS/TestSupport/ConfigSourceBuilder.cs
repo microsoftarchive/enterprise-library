@@ -37,16 +37,6 @@ namespace Common.ContainerInfrastructure.Tests.VSTS.TestSupport
             get { return configSource; }
         }
 
-        public ConfigSourceBuilder AddCryptoSettings()
-        {
-            CryptoSectionBuilder builder = new SectionBuilder().CryptoSection();
-            builder.AddHashProvider<MD5CryptoServiceProvider>().Named("md5").AsDefault
-                .AddHashProvider<SHA512CryptoServiceProvider>().Named("sha512")
-                .AddTo(configSource);
-
-            return this;
-        }
-
         public ConfigSourceBuilder AddExceptionHandlingSettings()
         {
             ExceptionSectionBuilder builder = new SectionBuilder().ExceptionSection();

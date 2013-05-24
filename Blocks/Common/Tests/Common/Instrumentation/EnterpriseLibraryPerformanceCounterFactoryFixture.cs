@@ -28,6 +28,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Tests
         public void SetUp()
         {
             factory = new EnterpriseLibraryPerformanceCounterFactory();
+
+            try
+            {
+                factory.CreateCounter(categoryName, counterName, new string[] { "Total" });
+            }
+            catch (InvalidOperationException)
+            {
+                Assert.Inconclusive("In order to run the test, please run RegAssemblies.bat script first as an Administrator.");
+            }
         }
 
         [TestMethod]

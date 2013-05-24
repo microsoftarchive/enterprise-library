@@ -21,7 +21,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Tests
 {
     [TestClass]
-    [DeploymentItem("test.exe.config")]
     public class ConfigurationSerializationFixture
     {
         const string providerName1 = "provider 1";
@@ -34,6 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Tests
             AppDomain.CurrentDomain.SetData("APPBASE", Environment.CurrentDirectory);
         }
 
+#pragma warning disable 612, 618
         [TestMethod]
         public void CanDeserializeSerializedConfiguration()
         {
@@ -61,5 +61,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Tests
             Assert.AreSame(typeof(OracleDatabase), roSettigs.ProviderMappings.Get(providerName1).DatabaseType);
             Assert.AreEqual(providerName1, roSettigs.ProviderMappings.Get(providerName1).DbProviderName);
         }
+#pragma warning restore 612, 618
     }
 }

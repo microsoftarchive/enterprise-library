@@ -102,7 +102,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 	        get { return upperBoundType; }
 	    }
 
-	    /// <summary>
+		/// <summary>
 		/// Creates the <see cref="StringLengthValidator"/> described by the configuration object.
 		/// </summary>
 		/// <param name="targetType">The type of object that will be validated by the validator.</param>
@@ -116,7 +116,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 				Negated);
 		}
 
-#if !SILVERLIGHT
         private readonly Guid typeId = Guid.NewGuid();
 
         /// <summary>
@@ -129,6 +128,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                 return this.typeId;
             }
         }
-#endif
     }
 }

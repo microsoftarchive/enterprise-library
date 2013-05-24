@@ -10,36 +10,18 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Configuration.Design</RootNamespace>
     <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <ExpressionBlendVersion>3.0.1927.0</ExpressionBlendVersion>
+    <WarningLevel>4</WarningLevel><ExpressionBlendVersion>3.0.1927.0</ExpressionBlendVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworkProfile />
+    <RestorePackages>true</RestorePackages>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -53,9 +35,8 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>
     </NoWarn>
-    <CodeAnalysisRules>
-    </CodeAnalysisRules>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules>-Microsoft.Design#CA2210;-Microsoft.Design#CA1020;-Microsoft.Design#CA1011;-Microsoft.Design#CA1006;-Microsoft.Design#CA1004;-Microsoft.Design#CA1033;-Microsoft.Design#CA1024;-Microsoft.Globalization#CA1300;-Microsoft.Maintainability#CA1506;-Microsoft.Maintainability#CA1500;-Microsoft.Naming#CA1711;-Microsoft.Naming#CA1716;-Microsoft.Performance#CA1811;-Microsoft.Performance#CA1812;-Microsoft.Performance#CA1800;-Microsoft.Performance#CA1805;-Microsoft.Performance#CA1810;-Microsoft.Usage#CA2214</CodeAnalysisRules>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -65,26 +46,34 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\..\bin\Release\Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime.xml</DocumentationFile>
-    <CodeAnalysisRules>
-    </CodeAnalysisRules>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules>-Microsoft.Design#CA2210;-Microsoft.Design#CA1020;-Microsoft.Design#CA1006;-Microsoft.Design#CA1004</CodeAnalysisRules>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.dll</HintPath>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter">
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5, Version=5.0.414.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5.dll</HintPath>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5">
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.dll</HintPath>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.1.505.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.Interception.dll</HintPath>
+      <HintPath>..\..\..\packages\Unity.3.0.1304.0\lib\Net45\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Unity.3.0.1304.0\lib\Net45\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Unity.Interception.3.0.1304.0\lib\Net45\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception.Configuration, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Unity.Interception.3.0.1304.0\lib\Net45\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework.Aero">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
@@ -151,6 +140,10 @@
     <Page Include="ComponentModel\Editors\TextEditDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ComponentModel\Editors\TimeSpanEditorControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -387,16 +380,14 @@
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <None Include="..\..\..\GlobalAssemblyInfo.2010.cs">
-      <Link>GlobalAssemblyInfo.2010.cs</Link>
-    </None>
     <Compile Include="ComponentModel\Converters\RedirectedSectionNameConverter.cs" />
     <Compile Include="ComponentModel\Editors\EditorUtility.cs" />
-    <Compile Include="ComponentModel\Editors\KeyManager\KeyManagerUtilities.cs" />
     <Compile Include="ComponentModel\Editors\PopupTextEditor.cs" />
-    <Compile Include="ComponentModel\Editors\SaveFileEditor.cs" />
     <Compile Include="ComponentModel\Editors\TextEditDialog.xaml.cs">
       <DependentUpon>TextEditDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ComponentModel\Editors\TimeSpanEditorControl.xaml.cs">
+      <DependentUpon>TimeSpanEditorControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ComponentModel\Editors\TypeBrowser\MetadataTypesRetriever.cs" />
     <Compile Include="ConfigurationContainer.cs" />
@@ -418,73 +409,6 @@
     <Compile Include="ComponentModel\Editors\FlagsEditor.xaml.cs">
       <DependentUpon>FlagsEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\ChooseDataProtectionScopeControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\ChooseDataProtectionScopeControl.designer.cs">
-      <DependentUpon>ChooseDataProtectionScopeControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\ChooseKeyFileControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\ChooseKeyFileControl.designer.cs">
-      <DependentUpon>ChooseKeyFileControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\CreateNewKeyControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\CreateNewKeyControl.designer.cs">
-      <DependentUpon>CreateNewKeyControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\CryptographicKeyWizard.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\CryptographicKeyWizard.designer.cs">
-      <DependentUpon>CryptographicKeyWizard.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\CryptographicKeyWizardStep.cs" />
-    <Compile Include="ComponentModel\Editors\KeyManager\ExportKeyControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\ExportKeyControl.designer.cs">
-      <DependentUpon>ExportKeyControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\ExportKeyUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\ExportKeyUI.designer.cs">
-      <DependentUpon>ExportKeyUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\ICryptographicConfigurationNode.cs" />
-    <Compile Include="ComponentModel\Editors\KeyManager\IKeyCreator.cs" />
-    <Compile Include="ComponentModel\Editors\KeyManager\ImportArchivedKeyControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\ImportArchivedKeyControl.Designer.cs">
-      <DependentUpon>ImportArchivedKeyControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\IValidationTarget.cs" />
-    <Compile Include="ComponentModel\Editors\KeyManager\KeyedHashAlgorithmKeyCreator.cs" />
-    <Compile Include="ComponentModel\Editors\KeyManager\KeyManagerEditor.cs" />
-    <Compile Include="ComponentModel\Editors\KeyManager\KeyManagerResources.Designer.cs">
-      <DependentUpon>KeyManagerResources.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\OpenExistingKeyFileControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\OpenExistingKeyFileControl.Designer.cs">
-      <DependentUpon>OpenExistingKeyFileControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\ProtectedKeySettings.cs" />
-    <Compile Include="ComponentModel\Editors\KeyManager\SupplyKeyControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\SupplyKeyControl.Designer.cs">
-      <DependentUpon>SupplyKeyControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\KeyManager\SymmetricAlgorithmKeyCreator.cs" />
     <Compile Include="ComponentModel\Editors\MemberChooser\MemberChooserResources.Designer.cs">
       <DependentUpon>MemberChooserResources.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -508,21 +432,6 @@
     </Compile>
     <Compile Include="ComponentModel\Editors\TypeBrowser\TypeBrowserViewModel.cs" />
     <Compile Include="ComponentModel\Editors\TypeBrowser\TypeSelectionEditor.cs" />
-    <Compile Include="ComponentModel\Editors\RuleEditor\ExpressionEditor.cs" />
-    <Compile Include="ComponentModel\Editors\RuleEditor\ExpressionEditorUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\RuleEditor\ExpressionTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\RuleEditor\NativeMethods.cs" />
-    <Compile Include="ComponentModel\Editors\RuleEditor\Resources.Designer.cs">
-      <DependentUpon>Resources.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="ComponentModel\Editors\RuleEditor\UnderlineColor.cs" />
-    <Compile Include="ComponentModel\Editors\RuleEditor\UnderlineStyle.cs" />
     <Compile Include="ComponentModel\Editors\TemplateEditor\TemplateEditor.cs" />
     <Compile Include="ComponentModel\Editors\TemplateEditor\TemplateEditorUI.cs">
       <SubType>Form</SubType>
@@ -629,6 +538,7 @@
     <Compile Include="Hosting\KeyedResourceDictionary.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Validation\DefaultConfigurationPropertyValidator.cs" />
     <Compile Include="Validation\DefaultPropertyValidator.cs" />
     <Compile Include="Validation\ElementReferenceValidator.cs" />
     <Compile Include="Validation\ElementValidationResult.cs" />
@@ -639,6 +549,7 @@
     <Compile Include="Validation\PropertyValidationResult.cs" />
     <Compile Include="Validation\PropertyValidator.cs" />
     <Compile Include="Validation\RequiredFieldValidator.cs" />
+    <Compile Include="Validation\TransientFaultHandling\ExponentialBackoffValidator.cs" />
     <Compile Include="Validation\TypeValidator.cs" />
     <Compile Include="Validation\Validator.cs" />
     <Compile Include="Validation\ValidationResult.cs" />
@@ -646,7 +557,6 @@
     <Compile Include="ViewModel\Bindable\BindableProperty.cs" />
     <Compile Include="ViewModel\Bindable\EnvironmentAwareFrameworkEditorBindableProperty.cs" />
     <Compile Include="ViewModel\Bindable\FrameworkEditorBindableProperty.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\Cryptography\ExportKeyCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\DataAccess\ConnectionStringSettingsViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\DataAccess\ConnectionStringSettingsDefaultDatabaseElementProperty.cs" />
     <Compile Include="ViewModel\BlockSpecifics\DataAccess\DefaultDatabaseValidator.cs" />
@@ -657,11 +567,15 @@
     <Compile Include="ViewModel\BlockSpecifics\PolicyInjection\MatchCollectionPopulatedValidator.cs" />
     <Compile Include="ViewModel\BlockSpecifics\PolicyInjection\PiabSectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\PolicyInjection\PolicyDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\TransientFaultHandling\AddTransientFaultHandlingBlockCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\TransientFaultHandling\RetryPolicyConfigurationSettingsViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\TransientFaultHandling\WellKnownRetryStrategyElementCollectionCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\Validation\RangeBoundValidator.cs" />
     <Compile Include="ViewModel\BlockSpecifics\RedirectedSectionSourceProperty.cs" />
     <Compile Include="ViewModel\BlockSpecifics\Validation\RangeValidatorCultureProperty.cs" />
     <Compile Include="ViewModel\CollectionEditorContainedElementReferenceProperty.cs" />
     <Compile Include="ViewModel\Commands\WeakEventHandlerManager.cs" />
+    <Compile Include="ViewModel\DefaultElementConfigurationProperty.cs" />
     <Compile Include="ViewModel\Layout\ElementListLayout.cs" />
     <Compile Include="ViewModel\Layout\ElementListLayoutWalker.cs" />
     <Compile Include="ViewModel\Layout\HeaderedListLayout.cs">
@@ -673,9 +587,6 @@
     <Compile Include="ViewModel\Layout\ListLayout.cs" />
     <Compile Include="ViewModel\Bindable\PopupEditorBindableProperty.cs" />
     <Compile Include="ViewModel\Bindable\SuggestedValuesBindableProperty.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\AddCacheManagerCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\AddInstrumentationCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\Caching\AddCachingBlockCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\AddConfigurationSourcesBlockCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\DataAccess\AddDatabaseBlockCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\DeleteConfigurationSourceElementCommand.cs" />
@@ -707,12 +618,6 @@
     <Compile Include="ViewModel\BlockSpecifics\Logging\LogFormatterValidator.cs" />
     <Compile Include="ViewModel\BlockSpecifics\EnvironmentalOverrides\OpenEnvironmentConfigurationDeltaCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\Logging\SourceLevelsProperty.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\ManageableConfigurationSourceViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\Security\AuthorizationProviderViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\Security\AuthorizationRuleDataViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\Security\AuthorizationRuleProviderDataViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\Caching\CacheManagerSectionViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\Caching\CacheManagerBackingStoreProperty.cs" />
     <Compile Include="ViewModel\BlockSpecifics\SelectedSourceValidator.cs" />
     <Compile Include="ViewModel\CollectionEditorContainedElementProperty.cs" />
     <Compile Include="ViewModel\Commands\DefaultSectionDeleteCommandModel.cs" />
@@ -722,21 +627,24 @@
     <Compile Include="ViewModel\Layout\ThreeVerticalVisualsLayout.cs" />
     <Compile Include="ViewModel\ProtectionProviderProperty.cs" />
     <Compile Include="ViewModel\RequirePermissionProperty.cs" />
+    <Compile Include="ViewModel\Services\AssemblyNameMatcher.cs" />
+    <Compile Include="ViewModel\Services\PlatformProfile\AssemblyMatchFilter.cs" />
+    <Compile Include="ViewModel\Services\PlatformProfile\AddBlockCommandMatchFilter.cs" />
+    <Compile Include="ViewModel\Services\PlatformProfile\CommandMatchFilter.cs" />
+    <Compile Include="ViewModel\Services\PlatformProfile\MatchFilter.cs" />
+    <Compile Include="ViewModel\Services\PlatformProfile\MatchKind.cs" />
+    <Compile Include="ViewModel\Services\PlatformProfile\Profile.cs" />
+    <Compile Include="ViewModel\Services\PlatformProfile\TypeMatchFilter.cs" />
+    <Compile Include="ViewModel\TimeSpanElementConfigurationProperty.cs" />
     <Compile Include="ViewModel\TypeNameParser.cs" />
     <Compile Include="ViewModel\Commands\HiddenCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\ConfigurationManageabilityProviderAttributeRetriever.cs" />
     <Compile Include="ViewModel\BlockSpecifics\ConfigurationSourceSectionViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\Cryptography\HashAlgorithmProviderAddCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\Cryptography\CryptographySectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\Logging\CustomTraceListenerDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\DataAccess\DataSectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\ExceptionHandling\ExceptionHandlerDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\ExceptionHandling\ExceptionHandlingSectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\ExceptionHandling\ExceptionPolicyDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\ExceptionHandling\ExceptionTypeDataViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\ExportAdmTemplateCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\Cryptography\KeyedHashAlgorithmProviderAddCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\Cryptography\KeyedHashAlgorithmProviderDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\Logging\LoggingSectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\Logging\LogPriorityMinMaxValidator.cs" />
     <Compile Include="ViewModel\BlockSpecifics\Logging\OverriddenTraceListenerCollectionEditor.xaml.cs">
@@ -744,10 +652,7 @@
     </Compile>
     <Compile Include="ViewModel\BlockSpecifics\EnvironmentalOverrides\SaveEnvironmentConfigurationDeltaCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\EnvironmentalOverrides\SaveMergedEnvironmentConfigurationCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\Security\SecuritySectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\Validation\SelectValidatedTypeReferenceMembersCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\Cryptography\SymmetricAlgorithmProviderAddCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\Cryptography\SymmetricAlgorithmProviderDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\Logging\SystemDiagnosticsTraceListenerDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\Logging\TraceListenerElementCollectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\Logging\TraceListenerReferenceViewModel.cs" />
@@ -820,38 +725,6 @@
     <Compile Include="Wizard\WizardView.xaml.cs">
       <DependentUpon>WizardView.xaml</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="ComponentModel\Editors\KeyManager\ChooseDataProtectionScopeControl.resx">
-      <DependentUpon>ChooseDataProtectionScopeControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ComponentModel\Editors\KeyManager\ChooseKeyFileControl.resx">
-      <DependentUpon>ChooseKeyFileControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ComponentModel\Editors\KeyManager\CreateNewKeyControl.resx">
-      <DependentUpon>CreateNewKeyControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ComponentModel\Editors\KeyManager\CryptographicKeyWizard.resx">
-      <DependentUpon>CryptographicKeyWizard.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ComponentModel\Editors\KeyManager\ExportKeyControl.resx">
-      <DependentUpon>ExportKeyControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ComponentModel\Editors\KeyManager\ExportKeyUI.resx">
-      <DependentUpon>ExportKeyUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ComponentModel\Editors\KeyManager\ImportArchivedKeyControl.resx">
-      <DependentUpon>ImportArchivedKeyControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ComponentModel\Editors\KeyManager\KeyManagerResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>KeyManagerResources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design</CustomToolNamespace>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ComponentModel\Editors\KeyManager\OpenExistingKeyFileControl.resx">
-      <DependentUpon>OpenExistingKeyFileControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ComponentModel\Editors\KeyManager\SupplyKeyControl.resx">
-      <DependentUpon>SupplyKeyControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ComponentModel\Editors\MemberChooser\MemberChooserResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MemberChooserResources.Designer.cs</LastGenOutput>
@@ -859,17 +732,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ComponentModel\Editors\MemberChooser\TypeMemberChooserUI.resx">
       <DependentUpon>TypeMemberChooserUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ComponentModel\Editors\RuleEditor\ExpressionEditorUI.resx">
-      <DependentUpon>ExpressionEditorUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ComponentModel\Editors\RuleEditor\ExpressionTextBox.resx">
-      <DependentUpon>ExpressionTextBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ComponentModel\Editors\RuleEditor\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.RuleEditor</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Include="ComponentModel\Editors\TemplateEditor\TemplateEditorUI.resx">
       <DependentUpon>TemplateEditorUI.cs</DependentUpon>
@@ -888,8 +750,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Migrated rules for Configuration.Design %282%29.ruleset" />
-    <None Include="Migrated rules for Configuration.Design.ruleset" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -897,18 +758,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Caching\Src\Caching\Caching.csproj">
-      <Project>{E725A5B4-A379-492F-89E3-3D8021376C3F}</Project>
-      <Name>Caching</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Caching\Src\Cryptography\Caching.Cryptography.csproj">
-      <Project>{A03EA97B-97CB-41EF-A55D-15C6496D8943}</Project>
-      <Name>Caching.Cryptography</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Caching\Src\Database\Caching.Database.csproj">
-      <Project>{674B06A5-A61C-4546-8475-90D4A7FE31D8}</Project>
-      <Name>Caching.Database</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
       <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
       <Name>Common</Name>
@@ -941,17 +790,13 @@
       <Project>{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}</Project>
       <Name>PolicyInjection</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Security.Cryptography\Src\Cryptography\Security.Cryptography.csproj">
-      <Project>{6A4E6A8A-A39F-4643-BA9B-87AED00BB03E}</Project>
-      <Name>Security.Cryptography</Name>
+    <ProjectReference Include="..\..\..\TransientFaultHandling\Source\TransientFaultHandling.Configuration\TransientFaultHandling.Configuration.csproj">
+      <Project>{f1fa20fb-5634-41b8-8196-14589df98684}</Project>
+      <Name>TransientFaultHandling.Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Security\Src\CachingStore\Security.Cache.CachingStore.csproj">
-      <Project>{933575C4-BCAC-47E0-B651-C57FBC5CE58E}</Project>
-      <Name>Security.Cache.CachingStore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Security\Src\Security\Security.csproj">
-      <Project>{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}</Project>
-      <Name>Security</Name>
+    <ProjectReference Include="..\..\..\TransientFaultHandling\Source\TransientFaultHandling\TransientFaultHandling.csproj">
+      <Project>{e7a6f876-1fa6-45a8-898c-9ee3d33440cc}</Project>
+      <Name>TransientFaultHandling</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Validation\Src\Validation\Validation.csproj">
       <Project>{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}</Project>
@@ -983,24 +828,10 @@
   <ItemGroup>
     <Folder Include="ViewModel\ComponentModel\" />
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\..\.nuget\nuget.targets" />
+  <!-- Cannot remove the following because NuGet will re-add it, and will break relative paths -->
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" Condition="False" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

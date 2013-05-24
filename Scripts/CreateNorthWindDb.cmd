@@ -1,1 +1,1 @@
-osql -S (local)\SQLEXPRESS -E -i instnwnd.sql
+sqlcmd -S (localdb)\v11.0 -E -i instnwnd.sql

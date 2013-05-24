@@ -43,10 +43,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             using (DbConnection connection = db.CreateConnection())
             {
                 connection.Open();
-                using (DbTransaction trans = connection.BeginTransaction())
+                using (DbTransaction transaction = connection.BeginTransaction())
                 {
-                    using (db.ExecuteReader(trans, "Ten Most Expensive Products")) { }
-                    trans.Commit();
+                    using (db.ExecuteReader(transaction, "Ten Most Expensive Products")) { }
+                    transaction.Commit();
                 }
             }
         }
@@ -67,7 +67,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         [ExpectedException(typeof(SqlException))]
         public void ExecuteReaderWithBadCommandThrows()
         {
-            DbCommand badCommand = db.GetSqlStringCommand("select * from foobar");
+            DbCommand badCommand = db.GetSqlStringCommand("select * from invalid");
             db.ExecuteReader(badCommand);
         }
 

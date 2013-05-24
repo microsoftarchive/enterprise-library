@@ -27,6 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         public void Setup()
         {
             Logger.Reset();
+            Logger.SetLogWriter(new LogWriterFactory().Create());
             Logger.FlushContextItems();
         }
 

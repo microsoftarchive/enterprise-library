@@ -121,6 +121,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         /// </returns>
         /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.
         ///                 </param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.Windows.Forms.Design.IUIService.ShowError(System.Exception,System.String)", Justification = "Low-level error message")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public bool CanExecute(object parameter)
         {
@@ -130,7 +131,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
             catch (Exception ex)
             {
-                uiService.ShowError(ex, string.Format(CultureInfo.CurrentCulture, "An error occurredwhile determing if the command {0} can execute:", Title));
+                uiService.ShowError(ex, string.Format(CultureInfo.CurrentCulture, "An error occurred while determining if the command {0} can execute:", Title));
             }
 
             return false;

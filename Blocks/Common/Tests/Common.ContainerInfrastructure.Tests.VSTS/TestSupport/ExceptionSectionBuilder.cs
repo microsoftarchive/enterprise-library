@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.Manageability;
 
 namespace Common.ContainerInfrastructure.Tests.VSTS.TestSupport
 {
@@ -37,12 +36,12 @@ namespace Common.ContainerInfrastructure.Tests.VSTS.TestSupport
         {
             var section = new ExceptionHandlingSettings();
 
-            foreach(var builder in builders)
+            foreach (var builder in builders)
             {
                 section.ExceptionPolicies.Add(builder.GetPolicyData());
             }
 
-            configurationSource.Add(BlockSectionNames.ExceptionHandling,
+            configurationSource.Add(ExceptionHandlingSettings.SectionName,
                 section);
         }
     }
@@ -61,7 +60,7 @@ namespace Common.ContainerInfrastructure.Tests.VSTS.TestSupport
 
         ExceptionPolicyData IExceptionPolicyBuilder.GetPolicyData()
         {
-            foreach(var builder in builders)
+            foreach (var builder in builders)
             {
                 policyData.ExceptionTypes.Add(builder.GetTypeData());
             }
@@ -70,7 +69,7 @@ namespace Common.ContainerInfrastructure.Tests.VSTS.TestSupport
 
         IAddException IAddPolicy.AddPolicy(string name)
         {
-            return ((IAddPolicy) parent).AddPolicy(name);
+            return ((IAddPolicy)parent).AddPolicy(name);
         }
 
         public INamedException AddException(Type exceptionType)
@@ -82,12 +81,12 @@ namespace Common.ContainerInfrastructure.Tests.VSTS.TestSupport
 
         INamedException IAddException.AddException<TException>()
         {
-            return AddException(typeof (TException));
+            return AddException(typeof(TException));
         }
 
         void IAddTo.AddTo(IConfigurationSource configurationSource)
         {
-            ((IAddTo) parent).AddTo(configurationSource);
+            ((IAddTo)parent).AddTo(configurationSource);
         }
     }
 
@@ -105,7 +104,7 @@ namespace Common.ContainerInfrastructure.Tests.VSTS.TestSupport
 
         ExceptionTypeData IExceptionTypeBuilder.GetTypeData()
         {
-            foreach(var builder in builders)
+            foreach (var builder in builders)
             {
                 exceptionData.ExceptionHandlers.Add(builder.GetHandlerData());
             }
@@ -147,12 +146,12 @@ namespace Common.ContainerInfrastructure.Tests.VSTS.TestSupport
 
         INamedException IAddException.AddException(Type exceptionType)
         {
-            return ((IAddException) parent).AddException(exceptionType);
+            return ((IAddException)parent).AddException(exceptionType);
         }
 
         INamedException IAddException.AddException<TException>()
         {
-            return ((IAddException) this).AddException(typeof (TException));
+            return ((IAddException)this).AddException(typeof(TException));
         }
 
         INamedWrapHandler IAddHandler.AddWrapHandler()
@@ -164,7 +163,7 @@ namespace Common.ContainerInfrastructure.Tests.VSTS.TestSupport
 
         void IAddTo.AddTo(IConfigurationSource configurationSource)
         {
-            ((IAddTo) parent).AddTo(configurationSource);
+            ((IAddTo)parent).AddTo(configurationSource);
         }
     }
 

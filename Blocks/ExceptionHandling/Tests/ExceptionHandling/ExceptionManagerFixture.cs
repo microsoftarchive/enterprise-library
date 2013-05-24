@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
@@ -19,12 +18,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
     [TestClass]
     public class ExceptionManagerFixture
     {
-        private string policyName;
-
         [TestInitialize]
         public void SetUp()
         {
-            policyName = null;
             TestExceptionHandler.HandlingNames.Clear();
         }
 
@@ -32,76 +28,34 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void CreationWithNullPolicyDictionaryThrows()
         {
-            new ExceptionManagerImpl(null);
+            new ExceptionManager((IDictionary<string, ExceptionPolicyDefinition>)null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void HandleWithNullNameThrows()
         {
-            new ExceptionManagerImpl(new Dictionary<string, ExceptionPolicyImpl>()).HandleException(new Exception(), null);
+            new ExceptionManager(new Dictionary<string, ExceptionPolicyDefinition>()).HandleException(new Exception(), null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void HandleWithNullExceptionThrows()
         {
-            new ExceptionManagerImpl(new Dictionary<string, ExceptionPolicyImpl>()).HandleException(null, "policy");
+            new ExceptionManager(new Dictionary<string, ExceptionPolicyDefinition>()).HandleException(null, "policy");
         }
 
         [TestMethod]
         [ExpectedException(typeof(ExceptionHandlingException))]
         public void HandleWithNonExistingPolicyThrows()
         {
-            new ExceptionManagerImpl(new Dictionary<string, ExceptionPolicyImpl>()).HandleException(new Exception(), "policy");
-        }
-
-        [TestMethod]
-        public void HandleWithNonExistingPolicyFiresInstrumentation()
-        {
-            ExceptionManager manager = new ExceptionManagerImpl(
-                new Dictionary<string, ExceptionPolicyImpl>(),
-                new TestInstrumentationProvider(this));
-
-            try
-            {
-                manager.HandleException(new Exception(), "policy");
-                Assert.Fail("should have thrown");
-            }
-            catch (ExceptionHandlingException)
-            {
-                Assert.IsNotNull(policyName);
-                Assert.AreEqual("policy", policyName);
-            }
-        }
-
-        private class TestInstrumentationProvider : IDefaultExceptionHandlingInstrumentationProvider
-        {
-            private readonly ExceptionManagerFixture outer;
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="T:System.Object"/> class.
-            /// </summary>
-            public TestInstrumentationProvider(ExceptionManagerFixture outer)
-            {
-                this.outer = outer;
-            }
-
-            /// <summary>
-            /// Fires the ExceptionHandlingErrorOccurred"/> event.
-            /// </summary>
-            /// <param name="policyName">The name of the policy involved with the error.</param>
-            /// <param name="message">The message that describes the failure.</param>
-            public void FireExceptionHandlingErrorOccurred(string policyName, string message)
-            {
-                outer.policyName = policyName;
-            }
+            new ExceptionManager(new Dictionary<string, ExceptionPolicyDefinition>()).HandleException(new Exception(), "policy");
         }
 
         [TestMethod]
         public void HandleForwardsHandlingToConfiguredExceptionEntry()
         {
-            var policies = new Dictionary<string, ExceptionPolicyImpl>();
+            var policies = new Dictionary<string, ExceptionPolicyDefinition>();
             var policy1Entries = new Dictionary<Type, ExceptionPolicyEntry>
             {
                 {
@@ -124,9 +78,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
                 }
             };
 
-            policies.Add("policy1", new ExceptionPolicyImpl("policy1", policy1Entries));
+            policies.Add("policy1", new ExceptionPolicyDefinition("policy1", policy1Entries));
 
-            ExceptionManager manager = new ExceptionManagerImpl(policies);
+            var manager = new ExceptionManager(policies);
 
             // is the exception rethrown?
             Exception thrownException = new ArithmeticException();
@@ -166,7 +120,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         [TestMethod]
         public void HandleWithReturnForwardsHandlingToConfiguredExceptionEntry()
         {
-            var policies = new Dictionary<string, ExceptionPolicyImpl>();
+            var policies = new Dictionary<string, ExceptionPolicyDefinition>();
             var policy1Entries = new Dictionary<Type, ExceptionPolicyEntry>
             {
                 {
@@ -189,9 +143,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
                 }
             };
 
-            policies.Add("policy1", new ExceptionPolicyImpl("policy1", policy1Entries));
+            policies.Add("policy1", new ExceptionPolicyDefinition("policy1", policy1Entries));
 
-            ExceptionManager manager = new ExceptionManagerImpl(policies);
+            var manager = new ExceptionManager(policies);
 
             Exception exceptionToThrow;
 
@@ -229,7 +183,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         [TestMethod]
         public void ProcessForwardsHandlingToConfiguredExceptionEntry()
         {
-            var policies = new Dictionary<string, ExceptionPolicyImpl>();
+            var policies = new Dictionary<string, ExceptionPolicyDefinition>();
             var policy1Entries = new Dictionary<Type, ExceptionPolicyEntry>
             {
                 {
@@ -251,16 +205,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
                         new IExceptionHandler[] {new TestExceptionHandler("handler13")})
                 }
             };
-            policies.Add("policy1", new ExceptionPolicyImpl("policy1", policy1Entries));
+            policies.Add("policy1", new ExceptionPolicyDefinition("policy1", policy1Entries));
 
-            ExceptionManager manager = new ExceptionManagerImpl(policies);
+            var manager = new ExceptionManager(policies);
 
             // is the exception rethrown?
             Exception thrownException = new ArithmeticException();
             try
             {
                 Exception ex1 = thrownException;
-                manager.Process( () => { throw ex1; }, "policy1");
+                manager.Process(() => { throw ex1; }, "policy1");
                 Assert.Fail("should have thrown");
             }
             catch (Exception e)
@@ -314,7 +268,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         [TestMethod]
         public void ProcessWithReturnValueReturnsCorrectValueWhenNoExceptionThrown()
         {
-            var policies = new Dictionary<string, ExceptionPolicyImpl>();
+            var policies = new Dictionary<string, ExceptionPolicyDefinition>();
             var policy1Entries = new Dictionary<Type, ExceptionPolicyEntry>
             {
                 {
@@ -336,9 +290,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
                         new IExceptionHandler[] {new TestExceptionHandler("handler13")})
                 }
             };
-            policies.Add("policy1", new ExceptionPolicyImpl("policy1", policy1Entries));
+            policies.Add("policy1", new ExceptionPolicyDefinition("policy1", policy1Entries));
 
-            ExceptionManager manager = new ExceptionManagerImpl(policies);
+            ExceptionManager manager = new ExceptionManager(policies);
 
             int result = manager.Process(() => 42, "policy1");
             Assert.AreEqual(42, result);
@@ -347,7 +301,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         [TestMethod]
         public void ProcessWithReturnValueProcessesExceptionsOnThrow()
         {
-            var policies = new Dictionary<string, ExceptionPolicyImpl>();
+            var policies = new Dictionary<string, ExceptionPolicyDefinition>();
             var policy1Entries = new Dictionary<Type, ExceptionPolicyEntry>
             {
                 {
@@ -369,18 +323,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
                         new IExceptionHandler[] {new TestExceptionHandler("handler13")})
                 }
             };
-            policies.Add("policy1", new ExceptionPolicyImpl("policy1", policy1Entries));
+            policies.Add("policy1", new ExceptionPolicyDefinition("policy1", policy1Entries));
 
-            ExceptionManager manager = new ExceptionManagerImpl(policies);
+            var manager = new ExceptionManager(policies);
 
             // is the exception rethrown?
             Exception thrownException = new ArithmeticException();
             try
             {
                 Exception ex1 = thrownException;
-                int result = manager.Process(() => { throw ex1;
+                int result = manager.Process(() =>
+                {
+                    throw ex1;
 #pragma warning disable 162 // Unreachable code
-                                                       return 37;
+                    return 37;
 #pragma warning restore 162
                 }, "policy1");
                 Assert.Fail("should have thrown");
@@ -396,14 +352,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             TestExceptionHandler.HandlingNames.Clear();
             thrownException = new ArgumentOutOfRangeException();
             Exception ex3 = thrownException;
-            int swallowedResult = manager.Process(() => { throw ex3;
+            int swallowedResult = manager.Process(() =>
+            {
+                throw ex3;
 #pragma warning disable 162 // Unreachable code
-                                                   return 17; 
+                return 17;
 #pragma warning restore 162
             }, -20, "policy1");
             Assert.AreEqual(1, TestExceptionHandler.HandlingNames.Count);
             Assert.AreEqual("handler13", TestExceptionHandler.HandlingNames[0]);
-            Assert.AreEqual(-20, swallowedResult);            
+            Assert.AreEqual(-20, swallowedResult);
         }
     }
 

@@ -15,12 +15,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Security;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
+using System.Security.Permissions;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
-using Microsoft.Practices.ServiceLocation;
-#if SILVERLIGHT
-using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
-#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
@@ -38,8 +35,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// You must configure the operation categories, or the catch-all categories, with desired log sinks to log 
     /// the trace messages.</para>
     /// </remarks>
-    public partial class Tracer : IDisposable
+    public class Tracer : IDisposable
     {
+        private readonly static bool isFullyTrusted;
+
         /// <summary>
         /// Priority value for Trace messages
         /// </summary>
@@ -65,14 +64,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// </summary>
         public const string ActivityIdPropertyKey = "TracerActivityId";
 
-        private readonly ITracerInstrumentationProvider instrumentationProvider;
         private Stopwatch stopwatch;
         private long tracingStartTicks;
         private bool tracerDisposed;
-        private bool tracingAvailable;
         private readonly Guid? previousActivityId;
 
+        private readonly bool tracingAvailable;
         private readonly LogWriter writer;
+
+        static Tracer()
+        {
+            Tracer.isFullyTrusted = typeof(Tracer).Assembly.IsFullyTrusted;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Tracer"/> class with the given logical operation name.
@@ -80,11 +83,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <remarks>
         /// If an existing activity id is already set, it will be kept. Otherwise, a new activity id will be created.
         /// </remarks>
-        /// <param name="operation">The operation for the <see cref="Tracer"/></param>
-        /// <param name="writer">The <see cref="LogWriter"/> that is used to write trace messages</param>
-        /// <param name="serviceLocator"><see cref="IServiceLocator"/> used to retrieve the instrumentation provider for this tracer.</param>
-        public Tracer(string operation, LogWriter writer, IServiceLocator serviceLocator) :
-            this(operation, writer, GetTracerInstrumentationProvider(serviceLocator))
+        /// <param name="operation">The operation for the <see cref="Tracer"/>.</param>
+        public Tracer(string operation)
+            : this(operation, Logger.Writer)
         {
         }
 
@@ -92,14 +93,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// Initializes a new instance of the <see cref="Tracer"/> class with the given logical operation name and activity id.
         /// </summary>
         /// <remarks>
-        /// The activity id will override a previous activity id
+        /// The activity id will override a previous activity id.
         /// </remarks>
-        /// <param name="operation">The operation for the <see cref="Tracer"/></param>
-        /// <param name="activityId">The activity id</param>
-        /// <param name="writer">The <see cref="LogWriter"/> that is used to write trace messages</param>
-        /// <param name="serviceLocator"><see cref="IServiceLocator"/> used to retrieve the instrumentation provider for this tracer.</param>
-        public Tracer(string operation, Guid activityId, LogWriter writer, IServiceLocator serviceLocator) :
-            this(operation, activityId, writer, GetTracerInstrumentationProvider(serviceLocator))
+        /// <param name="operation">The operation for the <see cref="Tracer"/>.</param>
+        /// <param name="activityId">The activity id.</param>
+        public Tracer(string operation, Guid activityId)
+            : this(operation, activityId, Logger.Writer)
         {
         }
 
@@ -107,47 +106,52 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// Initializes a new instance of the <see cref="Tracer"/> class with the given logical operation name and activity id.
         /// </summary>
         /// <remarks>
-        /// This is meant to be used internally
+        /// The activity id will override a previous activity id.
         /// </remarks>
-        /// <param name="operation">The operation for the <see cref="Tracer"/></param>
-        /// <param name="activityId">The activity id</param>
-        /// <param name="writer">The <see cref="LogWriter"/> that is used to write trace messages</param>
-        /// <param name="instrumentationProvider">Instrumentation provider to use for firing logical instrumentation events from Tracer.</param>
-        /// <exception cref="ArgumentNullException"></exception>
-        internal Tracer(string operation, Guid activityId, LogWriter writer, ITracerInstrumentationProvider instrumentationProvider)
+        /// <param name="operation">The operation for the <see cref="Tracer"/>.</param>
+        /// <param name="activityId">The activity id.</param>
+        /// <param name="writer">The <see cref="LogWriter"/> that is used to write trace messages.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="writer"/> is <see langword="null"/>.</exception>
+        public Tracer(string operation, Guid activityId, LogWriter writer)
         {
-            this.instrumentationProvider = instrumentationProvider;
+            Guard.ArgumentNotNull(writer, "writer");
+            this.writer = writer;
 
-            if (CheckTracingAvailable())
+            try
             {
-                if (writer == null) throw new ArgumentNullException("writer", Resources.ExceptionWriterShouldNotBeNull);
-
+                this.tracingAvailable = true;
+                CheckPermissionsIfFullyTrusted();
                 this.previousActivityId = GetActivityId();
-                SetActivityId(activityId);
-
-                this.writer = writer;
-
-                Initialize(operation);
             }
+            catch (SecurityException)
+            {
+                this.tracingAvailable = false;
+                return;
+            }
+
+            SetActivityId(activityId);
+
+            Initialize(operation);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Tracer"/> class with the given logical operation name and activity id.
         /// </summary>
         /// <remarks>
-        /// This is meant to be used internally
+        /// If an existing activity id is already set, it will be kept. Otherwise, a new activity id will be created.
         /// </remarks>
-        /// <param name="operation">The operation for the <see cref="Tracer"/></param>
-        /// <param name="writer">The <see cref="LogWriter"/> that is used to write trace messages</param>
-        /// <param name="instrumentationProvider">Instrumentation provider to use for firing logical instrumentation events from Tracer.</param>
-        /// <exception cref="ArgumentNullException"></exception>
-        internal Tracer(string operation, LogWriter writer, ITracerInstrumentationProvider instrumentationProvider)
+        /// <param name="operation">The operation for the <see cref="Tracer"/>.</param>
+        /// <param name="writer">The <see cref="LogWriter"/> that is used to write trace messages.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="writer"/> is <see langword="null"/>.</exception>
+        public Tracer(string operation, LogWriter writer)
         {
-            this.instrumentationProvider = instrumentationProvider;
+            Guard.ArgumentNotNull(writer, "writer");
+            this.writer = writer;
 
-            if (CheckTracingAvailable())
+            try
             {
-                if (writer == null) throw new ArgumentNullException("writer", Resources.ExceptionWriterShouldNotBeNull);
+                this.tracingAvailable = true;
+                CheckPermissionsIfFullyTrusted();
 
                 if (GetActivityId().Equals(Guid.Empty))
                 {
@@ -158,11 +162,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                 {
                     this.previousActivityId = null;
                 }
-
-                this.writer = writer;
-
-                Initialize(operation);
             }
+            catch (SecurityException)
+            {
+                this.tracingAvailable = false;
+                return;
+            }
+
+            Initialize(operation);
         }
 
         /// <summary>
@@ -170,57 +177,74 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// </summary>
         public void Dispose()
         {
-            if (!tracerDisposed)
-            {
-                if (tracingAvailable)
-                {
-                    try
-                    {
-                        if (IsTracingEnabled()) WriteTraceEndMessage(endTitle);
-                    }
-                    finally
-                    {
-                        try
-                        {
-                            StopLogicalOperation();
-                            if (this.previousActivityId != null)
-                            {
-                                SetActivityId(this.previousActivityId.Value);
-                            }
-                        }
-                        catch (SecurityException)
-                        {
-                        }
-                    }
-                }
+            this.Dispose(true);
 
-                tracerDisposed = true;
-            }
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
-        /// Answers whether tracing is enabled
+        /// Indicates whether tracing is enabled
         /// </summary>
-        /// <returns>true if tracing is enabled</returns>
+        /// <returns><see langword="true"/> if tracing is enabled; otherwise, <see langword="false"/>.</returns>
         public bool IsTracingEnabled()
         {
             return GetWriter().IsTracingEnabled();
         }
 
-        private bool CheckTracingAvailable()
+        [SecuritySafeCritical]
+        private static void CheckPermissionsIfFullyTrusted()
         {
-            tracingAvailable = IsTracingAvailable();
+            if (Tracer.isFullyTrusted)
+            {
+                new SecurityPermission(SecurityPermissionFlag.UnmanagedCode).Demand();
+            }
+        }
 
-            return tracingAvailable;
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (!tracerDisposed)
+                {
+                    if (tracingAvailable)
+                    {
+                        try
+                        {
+                            if (this.IsTracingEnabled())
+                            {
+                                WriteTraceEndMessage(endTitle);
+                            }
+                        }
+                        finally
+                        {
+                            try
+                            {
+                                StopLogicalOperation();
+                                if (this.previousActivityId != null)
+                                {
+                                    SetActivityId(this.previousActivityId.Value);
+                                }
+                            }
+                            catch (SecurityException)
+                            {
+                            }
+                        }
+                    }
+
+                    tracerDisposed = true;
+                }
+            }
         }
 
         private void Initialize(string operation)
         {
             StartLogicalOperation(operation);
-            if (IsTracingEnabled())
+            if (this.IsTracingEnabled())
             {
-                instrumentationProvider.FireTraceOperationStarted(PeekLogicalOperationStack() as string);
-
                 stopwatch = Stopwatch.StartNew();
                 tracingStartTicks = Stopwatch.GetTimestamp();
 
@@ -244,8 +268,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             string methodName = GetExecutingMethodName();
             string message = string.Format(CultureInfo.CurrentCulture, Resources.Tracer_EndMessageFormat, GetActivityId(), methodName, tracingEndTicks, secondsElapsed);
             WriteTraceMessage(message, entryTitle, TraceEventType.Stop);
-
-            instrumentationProvider.FireTraceOperationEnded(PeekLogicalOperationStack() as string, stopwatch.ElapsedMilliseconds);
         }
 
         private void WriteTraceMessage(string message, string entryTitle, TraceEventType eventType)
@@ -259,18 +281,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         private string GetExecutingMethodName()
         {
             string result = "Unknown";
-            StackTrace trace = new StackTrace();
+            StackTrace trace = new StackTrace(false);
 
             for (int index = 0; index < trace.FrameCount; ++index)
             {
                 StackFrame frame = trace.GetFrame(index);
                 MethodBase method = frame.GetMethod();
                 Type declaringType = method.DeclaringType;
-#if !SILVERLIGHT
                 if (declaringType != GetType() && declaringType != typeof(TraceManager))
-#else
-                if (declaringType != GetType() && declaringType != typeof(LogWriterImpl))
-#endif
                 {
                     result = string.Concat(method.DeclaringType.FullName, ".", method.Name);
                     break;
@@ -286,31 +304,42 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             return Math.Round(result, 6);
         }
 
+        private LogWriter GetWriter()
+        {
+            return this.writer ?? Logger.Writer;
+        }
+
+        [SecuritySafeCritical]
         private static Guid GetOrCreateActivityId()
         {
             return (Trace.CorrelationManager.ActivityId == Guid.Empty) ? Guid.NewGuid() : Trace.CorrelationManager.ActivityId;
         }
 
+        [SecuritySafeCritical]
         private static Guid GetActivityId()
         {
             return Trace.CorrelationManager.ActivityId;
         }
 
+        [SecuritySafeCritical]
         private static Guid SetActivityId(Guid activityId)
         {
             return Trace.CorrelationManager.ActivityId = activityId;
         }
 
+        [SecuritySafeCritical]
         private static void StartLogicalOperation(string operation)
         {
             Trace.CorrelationManager.StartLogicalOperation(operation);
         }
 
+        [SecuritySafeCritical]
         private static void StopLogicalOperation()
         {
             Trace.CorrelationManager.StopLogicalOperation();
         }
 
+        [SecuritySafeCritical]
         private static object PeekLogicalOperationStack()
         {
             return Trace.CorrelationManager.LogicalOperationStack.Peek();

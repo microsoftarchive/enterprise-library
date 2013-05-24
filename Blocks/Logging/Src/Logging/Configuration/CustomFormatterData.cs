@@ -11,14 +11,14 @@
 
 using System;
 using System.Collections.Specialized;
-using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
+using System.Globalization;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -190,16 +190,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         }
 
         /// <summary>
-        /// Returns the <see cref="TypeRegistration"/> entry for this data section.
+        /// Builds the <see cref="ILogFormatter" /> object represented by this configuration object.
         /// </summary>
-        /// <returns>The type registration for this data section</returns>
-        public override IEnumerable<TypeRegistration> GetRegistrations()
+        /// <returns>
+        /// A formatter.
+        /// </returns>
+        public override ILogFormatter BuildFormatter()
         {
-            yield return 
-                new TypeRegistration(
-                    RegistrationExpressionBuilder.BuildExpression(this.Type, Attributes), 
-                    typeof(ILogFormatter)) 
-                { Name = this.Name, Lifetime = TypeRegistrationLifetime.Transient };
+            return CustomProviderBuildHelper.Build<ILogFormatter, CustomFormatterData>(
+                this,
+                () => Resources.ExceptionCustomFormatterDataHasNoType,
+                () => Resources.ExceptionCustomFormatterDataTypeCannotBeLoaded,
+                () => Resources.ExceptionCustomFormatterDataNotFormatter,
+                () => Resources.ExceptionCustomFormatterTypeDoesNotHaveConstructor);
         }
     }
 }

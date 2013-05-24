@@ -14,11 +14,13 @@ using System.Configuration;
 using System.Data.Common;
 using System.Data.OracleClient;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Tests.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Tests
 {
+#pragma warning disable 612, 618
     [TestClass]
     public class OracleDatabaseFixture
     {
@@ -27,16 +29,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Tests
         [TestInitialize]
         public void SetUp()
         {
+            EnvironmentHelper.AssertOracleClientIsInstalled();
             configurationSource = OracleTestConfigurationSource.CreateConfigurationSource();
         }
 
         [TestMethod]
         public void CanConnectToOracleAndExecuteAReader()
         {
-            OracleDatabase oracleDatabase =
-                EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource)
-                    .GetInstance<OracleDatabase>("OracleTest");
-            
+            var oracleDatabase = new DatabaseSyntheticConfigSettings(this.configurationSource).GetDatabase("OracleTest").BuildDatabase();
+
             DbConnection connection = oracleDatabase.CreateConnection();
             Assert.IsNotNull(connection);
             Assert.IsTrue(connection is OracleConnection);
@@ -68,4 +69,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Tests
             new OracleDatabase(data.ConnectionString, null);
         }
     }
+#pragma warning restore 612, 618
 }

@@ -21,9 +21,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
 {
-    /// <summary>
-    /// Summary description for EntLibLoggingProxyTraceListenerFixture
-    /// </summary>
     [TestClass]
     public class EntLibLoggingProxyTraceListenerFixture
     {
@@ -33,6 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
         public void SetUp()
         {
             proxy = new EntLibLoggingProxyTraceListener();
+            Logger.SetLogWriter(new LogWriterFactory().Create(), false);
             MockTraceListener.Reset();
         }
 
@@ -40,6 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
         public void Teardown()
         {
             proxy.Dispose();
+            Logger.Reset();
         }
 
         [TestMethod]

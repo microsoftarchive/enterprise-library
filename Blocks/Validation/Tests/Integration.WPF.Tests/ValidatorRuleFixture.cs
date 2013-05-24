@@ -12,6 +12,7 @@
 using System;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SWC = System.Windows.Controls;
 
@@ -20,6 +21,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
     [TestClass]
     public class ValidatorRuleFixture
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
+        }
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void CreatingValidatorRuleWithNullBindingExpressionThrows()

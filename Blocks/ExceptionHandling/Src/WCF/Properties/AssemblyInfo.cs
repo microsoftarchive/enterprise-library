@@ -11,11 +11,15 @@
 
 using System.Reflection;
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
 using System.Security;
 
-[assembly : ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
-[assembly : AssemblyTitle("Enterprise Library Exception Handling WCF Provider")]
-[assembly : AssemblyDescription("Enterprise Library Exception Handling WCF Provider")]
-[assembly : AssemblyVersion("5.0.505.0")]
-[assembly : AllowPartiallyTrustedCallers]
-[assembly : SecurityTransparent]
+[assembly: ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
+[assembly: AssemblyTitle("Enterprise Library Exception Handling WCF Provider")]
+[assembly: AssemblyDescription("Enterprise Library Exception Handling WCF Provider")]
+[assembly: AssemblyVersion("6.0.0.0")]
+[assembly: AssemblyFileVersion("6.0.1304.0")]
+
+[assembly: SecurityTransparent]
+
+[assembly: ComVisible(false)]

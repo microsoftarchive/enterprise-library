@@ -9,14 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Configuration;
 using System.Diagnostics;
-using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
@@ -29,15 +25,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     [ResourceDisplayName(typeof(DesignResources), "RollingFlatFileTraceListenerDataDisplayName")]
     public class RollingFlatFileTraceListenerData : TraceListenerData
     {
-        const string FileNamePropertyName = "fileName";
-        const string footerProperty = "footer";
-        const string formatterNameProperty = "formatter";
-        const string headerProperty = "header";
-        const string RollFileExistsBehaviorPropertyName = "rollFileExistsBehavior";
-        const string RollIntervalPropertyName = "rollInterval";
-        const string RollSizeKBPropertyName = "rollSizeKB";
-        const string TimeStampPatternPropertyName = "timeStampPattern";
-        const string MaxArchivedFilesPropertyName = "maxArchivedFiles";
+        private const string FileNamePropertyName = "fileName";
+        private const string footerProperty = "footer";
+        private const string formatterNameProperty = "formatter";
+        private const string headerProperty = "header";
+        private const string RollFileExistsBehaviorPropertyName = "rollFileExistsBehavior";
+        private const string RollIntervalPropertyName = "rollInterval";
+        private const string RollSizeKBPropertyName = "rollSizeKB";
+        private const string TimeStampPatternPropertyName = "timeStampPattern";
+        private const string MaxArchivedFilesPropertyName = "maxArchivedFiles";
 
 
         /// <summary>
@@ -233,19 +229,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         }
 
         /// <summary>
-        /// Returns a lambda expression that represents the creation of the trace listener described by this
-        /// configuration object.
+        /// Builds the <see cref="TraceListener" /> object represented by this configuration object.
         /// </summary>
-        /// <returns>A lambda expression to create a trace listener.</returns>
-        protected override Expression<Func<TraceListener>> GetCreationExpression()
+        /// <param name="settings">The logging configuration settings.</param>
+        /// <returns>
+        /// A trace listener.
+        /// </returns>
+        protected override TraceListener CoreBuildTraceListener(LoggingSettings settings)
         {
-            return
-                () =>
-                    new RollingFlatFileTraceListener(
+            var formatter = this.BuildFormatterSafe(settings, this.Formatter);
+
+            return new RollingFlatFileTraceListener(
                         this.FileName,
                         this.Header,
                         this.Footer,
-                        Container.ResolvedIfNotNull<ILogFormatter>(this.Formatter),
+                        formatter,
                         this.RollSizeKB,
                         this.TimeStampPattern,
                         this.RollFileExistsBehavior,

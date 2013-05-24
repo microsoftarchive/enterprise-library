@@ -32,8 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
 
                 listener.Filter = new EventTypeFilter(SourceLevels.Off);
 
-                LogSource source = new LogSource("notfromconfig", SourceLevels.All);
-                source.Listeners.Add(listener);
+                LogSource source = new LogSource("notfromconfig", new[] { listener }, SourceLevels.All);
 
                 source.TraceData(TraceEventType.Error, 0, new LogEntry("message", "cat1", 0, 0, TraceEventType.Error, "title", null));
 
@@ -50,8 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
 
                 listener.Filter = new EventTypeFilter(SourceLevels.Error);
 
-                LogSource source = new LogSource("notfromconfig", SourceLevels.All);
-                source.Listeners.Add(listener);
+                LogSource source = new LogSource("notfromconfig", new[] { listener }, SourceLevels.All);
 
                 source.TraceData(TraceEventType.Error, 0, new LogEntry("message", "cat1", 0, 0, TraceEventType.Critical, "title", null));
 
@@ -67,8 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
                 FormattedTextWriterTraceListener listener = new FormattedTextWriterTraceListener(writer, new TextFormatter("DUMMY{newline}DUMMY"));
 
                 // need to go through the source to get a TraceEventCache
-                LogSource source = new LogSource("notfromconfig", SourceLevels.All);
-                source.Listeners.Add(listener);
+                LogSource source = new LogSource("notfromconfig", new[] { listener }, SourceLevels.All);
                 source.TraceData(TraceEventType.Error, 0, new LogEntry("message", "cat1", 0, 0, TraceEventType.Error, "title", null));
 
                 Assert.AreEqual("DUMMY" + Environment.NewLine + "DUMMY", writer.ToString());
@@ -84,8 +81,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
                 FormattedTextWriterTraceListener listener = new FormattedTextWriterTraceListener(writer);
 
                 // need to go through the source to get a TraceEventCache
-                LogSource source = new LogSource("notfromconfig", SourceLevels.All);
-                source.Listeners.Add(listener);
+                LogSource source = new LogSource("notfromconfig", new[] { listener }, SourceLevels.All);
                 source.TraceData(TraceEventType.Error, 0, testEntry);
 
                 string writtenData = writer.ToString();

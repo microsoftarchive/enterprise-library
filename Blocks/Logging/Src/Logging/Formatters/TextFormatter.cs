@@ -11,17 +11,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Security;
 using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
-#if !SILVERLIGHT
-using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-#else
-using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
-#endif
+using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
 {
@@ -36,9 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
     /// <seealso cref="GenericTextFormatter{T}"/>
     /// <seealso cref="TokenHandler{T}"/>
     /// <seealso cref="Formatter{T}"/>
-#if !SILVERLIGHT
     [ConfigurationElementType(typeof(TextFormatterData))]
-#endif
     public class TextFormatter : LogFormatter
     {
         private const string TimestampLocalStartDelimiter = "local";
@@ -68,16 +63,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
                 = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler("\t");
 
             // cached values
-            defaultTokenHandlers["localAppDomain"]
-                            = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntryContext.GetAppDomainNameSafe());
-#if !SILVERLIGHT
             defaultTokenHandlers["localMachine"]
                 = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntryContext.GetMachineNameSafe());
             defaultTokenHandlers["localProcessName"]
                             = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntryContext.GetProcessNameSafe());
+            defaultTokenHandlers["localAppDomain"]
+                            = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntryContext.GetAppDomainNameSafe());
             defaultTokenHandlers["localProcessId"]
                             = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntryContext.GetProcessIdSafe());
-#endif
 
             // simple properties on log entry
             defaultTokenHandlers["message"]
@@ -95,22 +88,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
             defaultTokenHandlers["errorMessages"]
                 = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.ErrorMessages);
 
-            defaultTokenHandlers["appDomain"]
-                = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.AppDomainName);
-            defaultTokenHandlers["threadName"]
-                = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.ManagedThreadName);
-            defaultTokenHandlers["activity"]
-                = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.ActivityId.ToString("D", CultureInfo.CurrentCulture));
-#if !SILVERLIGHT
             defaultTokenHandlers["machine"]
                 = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.MachineName);
+            defaultTokenHandlers["appDomain"]
+                = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.AppDomainName);
             defaultTokenHandlers["processId"]
                 = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.ProcessId);
             defaultTokenHandlers["processName"]
                 = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.ProcessName);
+            defaultTokenHandlers["threadName"]
+                = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.ManagedThreadName);
             defaultTokenHandlers["win32ThreadId"]
                 = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.Win32ThreadId);
-#endif
+            defaultTokenHandlers["activity"]
+                = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.ActivityId.ToString("D", CultureInfo.CurrentCulture));
 
             // parameterized tokens
             defaultTokenHandlers["timestamp"]
@@ -143,6 +134,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
         /// </summary>
         /// <param name="template">Template to be used when formatting.</param>
         /// <param name="extraTokenHandlers">The additional token handlers to use when processing the template.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "As designed")]
         protected TextFormatter(string template, IDictionary<string, TokenHandler<LogEntry>> extraTokenHandlers)
         {
             if (!string.IsNullOrEmpty(template))
@@ -175,12 +167,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
             bool isLocal = false;
             string format = parameter;
 
-            if (parameter.Equals(TimestampLocalStartDelimiter, StringComparison.InvariantCultureIgnoreCase))
+            if (parameter.Equals(TimestampLocalStartDelimiter, StringComparison.OrdinalIgnoreCase))
             {
                 format = string.Empty;
                 isLocal = true;
             }
-            else if (parameter.StartsWith(TimestampLocalStartDelimiterWithFormat, StringComparison.InvariantCultureIgnoreCase))
+            else if (parameter.StartsWith(TimestampLocalStartDelimiterWithFormat, StringComparison.OrdinalIgnoreCase))
             {
                 format
                     = parameter.Substring(TimestampLocalStartDelimiterWithFormat.Length, parameter.Length - TimestampLocalStartDelimiterWithFormat.Length);
@@ -360,7 +352,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
                     object value = property.GetValue(le, null);
                     return value != null ? value.ToString() : string.Empty;
                 }
-                catch
+                catch (ArgumentException)
+                {
+                    return String.Format(CultureInfo.CurrentCulture, Resources.ReflectedPropertyTokenException, parameter);
+                }
+                catch (TargetException)
+                {
+                    return String.Format(CultureInfo.CurrentCulture, Resources.ReflectedPropertyTokenException, parameter);
+                }
+                catch (MethodAccessException)
+                {
+                    return String.Format(CultureInfo.CurrentCulture, Resources.ReflectedPropertyTokenException, parameter);
+                }
+                catch (TargetInvocationException)
+                {
+                    return String.Format(CultureInfo.CurrentCulture, Resources.ReflectedPropertyTokenException, parameter);
+                }
+                catch (SecurityException)
                 {
                     return String.Format(CultureInfo.CurrentCulture, Resources.ReflectedPropertyTokenException, parameter);
                 }
@@ -490,11 +498,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
         /// </summary>
         public static string DefaultTextFormat
         {
-#if !SILVERLIGHT
-            get { return Resources_Desktop.DefaultTextFormat; }
-#else
-            get { return Resources.DefaultTextFormatShort; }
-#endif
+            get { return Resources.DefaultTextFormat; }
         }
     }
 }

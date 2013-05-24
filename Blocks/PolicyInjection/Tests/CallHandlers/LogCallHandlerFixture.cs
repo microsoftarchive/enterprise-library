@@ -10,13 +10,9 @@
 //===============================================================================
 
 using System;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
@@ -54,13 +50,19 @@ Exception: @@BEGIN EXCEPTION@@{{property(Exception)}}@@END EXCEPTION@@{{newline}
 Call Stack: @@BEGIN CALL STACK@@{{property(CallStack)}}@@END CALL STACK@@{{newline}}",
                 beginCallTimeMarker, endCallTimeMarker);
 
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            Logger.Reset();
+        }
 
         [TestMethod]
-        [DeploymentItem("LogCallHandler.config")]
         public void ShouldLogOnlyToCategoriesGivenInConfig()
         {
             using (var configSource = new FileConfigurationSource("LogCallHandler.config", false))
             {
+                Logger.SetLogWriter(new LogWriterFactory(configSource.GetSection).Create(), false);
+
                 using (var eventLog = new EventLogTracker("Application"))
                 {
                     using (var injector = new PolicyInjector(configSource))
@@ -75,11 +77,12 @@ Call Stack: @@BEGIN CALL STACK@@{{property(CallStack)}}@@END CALL STACK@@{{newli
         }
 
         [TestMethod]
-        [DeploymentItem("LogCallHandler.config")]
         public void AssembledCorrectlyLogCallHandler()
         {
             using (var configSource = new FileConfigurationSource("LogCallHandler.config", false))
             {
+                Logger.SetLogWriter(new LogWriterFactory(configSource.GetSection).Create(), false);
+
                 PolicyInjectionSettings settings = new PolicyInjectionSettings();
 
                 PolicyData policyData = new PolicyData("policy");
@@ -94,25 +97,24 @@ Call Stack: @@BEGIN CALL STACK@@{{property(CallStack)}}@@END CALL STACK@@{{newli
                 policyData.Handlers.Add(data);
                 settings.Policies.Add(policyData);
 
-                IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
-                settings.ConfigureContainer(container, configSource);
-                new UnityContainerConfigurator(container)
-                    .RegisterAll(configSource,
-                    (ITypeRegistrationsProvider)configSource.GetSection(LoggingSettings.SectionName));
+                using (var container = new UnityContainer().AddNewExtension<Interception>())
+                {
+                    settings.ConfigureContainer(container);
 
-                InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("policy");
+                    var policy = container.Resolve<InjectionPolicy>("policy");
 
-                LogCallHandler handler = (LogCallHandler)
-                    (policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
-                Assert.IsNotNull(handler);
-                Assert.AreEqual(66, handler.Order);
-                Assert.AreEqual("before", handler.BeforeMessage);
-                Assert.AreEqual("after", handler.AfterMessage);
-                Assert.AreEqual(true, handler.IncludeCallTime);
-                Assert.AreEqual(100, handler.EventId);
-                Assert.AreEqual(2, handler.Categories.Count);
-                CollectionAssert.Contains(handler.Categories, "category1");
-                CollectionAssert.Contains(handler.Categories, "category2");
+                    LogCallHandler handler = (LogCallHandler)
+                        (policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
+                    Assert.IsNotNull(handler);
+                    Assert.AreEqual(66, handler.Order);
+                    Assert.AreEqual("before", handler.BeforeMessage);
+                    Assert.AreEqual("after", handler.AfterMessage);
+                    Assert.AreEqual(true, handler.IncludeCallTime);
+                    Assert.AreEqual(100, handler.EventId);
+                    Assert.AreEqual(2, handler.Categories.Count);
+                    CollectionAssert.Contains(handler.Categories, "category1");
+                    CollectionAssert.Contains(handler.Categories, "category2");
+                }
             }
         }
 

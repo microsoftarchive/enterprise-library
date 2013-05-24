@@ -28,8 +28,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         DictionaryConfigurationSource configurationSource;
 
         [TestInitialize]
-        public void SetUp()
+        public void TestInitialize()
         {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
             mockFactory = new MockMemberAccessValidatorBuilderFactory();
             configurationSource = new DictionaryConfigurationSource();
             builder =
@@ -39,10 +40,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
                     ValidationFactory.DefaultCompositeValidatorFactory);
         }
 
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
+        }
+
         [TestMethod]
         public void CreateValidatorForPropertyReferenceWithoutValidatorsReturnsNull()
         {
-            ValidatedPropertyReference propertyReference = new ValidatedPropertyReference { Name = "PublicProperty" };
+            ValidatedPropertyReference propertyReference = new ValidatedPropertyReference("PublicProperty");
 
             Validator validator = builder.CreateValidatorForProperty(typeof(TestClass), propertyReference);
 
@@ -52,7 +59,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForNonPublicPropertyReferenceWithValidatorsReturnsNull()
         {
-            ValidatedPropertyReference propertyReference = new ValidatedPropertyReference { Name = "NonPublicProperty" };
+            ValidatedPropertyReference propertyReference = new ValidatedPropertyReference("NonPublicProperty");
             propertyReference.Validators.Add(new MockValidatorData("validator1", false));
             propertyReference.Validators.Get("validator1").MessageTemplate = "validator 1 message";
             propertyReference.Validators.Add(new MockValidatorData("validator2", false));
@@ -67,7 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForWriteOnlyPropertyReferenceWithValidatorsReturnsNull()
         {
-            ValidatedPropertyReference propertyReference = new ValidatedPropertyReference { Name = "WriteOnlyPublicProperty" };
+            ValidatedPropertyReference propertyReference = new ValidatedPropertyReference("WriteOnlyPublicProperty");
             propertyReference.Validators.Add(new MockValidatorData("validator1", false));
             propertyReference.Validators.Get("validator1").MessageTemplate = "validator 1 message";
             propertyReference.Validators.Add(new MockValidatorData("validator2", false));
@@ -82,7 +89,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForPropertyReferenceWithValidatorsReturnsValueAccessValidator()
         {
-            ValidatedPropertyReference propertyReference = new ValidatedPropertyReference { Name = "PublicProperty" };
+            ValidatedPropertyReference propertyReference = new ValidatedPropertyReference("PublicProperty");
             propertyReference.Validators.Add(new MockValidatorData("validator1", false));
             propertyReference.Validators.Get("validator1").MessageTemplate = "validator 1 message";
             propertyReference.Validators.Add(new MockValidatorData("validator2", false));
@@ -102,7 +109,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForFieldReferenceWithoutValidatorsReturnsNull()
         {
-            ValidatedFieldReference fieldReference = new ValidatedFieldReference { Name = "PublicField" };
+            ValidatedFieldReference fieldReference = new ValidatedFieldReference("PublicField");
 
             Validator validator = builder.CreateValidatorForField(typeof(TestClass), fieldReference);
 
@@ -112,7 +119,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForNonPublicFieldReferenceWithValidatorsReturnsNull()
         {
-            ValidatedFieldReference fieldReference = new ValidatedFieldReference { Name = "NonPublicField" };
+            ValidatedFieldReference fieldReference = new ValidatedFieldReference("NonPublicField");
             fieldReference.Validators.Add(new MockValidatorData("validator1", false));
             fieldReference.Validators.Get("validator1").MessageTemplate = "validator 1 message";
             fieldReference.Validators.Add(new MockValidatorData("validator2", false));
@@ -127,7 +134,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForFieldReferenceWithValidatorsReturnsValueAccessValidator()
         {
-            ValidatedFieldReference fieldReference = new ValidatedFieldReference { Name = "PublicField" };
+            ValidatedFieldReference fieldReference = new ValidatedFieldReference("PublicField");
             fieldReference.Validators.Add(new MockValidatorData("validator1", false));
             fieldReference.Validators.Get("validator1").MessageTemplate = "validator 1 message";
             fieldReference.Validators.Add(new MockValidatorData("validator2", false));
@@ -147,7 +154,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForMethodReferenceWithoutValidatorsReturnsNull()
         {
-            ValidatedMethodReference methodReference = new ValidatedMethodReference { Name = "PublicMethod" };
+            ValidatedMethodReference methodReference = new ValidatedMethodReference("PublicMethod");
 
             Validator validator = builder.CreateValidatorForMethod(typeof(TestClass), methodReference);
 
@@ -157,7 +164,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForNonPublicMethodReferenceWithValidatorsReturnsNull()
         {
-            ValidatedMethodReference methodReference = new ValidatedMethodReference { Name = "NonPublicMethod" };
+            ValidatedMethodReference methodReference = new ValidatedMethodReference("NonPublicMethod");
             methodReference.Validators.Add(new MockValidatorData("validator1", false));
             methodReference.Validators.Get("validator1").MessageTemplate = "validator 1 message";
             methodReference.Validators.Add(new MockValidatorData("validator2", false));
@@ -172,7 +179,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForVoidMethodReferenceWithValidatorsReturnsNull()
         {
-            ValidatedMethodReference methodReference = new ValidatedMethodReference { Name = "PublicVoidMethod" };
+            ValidatedMethodReference methodReference = new ValidatedMethodReference("PublicVoidMethod");
             methodReference.Validators.Add(new MockValidatorData("validator1", false));
             methodReference.Validators.Get("validator1").MessageTemplate = "validator 1 message";
             methodReference.Validators.Add(new MockValidatorData("validator2", false));
@@ -187,7 +194,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForMethodWithArgumentsReferenceWithValidatorsReturnsNull()
         {
-            ValidatedMethodReference methodReference = new ValidatedMethodReference { Name = "PublicMethodWithArguments" };
+            ValidatedMethodReference methodReference = new ValidatedMethodReference("PublicMethodWithArguments");
             methodReference.Validators.Add(new MockValidatorData("validator1", false));
             methodReference.Validators.Get("validator1").MessageTemplate = "validator 1 message";
             methodReference.Validators.Add(new MockValidatorData("validator2", false));
@@ -202,7 +209,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForMethodReferenceWithValidatorsReturnsValueAccessValidator()
         {
-            ValidatedMethodReference methodReference = new ValidatedMethodReference { Name = "PublicMethod" };
+            ValidatedMethodReference methodReference = new ValidatedMethodReference("PublicMethod");
             methodReference.Validators.Add(new MockValidatorData("validator1", false));
             methodReference.Validators.Get("validator1").MessageTemplate = "validator 1 message";
             methodReference.Validators.Add(new MockValidatorData("validator2", false));
@@ -236,9 +243,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void CreateValidatorForRuleWithPropertyReferenceReturnsCompositeValidatorWithPropertyValueAccess()
         {
             ValidationRulesetData ruleData = new ValidationRulesetData();
-            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference { Name = "PublicProperty" };
+            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference("PublicProperty");
             ruleData.Properties.Add(propertyReference1);
-            ValidatedPropertyReference propertyReference2 = new ValidatedPropertyReference { Name = "SecondPublicProperty" };
+            ValidatedPropertyReference propertyReference2 = new ValidatedPropertyReference("SecondPublicProperty");
             ruleData.Properties.Add(propertyReference2);
             propertyReference1.Validators.Add(new MockValidatorData("validator1", false));
             propertyReference1.Validators.Get("validator1").MessageTemplate = "validator 1 message";
@@ -266,9 +273,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void CreateValidatorForRuleWithInvalidPropertyReferenceIgnoresInvalidProperty()
         {
             ValidationRulesetData ruleData = new ValidationRulesetData();
-            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference { Name = "PublicProperty" };
+            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference("PublicProperty");
             ruleData.Properties.Add(propertyReference1);
-            ValidatedPropertyReference propertyReference2 = new ValidatedPropertyReference { Name = "NonPublicProperty" };
+            ValidatedPropertyReference propertyReference2 = new ValidatedPropertyReference("NonPublicProperty");
             ruleData.Properties.Add(propertyReference2);
             propertyReference1.Validators.Add(new MockValidatorData("validator1", false));
             propertyReference1.Validators.Get("validator1").MessageTemplate = "validator 1 message";
@@ -289,9 +296,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void CreateValidatorForRuleWithFieldReferenceReturnsCompositeValidatorWithFieldValueAccess()
         {
             ValidationRulesetData ruleData = new ValidationRulesetData();
-            ValidatedFieldReference fieldReference1 = new ValidatedFieldReference { Name = "PublicField" };
+            ValidatedFieldReference fieldReference1 = new ValidatedFieldReference("PublicField");
             ruleData.Fields.Add(fieldReference1);
-            ValidatedFieldReference fieldReference2 = new ValidatedFieldReference { Name = "SecondPublicField" };
+            ValidatedFieldReference fieldReference2 = new ValidatedFieldReference("SecondPublicField");
             ruleData.Fields.Add(fieldReference2);
             fieldReference1.Validators.Add(new MockValidatorData("validator1", false));
             fieldReference1.Validators.Get("validator1").MessageTemplate = "validator 1 message";
@@ -319,9 +326,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void CreateValidatorForRuleWithInvalidFieldReferenceIgnoresInvalidField()
         {
             ValidationRulesetData ruleData = new ValidationRulesetData();
-            ValidatedFieldReference fieldReference1 = new ValidatedFieldReference { Name = "PublicField" };
+            ValidatedFieldReference fieldReference1 = new ValidatedFieldReference("PublicField");
             ruleData.Fields.Add(fieldReference1);
-            ValidatedFieldReference fieldReference2 = new ValidatedFieldReference { Name = "NonPublicField" };
+            ValidatedFieldReference fieldReference2 = new ValidatedFieldReference("NonPublicField");
             ruleData.Fields.Add(fieldReference2);
             fieldReference1.Validators.Add(new MockValidatorData("validator1", false));
             fieldReference1.Validators.Get("validator1").MessageTemplate = "validator 1 message";
@@ -341,9 +348,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void CreateValidatorForRuleWithMethodReferenceReturnsCompositeValidatorWithMethodValueAccess()
         {
             ValidationRulesetData ruleData = new ValidationRulesetData();
-            ValidatedMethodReference methodReference1 = new ValidatedMethodReference { Name = "PublicMethod" };
+            ValidatedMethodReference methodReference1 = new ValidatedMethodReference("PublicMethod");
             ruleData.Methods.Add(methodReference1);
-            ValidatedMethodReference methodReference2 = new ValidatedMethodReference { Name = "SecondPublicMethod" };
+            ValidatedMethodReference methodReference2 = new ValidatedMethodReference("SecondPublicMethod");
             ruleData.Methods.Add(methodReference2);
             methodReference1.Validators.Add(new MockValidatorData("validator1", false));
             methodReference1.Validators.Get("validator1").MessageTemplate = "validator 1 message";
@@ -371,9 +378,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void CreateValidatorForRuleWithInvalidMethodReferenceIgnoresInvalidMethod()
         {
             ValidationRulesetData ruleData = new ValidationRulesetData();
-            ValidatedMethodReference methodReference1 = new ValidatedMethodReference { Name = "PublicMethod" };
+            ValidatedMethodReference methodReference1 = new ValidatedMethodReference("PublicMethod");
             ruleData.Methods.Add(methodReference1);
-            ValidatedMethodReference methodReference2 = new ValidatedMethodReference { Name = "NonPublicMethod" };
+            ValidatedMethodReference methodReference2 = new ValidatedMethodReference("NonPublicMethod");
             ruleData.Methods.Add(methodReference2);
             methodReference1.Validators.Add(new MockValidatorData("validator1", false));
             methodReference1.Validators.Get("validator1").MessageTemplate = "validator 1 message";
@@ -406,11 +413,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void CreateValidatorForExistingRuleReturnsNonEmptyValidatorBasedOnRuleDefinition()
         {
             ValidatedTypeReference typeReference = new ValidatedTypeReference();
-            ValidationRulesetData ruleData = new ValidationRulesetData { Name = "ruleset1" };
+            ValidationRulesetData ruleData = new ValidationRulesetData("ruleset1");
             typeReference.Rulesets.Add(ruleData);
-            ValidatedMethodReference methodReference1 = new ValidatedMethodReference { Name = "PublicMethod" };
+            ValidatedMethodReference methodReference1 = new ValidatedMethodReference("PublicMethod");
             ruleData.Methods.Add(methodReference1);
-            ValidatedMethodReference methodReference2 = new ValidatedMethodReference { Name = "NonPublicMethod" };
+            ValidatedMethodReference methodReference2 = new ValidatedMethodReference("NonPublicMethod");
             ruleData.Methods.Add(methodReference2);
             methodReference1.Validators.Add(new MockValidatorData("validator1", false));
             methodReference1.Validators.Get("validator1").MessageTemplate = "validator 1 message";
@@ -429,12 +436,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForExistingTypeReturnsNonEmptyValidatorBasedOnRuleDefinition()
         {
-            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(TestClass));
-            ValidationRulesetData ruleData = new ValidationRulesetData { Name = "ruleset1" };
+            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestClass));
+            ValidationRulesetData ruleData = new ValidationRulesetData("ruleset1");
             typeReference.Rulesets.Add(ruleData);
-            ValidatedMethodReference methodReference1 = new ValidatedMethodReference { Name = "PublicMethod" };
+            ValidatedMethodReference methodReference1 = new ValidatedMethodReference("PublicMethod");
             ruleData.Methods.Add(methodReference1);
-            ValidatedMethodReference methodReference2 = new ValidatedMethodReference { Name = "NonPublicMethod" };
+            ValidatedMethodReference methodReference2 = new ValidatedMethodReference("NonPublicMethod");
             ruleData.Methods.Add(methodReference2);
             methodReference1.Validators.Add(new MockValidatorData("validator1", false));
             methodReference1.Validators.Get("validator1").MessageTemplate = "validator 1 message";
@@ -453,13 +460,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForDefaultRuleForExistingTypeReturnsNonEmptyValidatorBasedOnDefaultRuleDefinition()
         {
-            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(TestClass));
+            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestClass));
             typeReference.DefaultRuleset = "ruleset1";
-            ValidationRulesetData ruleData = new ValidationRulesetData { Name = "ruleset1" };
+            ValidationRulesetData ruleData = new ValidationRulesetData("ruleset1");
             typeReference.Rulesets.Add(ruleData);
-            ValidatedMethodReference methodReference1 = new ValidatedMethodReference { Name = "PublicMethod" };
+            ValidatedMethodReference methodReference1 = new ValidatedMethodReference("PublicMethod");
             ruleData.Methods.Add(methodReference1);
-            ValidatedMethodReference methodReference2 = new ValidatedMethodReference { Name = "NonPublicMethod" };
+            ValidatedMethodReference methodReference2 = new ValidatedMethodReference("NonPublicMethod");
             ruleData.Methods.Add(methodReference2);
             methodReference1.Validators.Add(new MockValidatorData("validator1", false));
             methodReference1.Validators.Get("validator1").MessageTemplate = "validator 1 message";
@@ -478,12 +485,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForDefaultRuleForExistingTypeWithoutDefaultRuleSetReturnsEmptyValidator()
         {
-            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(TestClass));
-            ValidationRulesetData ruleData = new ValidationRulesetData { Name = "ruleset1" };
+            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestClass));
+            ValidationRulesetData ruleData = new ValidationRulesetData("ruleset1");
             typeReference.Rulesets.Add(ruleData);
-            ValidatedMethodReference methodReference1 = new ValidatedMethodReference { Name = "PublicMethod" };
+            ValidatedMethodReference methodReference1 = new ValidatedMethodReference("PublicMethod");
             ruleData.Methods.Add(methodReference1);
-            ValidatedMethodReference methodReference2 = new ValidatedMethodReference { Name = "NonPublicMethod" };
+            ValidatedMethodReference methodReference2 = new ValidatedMethodReference("NonPublicMethod");
             ruleData.Methods.Add(methodReference2);
             methodReference1.Validators.Add(new MockValidatorData("validator1", false));
             methodReference1.Validators.Get("validator1").MessageTemplate = "validator 1 message";
@@ -502,13 +509,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForDefaultRuleForExistingTypeNonExistingDefaultRuleSetReturnsEmptyValidator()
         {
-            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(TestClass));
+            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestClass));
             typeReference.DefaultRuleset = "ruleset2";
-            ValidationRulesetData ruleData = new ValidationRulesetData { Name = "ruleset1" };
+            ValidationRulesetData ruleData = new ValidationRulesetData("ruleset1");
             typeReference.Rulesets.Add(ruleData);
-            ValidatedMethodReference methodReference1 = new ValidatedMethodReference { Name = "PublicMethod" };
+            ValidatedMethodReference methodReference1 = new ValidatedMethodReference("PublicMethod");
             ruleData.Methods.Add(methodReference1);
-            ValidatedMethodReference methodReference2 = new ValidatedMethodReference { Name = "NonPublicMethod" };
+            ValidatedMethodReference methodReference2 = new ValidatedMethodReference("NonPublicMethod");
             ruleData.Methods.Add(methodReference2);
             methodReference1.Validators.Add(new MockValidatorData("validator1", false));
             methodReference1.Validators.Get("validator1").MessageTemplate = "validator 1 message";
@@ -571,13 +578,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationSettings settings = new ValidationSettings();
             configurationSource.Add(ValidationSettings.SectionName, settings);
-            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(TestClass));
+            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestClass));
             settings.Types.Add(typeReference);
-            ValidationRulesetData ruleData = new ValidationRulesetData { Name = "ruleset1" };
+            ValidationRulesetData ruleData = new ValidationRulesetData("ruleset1");
             typeReference.Rulesets.Add(ruleData);
-            ValidatedMethodReference methodReference1 = new ValidatedMethodReference { Name = "PublicMethod" };
+            ValidatedMethodReference methodReference1 = new ValidatedMethodReference("PublicMethod");
             ruleData.Methods.Add(methodReference1);
-            ValidatedMethodReference methodReference2 = new ValidatedMethodReference { Name = "NonPublicMethod" };
+            ValidatedMethodReference methodReference2 = new ValidatedMethodReference("NonPublicMethod");
             ruleData.Methods.Add(methodReference2);
             methodReference1.Validators.Add(new MockValidatorData("validator1", false));
             methodReference1.Validators.Get("validator1").MessageTemplate = "validator 1 message";
@@ -605,14 +612,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationSettings settings = new ValidationSettings();
             configurationSource.Add(ValidationSettings.SectionName, settings);
-            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(TestClass));
+            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestClass));
             settings.Types.Add(typeReference);
             typeReference.DefaultRuleset = "ruleset1";
-            ValidationRulesetData ruleData = new ValidationRulesetData { Name = "ruleset1" };
+            ValidationRulesetData ruleData = new ValidationRulesetData("ruleset1");
             typeReference.Rulesets.Add(ruleData);
-            ValidatedMethodReference methodReference1 = new ValidatedMethodReference { Name = "PublicMethod" };
+            ValidatedMethodReference methodReference1 = new ValidatedMethodReference("PublicMethod");
             ruleData.Methods.Add(methodReference1);
-            ValidatedMethodReference methodReference2 = new ValidatedMethodReference { Name = "NonPublicMethod" };
+            ValidatedMethodReference methodReference2 = new ValidatedMethodReference("NonPublicMethod");
             ruleData.Methods.Add(methodReference2);
             methodReference1.Validators.Add(new MockValidatorData("validator1", false));
             methodReference1.Validators.Get("validator1").MessageTemplate = "validator 1 message";
@@ -640,13 +647,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationSettings settings = new ValidationSettings();
             configurationSource.Add(ValidationSettings.SectionName, settings);
-            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(TestClass));
+            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestClass));
             settings.Types.Add(typeReference);
-            ValidationRulesetData ruleData = new ValidationRulesetData { Name = "ruleset1" };
+            ValidationRulesetData ruleData = new ValidationRulesetData("ruleset1");
             typeReference.Rulesets.Add(ruleData);
-            ValidatedMethodReference methodReference1 = new ValidatedMethodReference { Name = "PublicMethod" };
+            ValidatedMethodReference methodReference1 = new ValidatedMethodReference("PublicMethod");
             ruleData.Methods.Add(methodReference1);
-            ValidatedMethodReference methodReference2 = new ValidatedMethodReference { Name = "NonPublicMethod" };
+            ValidatedMethodReference methodReference2 = new ValidatedMethodReference("NonPublicMethod");
             ruleData.Methods.Add(methodReference2);
             methodReference1.Validators.Add(new MockValidatorData("validator1", false));
             methodReference1.Validators.Get("validator1").MessageTemplate = "validator 1 message";
@@ -672,7 +679,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForTypeWithoutValidatorConfigurationReturnsNull()
         {
-            ValidationRulesetData ruleData = new ValidationRulesetData { Name = "ruleset1" };
+            ValidationRulesetData ruleData = new ValidationRulesetData("ruleset1");
             Validator validator = builder.CreateValidatorForType(typeof(TestClass), ruleData);
 
             Assert.IsNull(validator);
@@ -681,7 +688,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CanCreateValidatorForTypeWithMultipleValidatorConfigurations()
         {
-            ValidationRulesetData ruleData = new ValidationRulesetData { Name = "ruleset1" };
+            ValidationRulesetData ruleData = new ValidationRulesetData("ruleset1");
             ruleData.Validators.Add(new MockValidatorData("validator1", false));
             ruleData.Validators.Get("validator1").MessageTemplate = "validator 1 message";
             ruleData.Validators.Add(new MockValidatorData("validator2", false));
@@ -708,10 +715,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationSettings settings = new ValidationSettings();
             configurationSource.Add(ValidationSettings.SectionName, settings);
-            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(TestClass));
+            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestClass));
             settings.Types.Add(typeReference);
             typeReference.DefaultRuleset = "RuleB";
-            ValidationRulesetData ruleDataA = new ValidationRulesetData { Name = "RuleA" };
+            ValidationRulesetData ruleDataA = new ValidationRulesetData("RuleA");
             typeReference.Rulesets.Add(ruleDataA);
             ruleDataA.Validators.Add(new MockValidatorData("validator1", false));
             ruleDataA.Validators.Get("validator1").MessageTemplate = "Message1-RuleA";
@@ -719,7 +726,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             ruleDataA.Validators.Get("validator2").MessageTemplate = "Message2-RuleA";
             ruleDataA.Validators.Add(new MockValidatorData("validator3", false));
             ruleDataA.Validators.Get("validator3").MessageTemplate = "Message3-RuleA";
-            ValidationRulesetData ruleDataB = new ValidationRulesetData { Name = "RuleB" };
+            ValidationRulesetData ruleDataB = new ValidationRulesetData("RuleB");
             typeReference.Rulesets.Add(ruleDataB);
             ruleDataB.Validators.Add(new MockValidatorData("validator1", false));
             ruleDataB.Validators.Get("validator1").MessageTemplate = "Message1-RuleB";

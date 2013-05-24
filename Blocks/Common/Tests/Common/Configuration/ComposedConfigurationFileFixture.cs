@@ -22,9 +22,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
 {
-
-    [DeploymentItem(@"ComposedConfigurationFile.config")]
-    [DeploymentItem(@"ExternalFileSource.config")]
     public abstract class Given_ConfigurationFileWithSectionsInOtherConfigurationSources : ArrangeActAssert
     {
         protected string LocaldummySectionName = "localdummy";
@@ -37,6 +34,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         protected override void Arrange()
         {
             CompositeSource = new FileConfigurationSource(@"ComposedConfigurationFile.config");
+        }
+
+        protected override void Teardown()
+        {
+            using (CompositeSource) { }
         }
     }
 
@@ -97,8 +99,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
                                         });
 
             TestConfigurationSource.ConfigurationSourceContents = customSourceContents;
-
-
         }
 
         protected override void Act()
@@ -153,6 +153,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
 
         protected override void Teardown()
         {
+            base.Teardown();
+
             File.WriteAllText(@"ExternalFileSource.config", originalConfigurationFileContents);
         }
     }
@@ -188,8 +190,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         {
             originalConfigurationFileContents = File.ReadAllText(@"ExternalFileSource.config");
 
-            FileConfigurationSource externalConfigurationFileSource = new FileConfigurationSource(@"ExternalFileSource.config");
-            externalConfigurationFileSource.Save(FileSourceDummySectionName, new DummySection { });
+            using (var externalConfigurationFileSource = new FileConfigurationSource(@"ExternalFileSource.config"))
+            {
+                externalConfigurationFileSource.Save(FileSourceDummySectionName, new DummySection { });
+            }
 
             base.Arrange();
         }
@@ -207,6 +211,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
 
         protected override void Teardown()
         {
+            base.Teardown();
+
             File.WriteAllText(@"ExternalFileSource.config", originalConfigurationFileContents);
         }
     }
@@ -218,56 +224,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         string originalConfigurationFileContents;
         int sourceChangedEvents = 0;
         int sectionChangedEvents = 0;
-        
-        // Quick & dirty sync object to work around lack of WaitHandle.WaitAll in STA threads.
-        private class Multiwaiter : IDisposable
-        {
-            private readonly int totalToWait = 0;
-            private int releases = 0;
-            private ManualResetEvent waitOnMe = new ManualResetEvent(false);
-            private readonly object padlock = new object();
-
-            public Multiwaiter(int numberOfReleasesToWaitOn)
-            {
-                totalToWait = numberOfReleasesToWaitOn;
-            }
-
-            public void Dispose()
-            {
-                if(waitOnMe != null)
-                {
-                    waitOnMe.Close();
-                    waitOnMe = null;
-                }
-            }
-
-            public void Release()
-            {
-                lock(padlock)
-                {
-                    ++releases;
-                    if(releases >= totalToWait)
-                    {
-                        waitOnMe.Set();
-                    }
-                }
-            }
-
-            public bool Wait(int timeoutMS)
-            {
-                return waitOnMe.WaitOne(timeoutMS);
-            }
-        }
-
-        private Multiwaiter waitForChangedEvents = new Multiwaiter(2);
+        private CountdownEvent waitForChangedEvents;
 
         protected override void Arrange()
         {
+            waitForChangedEvents = new CountdownEvent(2);
             ConfigurationChangeWatcher.SetDefaultPollDelayInMilliseconds(1000);
 
             originalConfigurationFileContents = File.ReadAllText(@"ExternalFileSource.config");
 
-            using (FileConfigurationSource externalConfigurationFileSource = new FileConfigurationSource(@"ExternalFileSource.config", false))
+            using (var externalConfigurationFileSource = new FileConfigurationSource(@"ExternalFileSource.config", false))
             {
                 externalConfigurationFileSource.Save(FileSourceDummySectionName, new DummySection { });
             }
@@ -278,14 +244,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
                 (sender, e) =>
                 {
                     sourceChangedEvents++;
-                    waitForChangedEvents.Release();
+                    waitForChangedEvents.Signal();
                 };
             this.CompositeSource.AddSectionChangeHandler(
                 FileSourceDummySectionName,
                 (sender, e) =>
                 {
                     sectionChangedEvents++;
-                    waitForChangedEvents.Release();
+                    waitForChangedEvents.Signal();
                 });
         }
 
@@ -296,7 +262,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
             File.SetLastWriteTime(@"ExternalFileSource.config", DateTime.Now);
 
             // Wait for at least two events
-            waitForChangedEvents.Wait(30000);
+            Assert.IsTrue(waitForChangedEvents.Wait(30000), "timed out");
 
             // And give it a little more time in case more come in
             Thread.Sleep(3000);
@@ -316,12 +282,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
 
         protected override void Teardown()
         {
+            base.Teardown();
+
             ConfigurationChangeWatcher.ResetDefaultPollDelay();
 
             File.WriteAllText(@"ExternalFileSource.config", originalConfigurationFileContents);
             waitForChangedEvents.Dispose();
         }
     }
-
-
 }

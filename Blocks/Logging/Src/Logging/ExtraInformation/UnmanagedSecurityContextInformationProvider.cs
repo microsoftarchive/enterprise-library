@@ -15,22 +15,25 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Security.Permissions;
+using System.Security;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
 {
     /// <summary>
     /// Gets the security context information from the unmanaged world
     /// </summary>
+    [SecurityCritical]
     public class UnmanagedSecurityContextInformationProvider : IExtraInformationProvider
     {
         /// <summary>
         /// Populates an <see cref="IDictionary{K,T}"/> with helpful diagnostic information.
         /// </summary>
         /// <param name="dict">Dictionary used to populate the <see cref="UnmanagedSecurityContextInformationProvider"></see></param>
+        [SecuritySafeCritical]
         public void PopulateDictionary(IDictionary<string, object> dict)
         {
-            dict.Add(Properties.Resources_Desktop.UnmanagedSecurity_CurrentUser, CurrentUser);
-            dict.Add(Properties.Resources_Desktop.UnmanagedSecurity_ProcessAccountName, ProcessAccountName);
+            dict.Add(Properties.Resources.UnmanagedSecurity_CurrentUser, CurrentUser);
+            dict.Add(Properties.Resources.UnmanagedSecurity_ProcessAccountName, ProcessAccountName);
         }
 
         /// <summary>
@@ -41,7 +44,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
             get
             {
                 uint size = 256;
-                StringBuilder userNameBuffer = new StringBuilder((int) size);
+                StringBuilder userNameBuffer = new StringBuilder((int)size);
                 if (NativeMethods.GetUserNameEx(NativeMethods.ExtendedNameFormat.NameSamCompatible, userNameBuffer, ref size))
                 {
                     return userNameBuffer.ToString();
@@ -56,10 +59,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
         /// <summary>
         ///		Gets the ProcessAccountName, calculating it if necessary. 
         /// </summary>
-		public string ProcessAccountName
+        public string ProcessAccountName
         {
-			[SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
-			get
+            [SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
+            get
             {
                 // Get Security Info
                 // -----------------
@@ -85,10 +88,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
                 // Lookup the account name associated with sidOwner
 
                 StringBuilder accountName = new StringBuilder(1024);
-                uint accountNameLength = (uint) accountName.Capacity;
+                uint accountNameLength = (uint)accountName.Capacity;
 
                 StringBuilder domainName = new StringBuilder(1024);
-                uint domainNameLength = (uint) domainName.Capacity;
+                uint domainNameLength = (uint)domainName.Capacity;
 
                 int sidType;
                 bool successful = NativeMethods.LookupAccountSid(IntPtr.Zero,
@@ -105,7 +108,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
                 } // + " SID=" + sidOwner;
                 else
                 {
-                    processAccountName = Properties.Resources_Desktop.CouldNotLookupAccountSid;
+                    processAccountName = Properties.Resources.CouldNotLookupAccountSid;
                 }
 
                 Marshal.FreeHGlobal(pSecurityDescriptor);

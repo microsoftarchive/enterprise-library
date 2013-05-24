@@ -9,11 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Diagnostics;
 using System.Reflection;
-using System.Security.Permissions;
 
 [assembly: AssemblyTitle("Enterprise Library Exception Handling WCF Provider Tests")]
 [assembly: AssemblyDescription("Enterprise Library Exception Handling WCF Provider Tests")]
-[assembly: AssemblyVersion("5.0.505.0")]
+[assembly: AssemblyVersion("6.0.0.0")]
+[assembly: AssemblyFileVersion("6.0.1304.0")]
 

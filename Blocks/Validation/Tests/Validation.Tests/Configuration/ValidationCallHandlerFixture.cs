@@ -29,9 +29,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         public void Setup()
         {
             callHandlerData =
-                new ValidationCallHandlerData
+                new ValidationCallHandlerData("validation")
                     {
-                        Name = "validation",
                         Order = 300,
                         SpecificationSource = SpecificationSource.Attributes,
                         RuleSet = "ruleset"
@@ -89,9 +88,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         public void Setup()
         {
             callHandlerData =
-                new ValidationCallHandlerData
+                new ValidationCallHandlerData("validation")
                     {
-                        Name = "validation",
                         Order = 400,
                         SpecificationSource = SpecificationSource.Configuration,
                         RuleSet = "ruleset"
@@ -140,9 +138,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         public void Setup()
         {
             callHandlerData =
-                new ValidationCallHandlerData
+                new ValidationCallHandlerData("validation")
                     {
-                        Name = "validation",
                         Order = 400,
                         SpecificationSource = SpecificationSource.Both,
                         RuleSet = "ruleset"
@@ -191,9 +188,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         public void Setup()
         {
             callHandlerData =
-                new ValidationCallHandlerData
+                new ValidationCallHandlerData("validation")
                     {
-                        Name = "validation",
                         Order = 400,
                         SpecificationSource = SpecificationSource.ParameterAttributesOnly,
                         RuleSet = "ruleset"
@@ -230,24 +226,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 .WithValueConstructorParameter<ValidatorFactory>(null)
                 .WithValueConstructorParameter(400)
                 .VerifyConstructorParameters();
-        }
-    }
-
-    [TestClass]
-    public class GivenAValidationCallHandlerData
-    {
-        private ValidationCallHandlerData callHandlerData;
-
-        [TestInitialize]
-        public void Setup()
-        {
-            callHandlerData = new ValidationCallHandlerData();
-        }
-
-        [TestMethod]
-        public void WhenUsingDefaultCtor_ThenDefaultValuesAreSettedProperly()
-        {
-            Assert.AreEqual(SpecificationSource.Both, callHandlerData.SpecificationSource);
         }
     }
 }

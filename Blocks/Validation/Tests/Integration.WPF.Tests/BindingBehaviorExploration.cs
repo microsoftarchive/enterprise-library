@@ -41,15 +41,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
         }
 
         [TestMethod]
-        [Ignore] // There is a new internal class called ConversionValidationRule in .NET 4 that makes this test fail
-        public void BindingSilentlyFailsIfValueConversionFails()
+        public void BindingLogsErrorIfValueIfValueConversionFails()
         {
             var source = new BindingTestSource { SourceProperty = 100 };
             var target = new BindingTestTarget();
             var binding = new Binding("SourceProperty")
             {
                 Source = source,
-                Mode = BindingMode.TwoWay,
+                Mode = BindingMode.TwoWay
             };
             BindingOperations.SetBinding(target, BindingTestTarget.TargetPropertyProperty, binding);
 
@@ -59,7 +58,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
 
             Assert.AreEqual("zzz", target.TargetProperty);
             Assert.AreEqual(100, source.SourceProperty);
-            Assert.IsFalse(SWC.Validation.GetHasError(target));
+            Assert.IsTrue(SWC.Validation.GetHasError(target));
         }
 
         [TestMethod]

@@ -10,17 +10,12 @@
     <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Logging.Tests</RootNamespace>
     <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Logging.Tests</AssemblyName>
     <WarningLevel>4</WarningLevel>
-    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <FileUpgradeFlags>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids><FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>4.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -36,6 +31,9 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+    <RestorePackages>true</RestorePackages>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,32 +41,19 @@
     <Optimize>false</Optimize>
     <OutputPath>.\bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>false</DebugSymbols>
     <Optimize>true</Optimize>
     <OutputPath>.\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.Interception.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Moq, Version=3.1.416.3, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\ThirdParty\Moq\Moq.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -83,6 +68,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Logging.licenseheader">
+      <Link>Logging.licenseheader</Link>
+    </None>
     <None Include="Microsoft.Practices.EnterpriseLibrary.Logging.Tests.dll.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -91,7 +79,6 @@
     <Compile Include="..\..\Src\Logging\NativeMethods.cs">
       <Link>NativeMethods.cs</Link>
     </Compile>
-    <None Include="APTCAFixture.2008.cs" />
     <Compile Include="Configuration\BinaryLogFormatterDataFixture.cs" />
     <Compile Include="Configuration\CustomFormatterDataFixture.cs" />
     <Compile Include="Configuration\CustomTraceListenerDataFixture.cs" />
@@ -112,43 +99,33 @@
     <Compile Include="Configuration\Fluent\MsmqListenerInConfigurationSourceBuilderFixture.cs" />
     <Compile Include="Configuration\Fluent\RollingFileListenerInConfigurationSourceBuilderFixture.cs" />
     <Compile Include="Configuration\Fluent\SystemDiagnosticsListenerInConfigurationSourceBuilderFixture.cs" />
-    <Compile Include="Configuration\Fluent\WmiListenerInConfigurationSourceBuilder.cs" />
     <Compile Include="Configuration\Fluent\XmlFileListenerInConfigurationSourceBuilderFixture.cs" />
     <Compile Include="Configuration\FormattedEventLogTraceListenerDataFixture.cs" />
     <Compile Include="Configuration\FlatFileTraceListenerDataFixture.cs" />
     <Compile Include="Configuration\LoggingSettingsTypeRegistrationFixture.cs" />
-    <Compile Include="Configuration\LogHandlerDataFixture.cs" />
     <Compile Include="Configuration\MsmqTraceListenerDataFixture.cs" />
     <Compile Include="Configuration\LogFilterDataFixture.cs" />
     <Compile Include="Configuration\EmailTraceListenerDataFixture.cs" />
-    <Compile Include="Configuration\AttributeSettingTraceListenerWrapperFixture.cs" />
     <Compile Include="Configuration\RollingFlatFileTraceListenerData.cs" />
     <Compile Include="Configuration\SystemDiagnosticsTraceListenerDataFixture.cs" />
     <Compile Include="Configuration\TextFormatterDataFixture.cs" />
-    <Compile Include="Configuration\Unity\FiltersPolicyCreationFixture.cs" />
-    <Compile Include="Configuration\Unity\FormattersPolicyCreationFixture.cs" />
-    <Compile Include="Configuration\Unity\LoggingBlockExtensionFixture.cs" />
     <Compile Include="Configuration\TraceListenerDataFixture.cs" />
     <Compile Include="Configuration\TraceSourceDataFixture.cs" />
-    <Compile Include="Configuration\Unity\TraceListenersPolicyCreationFixture.cs" />
-    <Compile Include="Configuration\WmiTraceListenerDataFixture.cs" />
     <Compile Include="Configuration\XmlTraceListenerDataFixture.cs" />
+    <Compile Include="Config\LoggingConfigurationFixture.cs" />
+    <Compile Include="Config\MockLogFilter.cs" />
     <Compile Include="ContextItemsFixture.cs" />
-    <Compile Include="PolicyInjection\CategoryFormatterFixture.cs" />
-    <Compile Include="PolicyInjection\LogCallHandlerAttributeFixture.cs" />
-    <Compile Include="PolicyInjection\LogCallHandlerFixture.cs" />
-    <Compile Include="PolicyInjection\TraceLogEntryFixture.cs" />
-    <None Include="TraceListeners\RollingFlatFileTraceListenerFixture.2008.cs" />
-    <None Include="TraceListeners\FlatFileTraceListenerFixture.2008.cs" />
-    <Compile Include="TraceListeners\LoggingInstrumentationFixture.cs" />
+    <Compile Include="LogWriterAsynchronousFixture.cs" />
+    <Compile Include="TestSupport\AssertEx.cs" />
+    <Compile Include="TraceListeners\AsynchronousTraceListenerWrapperFixture.cs" />
+    <Compile Include="TracerTransparencyFixture.cs" />
+    <Compile Include="Formatters\JsonLogFormatterFixture.cs" />
+    <Compile Include="LogWriterTransparencyFixture.cs" />
+    <Compile Include="TraceListeners\RollingFlatFileTraceListenerFixture.2008.cs" />
+    <Compile Include="TraceListeners\FlatFileTraceListenerFixture.2008.cs" />
     <Compile Include="TraceListeners\RollingFilePurgingTests.cs" />
     <Compile Include="LogEntrySerializationFixture.cs" />
-    <Compile Include="LoggingInstrumentationProviderFixture.cs" />
-    <Compile Include="LoggingUpdateCoordinatorFixture.cs" />
     <Compile Include="LogWriterInjectionFixture.cs" />
-    <Compile Include="MockConfigurationChangeEventSource.cs" />
-    <Compile Include="MockLoggingUpdateCoordinator.cs" />
-    <Compile Include="TraceListeners\ReconfigurableTraceListenerWrapperFixture.cs" />
     <Compile Include="TracerManagerFixture.cs" />
     <Compile Include="Distributor\LogDistributorFixture.cs">
       <SubType>Code</SubType>
@@ -183,8 +160,6 @@
     <Compile Include="LoggerFixture.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LogWriterRefreshFixture.cs" />
-    <Compile Include="LogWriterSingletonManagementFixture.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -204,7 +179,6 @@
     <Compile Include="TraceListeners\Configuration\EventLogTraceListenerConfigurationFixture.cs" />
     <Compile Include="TraceListeners\Configuration\FormattedEventLogTraceListenerConfigurationFixture.cs" />
     <Compile Include="TraceListeners\Configuration\TraceListenerDataCollectionFixture.cs" />
-    <Compile Include="TraceListeners\Configuration\WmiTraceListenerConfigurationFixture.cs" />
     <Compile Include="TraceListeners\EntLibLoggingProxyTraceListenerFixture.cs" />
     <Compile Include="TraceListeners\ErrorsMockTraceListener.cs" />
     <Compile Include="TraceListeners\ExceptionThrowingMockTraceListener.cs" />
@@ -227,7 +201,6 @@
     <Compile Include="TraceListeners\MyCustomLogEntry.cs" />
     <Compile Include="TraceListeners\RollingFlatFileTraceListenerFixture.cs" />
     <Compile Include="TraceListeners\TallyKeepingFileStreamWriterFixture.cs" />
-    <Compile Include="TraceListeners\WmiListenerFixture.cs" />
     <Compile Include="TraceListeners\XmlTraceListenerFixture.cs" />
     <Compile Include="TracerFixture.cs" />
     <Compile Include="TraceSourceFixture.cs" />
@@ -242,7 +215,7 @@
       <Name>Common.TestSupport</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Src\Logging\Logging.csproj">
-      <Project>{6AC97717-899D-4F72-BC5B-2C37959CD4FF}</Project>
+      <Project>{6ac97717-899d-4f72-bc5b-2c37959cd4ff}</Project>
       <Name>Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\Logging.TestSupport\Logging.TestSupport.csproj">
@@ -287,11 +260,14 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
       <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
+      <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <Import Project="..\..\..\.nuget\nuget.targets" />
+  <!-- Cannot remove the following because NuGet will re-add it, and will break relative paths -->
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" Condition="False" />
 </Project>

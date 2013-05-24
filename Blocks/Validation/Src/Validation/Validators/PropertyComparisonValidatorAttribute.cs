@@ -27,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         | AttributeTargets.Parameter,
         AllowMultiple = true,
         Inherited = false)]
-    public sealed partial class PropertyComparisonValidatorAttribute : ValueValidatorAttribute
+    public sealed class PropertyComparisonValidatorAttribute : ValueValidatorAttribute
     {
         private string propertyToCompare;
         private ComparisonOperator comparisonOperator;
@@ -103,7 +103,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             throw new NotImplementedException(Resources.ExceptionShouldNotCall);
         }
 
-#if !SILVERLIGHT
+        /// <summary>
+        /// Determines whether the specified value of the object is valid.
+        /// </summary>
+        /// <param name="value">The value of the specified validation object on which the 
+        /// <see cref="System.ComponentModel.DataAnnotations.ValidationAttribute "/> is declared.</param>
+        /// <returns><see langword="true"/> if the specified value is valid; otherwise, <see langword="false"/>.</returns>
+        /// <exception cref="NotSupportedException">when invoked on an attribute with a non-null ruleset.</exception>
+        public override bool IsValid(object value)
+        {
+            if (!string.IsNullOrEmpty(this.Ruleset))
+            {
+                return true;
+            }
+
+            throw new NotSupportedException(
+                string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.ExceptionValidationAttributeNotSupported,
+                    this.GetType().Name));
+        }
+
         private readonly Guid typeId = Guid.NewGuid();
 
         /// <summary>
@@ -116,6 +136,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                 return this.typeId;
             }
         }
-#endif
     }
 }

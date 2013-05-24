@@ -25,7 +25,6 @@ using Moq;
 namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
 {
     [TestClass]
-    [DeploymentItem("redirected_sections.config")]
     public class when_opening_source_with_redirected_sections : given_clean_application_model
     {
         protected override void Arrange()
@@ -50,7 +49,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
     }
 
     [TestClass]
-    [DeploymentItem("hierarchical_config.config")]
     public class when_opening_source_with_parent_source : given_clean_application_model
     {
         protected override void Arrange()

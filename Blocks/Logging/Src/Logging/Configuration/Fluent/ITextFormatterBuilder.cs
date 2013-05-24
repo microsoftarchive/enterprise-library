@@ -9,6 +9,11 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Common;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent

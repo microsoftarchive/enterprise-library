@@ -10,11 +10,8 @@
 //===============================================================================
 
 using System.Diagnostics;
-using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
+using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -36,7 +33,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
                     };
         }
 
-
         [TestMethod]
         public void WhenCreatingInstanceUsingDefaultContructor_ThenListenerDataTypeIsSet()
         {
@@ -45,89 +41,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
         }
 
         [TestMethod]
-        public void ThenCreatesTwoTypeRegistrations()
+        public void WhenCreatingListener_ThenCreatesFileListener()
         {
-            Assert.AreEqual(2, listenerData.GetRegistrations().Count());
-        }
+            var settings = new LoggingSettings { Formatters = { new TextFormatterData { Name = "formatter", Template = "template" } } };
 
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatesATypeRegistrationForTheWrapperWithTheOriginalName()
-        {
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener").First()
-                .AssertForServiceType(typeof(TraceListener))
-                .ForName("listener")
-                .ForImplementationType(typeof(ReconfigurableTraceListenerWrapper));
-        }
+            var listener = (FlatFileTraceListener)listenerData.BuildTraceListener(settings);
 
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenWrapperRegistrationIsSingleton()
-        {
-            Assert.AreEqual(
-                TypeRegistrationLifetime.Singleton,
-                listenerData.GetRegistrations().Where(tr => tr.Name == "listener").First().Lifetime);
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenWrapperRegistrationIsInjectedWithTheWrappedTraceListenerAndTheLoggingUpdateCoordinator()
-        {
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener").First()
-                .AssertConstructor()
-                .WithContainerResolvedParameter<TraceListener>("listener\u200Cimplementation")
-                .WithContainerResolvedParameter<ILoggingUpdateCoordinator>(null)
-                .VerifyConstructorParameters();
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenWrapperRegistrationIsInjectedWithTheNameProperty()
-        {
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener").First()
-                .AssertProperties()
-                .WithValueProperty("Name", "listener")
-                .VerifyProperties();
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationMapsTraceListenerToFlatFileTraceListenerForTheSuppliedName()
-        {
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First()
-                .AssertForServiceType(typeof(TraceListener))
-                .ForName("listener\u200Cimplementation")
-                .ForImplementationType(typeof(FlatFileTraceListener));
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationHasTheExpectedConstructorParameters()
-        {
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First()
-                .AssertConstructor()
-                .WithValueConstructorParameter("filename")
-                .WithValueConstructorParameter("header")
-                .WithValueConstructorParameter("footer")
-                .WithContainerResolvedParameter<ILogFormatter>("formatter")
-                .VerifyConstructorParameters();
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationInjectsFilterAndNameAndTraceOutputOptionsProperties()
-        {
-            TraceFilter filter;
-
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First()
-                .AssertProperties()
-                .WithValueProperty("Name", "listener\u200Cimplementation")
-                .WithValueProperty("TraceOutputOptions", TraceOptions.DateTime | TraceOptions.Callstack)
-                .WithValueProperty("Filter", out filter)
-                .VerifyProperties();
-
-            Assert.AreEqual(SourceLevels.Warning, ((EventTypeFilter)filter).EventType);
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenWrappedRegistrationIsTransient()
-        {
-            Assert.AreEqual(
-                TypeRegistrationLifetime.Transient,
-                listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First().Lifetime);
+            try
+            {
+                Assert.IsNotNull(listener);
+                Assert.AreEqual("listener", listener.Name);
+                Assert.AreEqual(TraceOptions.DateTime | TraceOptions.Callstack, listener.TraceOutputOptions);
+                Assert.IsNotNull(listener.Filter);
+                Assert.AreEqual(SourceLevels.Warning, ((EventTypeFilter)listener.Filter).EventType);
+                Assert.IsInstanceOfType(listener.Formatter, typeof(TextFormatter));
+                Assert.AreEqual("filename", Path.GetFileName(((FileStream)((StreamWriter)listener.Writer).BaseStream).Name));
+            }
+            finally
+            {
+                listener.Dispose();
+            }
         }
     }
 
@@ -148,23 +81,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
         }
 
         [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationHasTheExpectedConstructorParameters()
+        public void WhenCreatingListener_ThenCreatesFileListenerWithoutFormatter()
         {
-            listenerData.GetRegistrations().ElementAt(0)
-                .AssertConstructor()
-                .WithValueConstructorParameter("filename")
-                .WithValueConstructorParameter("header")
-                .WithValueConstructorParameter("footer")
-                .WithValueConstructorParameter<ILogFormatter>(null)
-                .VerifyConstructorParameters();
-        }
+            var settings = new LoggingSettings { Formatters = { new TextFormatterData { Name = "formatter", Template = "template" } } };
 
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenWrappedRegistrationIsTransient()
-        {
-            Assert.AreEqual(
-                TypeRegistrationLifetime.Transient,
-                listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First().Lifetime);
+            var listener = (FlatFileTraceListener)listenerData.BuildTraceListener(settings);
+            try
+            {
+                Assert.IsNotNull(listener);
+                Assert.AreEqual("listener", listener.Name);
+                Assert.AreEqual(TraceOptions.DateTime | TraceOptions.Callstack, listener.TraceOutputOptions);
+                Assert.IsNotNull(listener.Filter);
+                Assert.AreEqual(SourceLevels.Warning, ((EventTypeFilter)listener.Filter).EventType);
+                Assert.IsNull(listener.Formatter);
+                Assert.AreEqual("filename", Path.GetFileName(((FileStream)((StreamWriter)listener.Writer).BaseStream).Name));
+            }
+            finally
+            {
+                listener.Dispose();
+            }
         }
     }
 }

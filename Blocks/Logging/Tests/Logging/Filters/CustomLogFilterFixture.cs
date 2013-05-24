@@ -29,6 +29,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests
             AppDomain.CurrentDomain.SetData("APPBASE", Environment.CurrentDirectory);
         }
 
+        private static ILogFilter GetFilter(string name, IConfigurationSource configurationSource)
+        {
+            var settings = LoggingSettings.GetLoggingSettings(configurationSource);
+            return settings.LogFilters.Get(name).BuildFilter();
+        }
+
         [TestMethod]
         public void CanBuildCustomLogFilterFromGivenConfiguration()
         {
@@ -39,9 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
             helper.loggingSettings.LogFilters.Add(filterData);
 
-            ILogFilter filter = 
-                EnterpriseLibraryContainer.CreateDefaultContainer(helper.configurationSource)
-                    .GetInstance<ILogFilter>(filterData.Name);
+            ILogFilter filter = GetFilter(filterData.Name, helper.configurationSource);
 
             Assert.IsNotNull(filter);
             Assert.AreSame(typeof(MockCustomLogFilter), filter.GetType());

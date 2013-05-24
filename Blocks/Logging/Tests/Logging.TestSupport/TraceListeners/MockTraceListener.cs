@@ -11,11 +11,7 @@
 
 using System;
 using System.Collections.Generic;
-#if !SILVERLIGHT
 using System.Diagnostics;
-#else
-using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
-#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners
 {
@@ -66,7 +62,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListene
             }
         }
 
-#if !SILVERLIGHT
         public override void TraceTransfer(TraceEventCache eventCache, string source, int id, string message, Guid relatedActivityId)
         {
             lock (traceRequestMonitor)
@@ -74,7 +69,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListene
                 MockTraceListener.transferGuids.Add(relatedActivityId);
             }
         }
-#endif
 
         public override void Write(string message)
         {

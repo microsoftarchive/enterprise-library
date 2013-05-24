@@ -10,41 +10,33 @@
 //===============================================================================
 
 using System;
+using System.Collections.Specialized;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
 {
-#if !SILVERLIGHT
-    [Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ConfigurationElementType(typeof(Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.CustomHandlerData))]
-#endif
-    public class MockExceptionHandler : IExceptionHandler
+	[ConfigurationElementType(typeof(CustomHandlerData))]
+	public class MockExceptionHandler : IExceptionHandler
     {
         public static int handleExceptionCount = 0;
         public static string lastMessage;
         public static Guid handlingInstanceID;
+		public static NameValueCollection attributes;
 
-        public int instanceHandledExceptionCount = 0;
+	    public int instanceHandledExceptionCount = 0;
 
-#if !SILVERLIGHT
-        public static System.Collections.Specialized.NameValueCollection attributes;
-
-		public MockExceptionHandler(System.Collections.Specialized.NameValueCollection attributes)
+		public MockExceptionHandler(NameValueCollection attributes)
 		{
 			MockExceptionHandler.attributes = attributes;
 		}
-#endif
-
-        public MockExceptionHandler()
-        { }
-
-
+		
         public static void Clear()
         {
             handleExceptionCount = 0;
             lastMessage = String.Empty;
             handlingInstanceID = Guid.Empty;
-#if !SILVERLIGHT
 			attributes = null;
-#endif
         }
 
         public static string FormatExceptionMessage(string message, Guid handlingInstanceID)

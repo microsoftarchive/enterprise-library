@@ -10,11 +10,10 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
+using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -23,12 +22,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
     [TestClass]
     public class LogCallHandlerAttributeFixture
     {
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            Logger.Reset();
+        }
+
         [TestMethod]
-        [DeploymentItem("CombinesWithConfig.config")]
         public void ShouldCombineWithPoliciesDefinedInConfiguration()
         {
             using (var configSource = new FileConfigurationSource("CombinesWithConfig.config", false))
             {
+                Logger.SetLogWriter(new LogWriterFactory(configSource.GetSection).Create(), false);
+
                 using (var eventLog = new EventLogTracker("Application"))
                 {
                     using (var injector = new PolicyInjector(configSource))

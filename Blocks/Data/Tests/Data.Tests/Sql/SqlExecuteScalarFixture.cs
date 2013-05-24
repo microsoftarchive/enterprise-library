@@ -51,10 +51,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             using (DbConnection connection = db.CreateConnection())
             {
                 connection.Open();
-                using (DbTransaction trans = connection.BeginTransaction())
+                using (DbTransaction transaction = connection.BeginTransaction())
                 {
-                    db.ExecuteScalar(trans, "Ten Most Expensive Products");
-                    trans.Commit();
+                    db.ExecuteScalar(transaction, "Ten Most Expensive Products");
+                    transaction.Commit();
                 }
             }
         }
@@ -63,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         [ExpectedException(typeof(SqlException))]
         public void ExecuteSqlWithBadCommandThrows()
         {
-            DbCommand badCommand = db.GetSqlStringCommand("select * from foobar");
+            DbCommand badCommand = db.GetSqlStringCommand("select * from invalid");
             db.ExecuteScalar(badCommand);
         }
 

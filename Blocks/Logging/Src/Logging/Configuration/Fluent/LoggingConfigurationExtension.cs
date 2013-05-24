@@ -20,7 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
     public abstract class LoggingConfigurationExtension : ILoggingConfigurationOptions, ILoggingConfigurationExtension
     {
         ILoggingConfigurationExtension contextExtension;
-        
+
         /// <summary/>
         protected LoggingConfigurationExtension(ILoggingConfigurationContd context)
         {
@@ -49,12 +49,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
             return LoggingOptions.DisableTracing();
         }
 
-#if !SILVERLIGHT
         ILoggingConfigurationOptions ILoggingConfigurationOptions.DoNotRevertImpersonation()
         {
             return LoggingOptions.DoNotRevertImpersonation();
         }
-#endif
 
         ILoggingConfigurationOptions ILoggingConfigurationOptions.DoNotLogWarningsWhenNoCategoryExists()
         {
@@ -79,7 +77,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
 
         LoggingSettings ILoggingConfigurationExtension.LoggingSettings
         {
-            get { return contextExtension.LoggingSettings ; }
+            get { return contextExtension.LoggingSettings; }
         }
     }
 }

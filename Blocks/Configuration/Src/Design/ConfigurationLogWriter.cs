@@ -60,6 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
         /// </summary>
         /// <param name="message"></param>
         /// <param name="ex"></param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ConfigurationLogWriter.LogError(System.String)", Justification = "Template for two lines - not language specific.")]
         public static void LogException(string message, Exception ex)
         {
             LogError(string.Format(CultureInfo.CurrentCulture, "{0}/n{1}", message, ex));

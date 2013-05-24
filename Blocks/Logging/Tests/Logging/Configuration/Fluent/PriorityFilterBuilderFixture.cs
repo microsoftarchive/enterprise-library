@@ -59,13 +59,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Flue
             Assert.AreEqual("prio filter", GetPriorityFilterData().Name);
         }
 
-#if !SILVERLIGHT
         [TestMethod]
         public void Then_PriorityFilterHasCorrectType()
         {
             Assert.AreEqual(typeof(PriorityFilter), GetPriorityFilterData().Type);
         }
-#endif
 
         [TestMethod]
         public void Then_PriorityFilterIsContainedInSettings()

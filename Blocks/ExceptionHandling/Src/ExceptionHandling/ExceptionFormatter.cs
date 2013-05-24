@@ -10,18 +10,14 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
+using System.Collections;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Reflection;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
-#if !SILVERLIGHT
-using System.Collections.Specialized;
 using System.Security;
 using System.Security.Principal;
 using System.Threading;
-#else
-using NameValueCollection = System.Collections.Generic.Dictionary<string, string>;
-#endif
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 {
@@ -30,7 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
     /// </summary>	
     public abstract class ExceptionFormatter
     {
-        private static readonly List<string> IgnoredProperties = new List<string>(
+        private static readonly ArrayList IgnoredProperties = new ArrayList(
             new String[] { "Source", "Message", "HelpLink", "InnerException", "StackTrace" });
 
         private readonly Guid handlingInstanceId;
@@ -74,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 
         /// <summary>
         /// Gets additional information related to the <see cref="Exception"/> but not
-        /// stored in the exception (for example, the time in which the <see cref="Exception"/> was 
+        /// stored in the exception (eg: the time in which the <see cref="Exception"/> was 
         /// thrown).
         /// </summary>
         /// <value>
@@ -89,16 +85,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
                 if (this.additionalInfo == null)
                 {
                     this.additionalInfo = new NameValueCollection();
-#if !SILVERLIGHT
                     this.additionalInfo.Add("MachineName", GetMachineName());
-#endif
                     this.additionalInfo.Add("TimeStamp", DateTime.UtcNow.ToString(CultureInfo.CurrentCulture));
                     this.additionalInfo.Add("FullName", Assembly.GetExecutingAssembly().FullName);
                     this.additionalInfo.Add("AppDomainName", AppDomain.CurrentDomain.FriendlyName);
-#if !SILVERLIGHT
-                    this.additionalInfo.Add("ThreadIdentity", Thread.CurrentPrincipal.Identity.Name);
+                    this.additionalInfo.Add("ThreadIdentity", GetThreadIdentity());
                     this.additionalInfo.Add("WindowsIdentity", GetWindowsIdentity());
-#endif
                 }
 
                 return this.additionalInfo;
@@ -115,7 +107,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             WriteException(this.exception, null);
         }
 
-#if !SILVERLIGHT
         /// <summary>
         /// Formats the exception and all nested inner exceptions.
         /// </summary>
@@ -154,50 +145,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// </list>
         /// </para>
         /// </remarks>
-#else
-        /// <summary>
-        /// Formats the exception and all nested inner exceptions.
-        /// </summary>
-        /// <param name="exceptionToFormat">The exception to format.</param>
-        /// <param name="outerException">The outer exception. This 
-        /// value will be null when writing the outer-most exception.</param>
-        /// <remarks>
-        /// <para>This method calls itself recursively until it reaches
-        /// an exception that does not have an inner exception.</para>
-        /// <para>
-        /// This is a template method which calls the following
-        /// methods in order
-        /// <list type="number">
-        /// <item>
-        /// <description><see cref="WriteExceptionType"/></description>
-        /// </item>
-        /// <item>
-        /// <description><see cref="WriteMessage"/></description>
-        /// </item>
-        /// <item>
-        /// <description><see cref="WriteReflectionInfo"/></description>
-        /// </item>
-        /// <item>
-        /// <description><see cref="WriteStackTrace"/></description>
-        /// </item>
-        /// <item>
-        /// <description>If the specified exception has an inner exception
-        /// then it makes a recursive call. <see cref="WriteException"/></description>
-        /// </item>
-        /// </list>
-        /// </para>
-        /// </remarks>
-#endif
         protected virtual void WriteException(Exception exceptionToFormat, Exception outerException)
         {
             if (exceptionToFormat == null) throw new ArgumentNullException("exceptionToFormat");
 
             this.WriteExceptionType(exceptionToFormat.GetType());
             this.WriteMessage(exceptionToFormat.Message);
-#if !SILVERLIGHT
             this.WriteSource(exceptionToFormat.Source);
             this.WriteHelpLink(exceptionToFormat.HelpLink);
-#endif
             this.WriteReflectionInfo(exceptionToFormat);
             this.WriteStackTrace(exceptionToFormat.StackTrace);
 
@@ -291,7 +246,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// <param name="message">The message to write.</param>
         protected abstract void WriteMessage(string message);
 
-#if !SILVERLIGHT
         /// <summary>
         /// When overridden by a class, writes the value of the <see cref="System.Exception.Source"/> property.
         /// </summary>
@@ -303,7 +257,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// </summary>
         /// <param name="helpLink">The help link for the exception.</param>
         protected abstract void WriteHelpLink(string helpLink);
-#endif
 
         /// <summary>
         /// When overridden by a class, writes the value of the <see cref="System.Exception.StackTrace"/> property.
@@ -331,7 +284,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// <param name="additionalInformation">Additional information to be included with the exception report</param>
         protected abstract void WriteAdditionalInfo(NameValueCollection additionalInformation);
 
-#if !SILVERLIGHT
         private static string GetMachineName()
         {
             string machineName = String.Empty;
@@ -341,10 +293,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             }
             catch (SecurityException)
             {
-                machineName = Resources_Desktop.PermissionDenied;
+                machineName = Resources.PermissionDenied;
             }
 
             return machineName;
+        }
+
+        private static string GetThreadIdentity()
+        {
+            string threadIdentity = String.Empty;
+            try
+            {
+                threadIdentity = Thread.CurrentPrincipal.Identity.Name;
+            }
+            catch (SecurityException)
+            {
+                threadIdentity = Resources.PermissionDenied;
+            }
+
+            return threadIdentity;
         }
 
         private static string GetWindowsIdentity()
@@ -356,11 +323,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             }
             catch (SecurityException)
             {
-                windowsIdentity = Resources_Desktop.PermissionDenied;
+                windowsIdentity = Resources.PermissionDenied;
             }
 
             return windowsIdentity;
         }
-#endif
     }
 }

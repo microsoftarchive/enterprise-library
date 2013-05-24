@@ -12,8 +12,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.Linq;
+using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
@@ -39,6 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <see cref="ValidationAttribute"/>.
         /// </summary>
         /// <param name="validationAttributes">The validation attributes to wrap.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Justification = "Properly instantiated. False positive caused by using a lambda expression.")]
         public ValidationAttributeValidator(IEnumerable<ValidationAttribute> validationAttributes)
             : base(null, null)
         {
@@ -67,13 +68,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         {
             foreach (var validationAttribute in this.validationAttributes)
             {
-                var context = new ValidationContext(currentTarget, null, null) { MemberName = key };
                 try
                 {
-                    var result = validationAttribute.GetValidationResult(objectToValidate, context);
-                    if (result != null && !string.IsNullOrEmpty(result.ErrorMessage))
+                    if (!validationAttribute.IsValid(objectToValidate))
                     {
-                        this.LogValidationResult(validationResults, result.ErrorMessage, currentTarget, key);
+                        this.LogValidationResult(validationResults, validationAttribute.FormatErrorMessage(key), currentTarget, key);
                     }
                 }
                 catch (Exception e)

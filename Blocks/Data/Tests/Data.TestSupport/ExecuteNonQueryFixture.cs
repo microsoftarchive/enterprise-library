@@ -58,10 +58,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.TestSupport
             using (DbConnection connection = db.CreateConnection())
             {
                 connection.Open();
-                using (DbTransaction trans = connection.BeginTransaction())
+                using (DbTransaction transaction = connection.BeginTransaction())
                 {
-                    db.ExecuteNonQuery(trans, insertionCommand.CommandText);
-                    trans.Commit();
+                    db.ExecuteNonQuery(transaction, insertionCommand.CommandText);
+                    transaction.Commit();
                 }
             }
 
@@ -80,11 +80,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.TestSupport
             using (DbConnection connection = db.CreateConnection())
             {
                 connection.Open();
-                using (DbTransaction trans = connection.BeginTransaction())
+                using (DbTransaction transaction = connection.BeginTransaction())
                 {
                     connection.Open();
-                    db.ExecuteNonQuery(trans, insertionCommand.CommandText);
-                    trans.Commit();
+                    db.ExecuteNonQuery(transaction, insertionCommand.CommandText);
+                    transaction.Commit();
                 }
             }
 
@@ -103,10 +103,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.TestSupport
             using (DbConnection connection = db.CreateConnection())
             {
                 connection.Open();
-                using (DbTransaction trans = connection.BeginTransaction())
+                using (DbTransaction transaction = connection.BeginTransaction())
                 {
-                    db.ExecuteNonQuery(trans, CommandType.Text, insertionCommand.CommandText);
-                    trans.Commit();
+                    db.ExecuteNonQuery(transaction, CommandType.Text, insertionCommand.CommandText);
+                    transaction.Commit();
                 }
             }
 

@@ -13,7 +13,6 @@ using System;
 using System.Data.Common;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data
@@ -34,23 +33,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// </summary>
         /// <param name="connectionString">The connection string.</param>
         /// <param name="dbProviderFactory">The provider factory.</param>
-        public GenericDatabase(string connectionString, DbProviderFactory dbProviderFactory
-        )
+        public GenericDatabase(string connectionString, DbProviderFactory dbProviderFactory)
             : base(connectionString, dbProviderFactory)
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GenericDatabase"/> class with a connection string, 
-        /// a provider factory, and an instrumentation provider.
-        /// </summary>
-        /// <param name="connectionString">The connection string.</param>
-        /// <param name="dbProviderFactory">The provider factory.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider.</param>
-        public GenericDatabase(string connectionString, DbProviderFactory dbProviderFactory, IDataInstrumentationProvider instrumentationProvider)
-            : base(connectionString, dbProviderFactory, instrumentationProvider)
-        {
-            
         }
 
         /// <summary>

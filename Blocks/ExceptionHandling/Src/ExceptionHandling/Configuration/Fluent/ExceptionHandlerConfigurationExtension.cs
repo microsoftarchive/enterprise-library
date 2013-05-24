@@ -46,7 +46,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
 
         /// <summary>
-        /// The current exception type being built in the fluent interface.  Inheritors generally should 
+        /// The current exception type being built in the fluent interface.  Inheritors genereally should 
         /// add their <see cref="ExceptionHandlerData"/> to this during construction.
         /// </summary>
         public ExceptionTypeData CurrentExceptionTypeData

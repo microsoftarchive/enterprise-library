@@ -9,8 +9,11 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using System;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
 {

@@ -11,12 +11,9 @@
 
 using System;
 using System.Diagnostics;
-using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -94,6 +91,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                 base.TypeName = value;
             }
         }
+
         /// <summary>
         /// Creates the helper that enapsulates the configuration properties management.
         /// </summary>
@@ -104,26 +102,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         }
 
         /// <summary>
-        /// Returns a lambda expression that represents the creation of the trace listener described by this
-        /// configuration object.
+        /// Builds the <see cref="TraceListener" /> object represented by this configuration object.
         /// </summary>
-        /// <returns>A lambda expression to create a trace listener.</returns>
-        protected override Expression<Func<TraceListener>> GetCreationExpression()
+        /// <param name="settings">The logging configuration settings.</param>
+        /// <returns>
+        /// A trace listener.
+        /// </returns>
+        protected override TraceListener CoreBuildTraceListener(LoggingSettings settings)
         {
-            Expression<Func<TraceListener>> baseLambdaExpression = base.GetCreationExpression();
+            var listener = base.CoreBuildTraceListener(settings);
 
-            if (!(typeof(CustomTraceListener).IsAssignableFrom(this.Type) && !string.IsNullOrEmpty(this.Formatter)))
+            var customTraceListener = listener as CustomTraceListener;
+            if (customTraceListener != null && !string.IsNullOrEmpty(this.Formatter))
             {
-                return baseLambdaExpression;
+                customTraceListener.Formatter = this.BuildFormatterSafe(settings, this.Formatter);
             }
 
-            Expression<Func<ILogFormatter>> resolveFormatterExpression =
-                () => Container.Resolved<ILogFormatter>(this.Formatter);
-
-            return Expression.Lambda<Func<TraceListener>>(
-                Expression.MemberInit(
-                    (NewExpression)baseLambdaExpression.Body,
-                    Expression.Bind(this.Type.GetProperty("Formatter"), resolveFormatterExpression.Body)));
+            return listener;
         }
     }
 }

@@ -13,7 +13,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {

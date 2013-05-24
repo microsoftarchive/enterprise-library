@@ -10,27 +10,19 @@
 //===============================================================================
 
 using System;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 {
-#if !SILVERLIGHT
     /// <summary>
     /// Defines the contract for an ExceptionHandler.  An ExceptionHandler contains specific handling
     /// logic (i.e. logging the exception, replacing the exception, and so forth.) that is executed in a chain of multiple
     /// ExceptionHandlers.  A chain of one or more ExceptionHandlers is executed based on the exception type being 
     /// handled, as well as the <see cref="ExceptionPolicy"/>.  <seealso cref="ExceptionPolicy.HandleException(Exception,String)"/>
     /// </summary>    
-#else
-    /// <summary>
-    /// Defines the contract for an ExceptionHandler.  An ExceptionHandler contains specific handling
-    /// logic (that is, logging the exception, replacing the exception, and so forth.) that is executed in a chain of multiple
-    /// ExceptionHandlers.  A chain of one or more ExceptionHandlers is executed based on the exception type being 
-    /// handled.
-    /// </summary>    
-#endif
-    public interface IExceptionHandler
+	public interface IExceptionHandler
     {
-        /// <summary>
+		/// <summary>
         /// <para>When implemented by a class, handles an <see cref="Exception"/>.</para>
         /// </summary>
         /// <param name="exception"><para>The exception to handle.</para></param>        

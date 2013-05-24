@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Integration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport;
@@ -27,10 +28,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Integration
         const string conversionErrorMessage = "failure";
 
         [TestInitialize]
-        public void SetUp()
+        public void TestInitialize()
         {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
             valueToConvert = null;
             originalConvertedValue = null;
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
         }
 
         [TestMethod]
@@ -253,7 +261,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Integration
 
             Assert.IsFalse(status);
             Assert.AreEqual(null, retrievedValue);
-            Assert.IsTrue(TemplateStringTester.IsMatch(Resources_Desktop.ErrorCannotPerfomDefaultConversion, valueRetrievalFailureMessage));
+            Assert.IsTrue(TemplateStringTester.IsMatch(Resources.ErrorCannotPerfomDefaultConversion, valueRetrievalFailureMessage));
             Assert.AreEqual(null, originalConvertedValue);
             Assert.AreEqual(null, valueToConvert);
         }

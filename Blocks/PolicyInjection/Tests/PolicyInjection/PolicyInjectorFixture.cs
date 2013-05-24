@@ -11,9 +11,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.ObjectsUnderTest;
@@ -113,7 +111,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void WhenCreatingAPolicyInjectorWithTheServiceLocator_ThenArgumentExceptionIsThrown()
         {
             new PolicyInjector(this.serviceLocator);
@@ -305,14 +303,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
             this.policyInjector.Create(typeof(object), (Type)null);
         }
 
-        
+
         [TestMethod]
-        //todo: What should be exception expected?
-        //[ExpectedException(typeof(ArgumentException))]
-        [ExpectedException(typeof(ResolutionFailedException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void WhenCreatingAnInstanceWithNonMatchingCreateAndReturnTypes_ThenArgumentExceptionIsThrown()
         {
-            // this check is performed by the container
             this.policyInjector.Create(typeof(object), typeof(IFormatProvider));
         }
 
@@ -320,17 +315,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void WhenWrappingNull_ThenArgumentNullExceptionIsThrown()
         {
-            // this check is performed by the container
             this.policyInjector.Wrap<Wrappable>(null);
         }
 
         [TestMethod]
-        //todo: What should be exception expected?
-        //[ExpectedException(typeof(ArgumentException))]
-        [ExpectedException(typeof(ResolutionFailedException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void WhenWrappingAnInstanceWithNonMatchingReturnType_ThenArgumentExceptionIsThrown()
         {
-            // this check is performed by the container
             this.policyInjector.Wrap(typeof(IFormatProvider), new object());
         }
     }
@@ -395,6 +386,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
         {
             this.container = new MockUnityContainer();
             this.container.AddNewExtension<Interception>();
+            this.container.AddNewExtension<TransientPolicyBuildUpExtension>();
             this.policyInjector = new PolicyInjector(new UnityServiceLocator(this.container));
         }
 

@@ -21,8 +21,6 @@ using Moq;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
 {
-
-    [DeploymentItem("save_as_target.config")]
     public abstract class save_as_context : given_dirty_application_model
     {
         protected static string SaveAsTargetFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "save_as_target.config");

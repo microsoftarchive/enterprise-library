@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.Security;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
@@ -34,8 +35,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
 
         private static TraceListener GetListener(string name, IConfigurationSource configurationSource)
         {
-            var container = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
-            return container.GetInstance<TraceListener>(name);
+            var settings = LoggingSettings.GetLoggingSettings(configurationSource);
+            return settings.TraceListeners.Get(name).BuildTraceListener(settings);
         }
 
         [TestMethod]
@@ -144,35 +145,45 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
         [TestMethod]
         public void CanCreateInstanceFromGivenName()
         {
+
+
             FormattedEventLogTraceListenerData listenerData = new FormattedEventLogTraceListenerData("listener", "unknown source", "formatter");
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            helper.loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
+            helper.loggingSettings.Formatters.Add(new TextFormatterData("formatter", "some template"));
             helper.loggingSettings.TraceListeners.Add(listenerData);
 
-            TraceListener listener = GetListener("listener\u200cimplementation", helper.configurationSource);
+            TraceListener listener = GetListener("listener", helper.configurationSource);
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual("listener\u200cimplementation", listener.Name);
+            Assert.AreEqual("listener", listener.Name);
             Assert.AreEqual(listener.GetType(), typeof(FormattedEventLogTraceListener));
             FormattedEventLogTraceListener castedListener = (FormattedEventLogTraceListener)listener;
             Assert.IsNotNull(castedListener.Formatter);
             Assert.AreEqual("unknown source", ((EventLogTraceListener)castedListener.InnerListener).EventLog.Source);
-            Assert.AreEqual(FormattedEventLogTraceListener.DefaultLogName, ((EventLogTraceListener)castedListener.InnerListener).EventLog.Log);
             Assert.AreEqual(FormattedEventLogTraceListener.DefaultMachineName, ((EventLogTraceListener)castedListener.InnerListener).EventLog.MachineName);
             Assert.AreEqual(castedListener.Formatter.GetType(), typeof(TextFormatter));
-            Assert.AreEqual("foobar template", ((TextFormatter)castedListener.Formatter).Template);
+            Assert.AreEqual("some template", ((TextFormatter)castedListener.Formatter).Template);
+            
+            try
+            {
+                Assert.AreEqual(FormattedEventLogTraceListener.DefaultLogName, ((EventLogTraceListener)castedListener.InnerListener).EventLog.Log);
+            }
+            catch (SecurityException ex)
+            {
+                Assert.Inconclusive("In order to run the tests, please run Visual Studio as Administrator.\r\n{0}", ex.ToString());
+            }
         }
 
         [TestMethod]
         public void CanCreateInstanceFromConfigurationFile()
         {
             LoggingSettings loggingSettings = new LoggingSettings();
-            loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
+            loggingSettings.Formatters.Add(new TextFormatterData("formatter", "some template"));
             loggingSettings.TraceListeners.Add(new FormattedEventLogTraceListenerData("listener", "unknown source", "log", "machine", "formatter"));
 
             TraceListener listener =
-                GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+                GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(FormattedEventLogTraceListener));
@@ -182,14 +193,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             Assert.AreEqual("log", ((EventLogTraceListener)castedListener.InnerListener).EventLog.Log);
             Assert.AreEqual("machine", ((EventLogTraceListener)castedListener.InnerListener).EventLog.MachineName);
             Assert.AreEqual(castedListener.Formatter.GetType(), typeof(TextFormatter));
-            Assert.AreEqual("foobar template", ((TextFormatter)castedListener.Formatter).Template);
+            Assert.AreEqual("some template", ((TextFormatter)castedListener.Formatter).Template);
         }
 
         [TestMethod]
         public void CanCreateInstanceFromConfigurationFileWithMinimalConfiguration()
         {
             LoggingSettings loggingSettings = new LoggingSettings();
-            loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
+            loggingSettings.Formatters.Add(new TextFormatterData("formatter", "some template"));
             FormattedEventLogTraceListenerData listenerData = new FormattedEventLogTraceListenerData();
             listenerData.Name = "listener";
             listenerData.Type = typeof(FormattedEventLogTraceListener);
@@ -199,7 +210,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             loggingSettings.TraceListeners.Add(listenerData);
 
             TraceListener listener = 
-                GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+                GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(FormattedEventLogTraceListener));
@@ -209,7 +220,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             //Assert.AreEqual(FormattedEventLogTraceListener.DefaultLogName, ((EventLogTraceListener)castedListener.InnerListener).EventLog.Log);
             Assert.AreEqual(FormattedEventLogTraceListener.DefaultMachineName, ((EventLogTraceListener)castedListener.InnerListener).EventLog.MachineName);
             Assert.AreEqual(castedListener.Formatter.GetType(), typeof(TextFormatter));
-            Assert.AreEqual("foobar template", ((TextFormatter)castedListener.Formatter).Template);
+            Assert.AreEqual("some template", ((TextFormatter)castedListener.Formatter).Template);
         }
     }
 }

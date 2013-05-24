@@ -10,18 +10,16 @@
 //===============================================================================
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-#if !SILVERLIGHT
-using System.Diagnostics;
-#else
-using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
-#endif
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration;
+using System.Diagnostics;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests.Configuration
 {

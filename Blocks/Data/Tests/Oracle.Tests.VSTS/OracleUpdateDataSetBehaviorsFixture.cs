@@ -29,6 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Tests
         [TestInitialize]
         public void Initialize()
         {
+            EnvironmentHelper.AssertOracleClientIsInstalled();
             DatabaseProviderFactory factory = new DatabaseProviderFactory(OracleTestConfigurationSource.CreateConfigurationSource());
             db = factory.Create("OracleTest");
             // ensure that stored procedures are dropped before trying to create them

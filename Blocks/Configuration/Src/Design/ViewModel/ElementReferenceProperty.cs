@@ -11,19 +11,18 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Configuration;
-using System.Linq;
 using System.ComponentModel;
+using System.Configuration;
+using System.Diagnostics;
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Converters;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.Globalization;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Converters;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
@@ -80,8 +79,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         ///<param name="declaringProperty">The descriptor declaring this property.</param>
         ///<param name="additionalAttributes">Additional attributes to apply to the reference proeprty.</param>
         ///<exception cref="ArgumentException">Thrown if the declaring property <see cref="PropertyDescriptor.PropertyType"/> is not a <see cref="string"/> type.</exception>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "As designed")]
         public ElementReferenceProperty(IServiceProvider serviceProvider, ElementLookup lookup, ElementViewModel parent, PropertyDescriptor declaringProperty, IEnumerable<Attribute> additionalAttributes)
-            : base(serviceProvider, parent, declaringProperty, additionalAttributes.Union(new Attribute[]{new ValidationAttribute(typeof(ElementReferenceValidator))}))
+            : base(serviceProvider, parent, declaringProperty, additionalAttributes.Union(new Attribute[] { new ValidationAttribute(typeof(ElementReferenceValidator)) }))
         {
             if (declaringProperty.PropertyType != typeof(string)) throw new ArgumentException(Resources.ReferencePropertyInvalidType);
 
@@ -211,7 +211,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             return element.NameProperty.BindableProperty.BindableValue;
         }
 
-        
+
         /// <summary>
         /// Returns the suggested elements for this reference.
         /// </summary>
@@ -454,7 +454,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                     scopeChangeScope.CollectionChanged -= ScopeChangedHandler;
                     scopeChangeScope.Dispose();
                     scopeChangeScope = null;
-                }    
+                }
             }
 
             public void Dispose()
@@ -505,7 +505,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         public ChangeScopePropertyWatcher()
         {
-            
+
         }
 
         public void Refresh(IEnumerable<ElementViewModel> elements)

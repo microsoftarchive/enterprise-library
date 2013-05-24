@@ -10,19 +10,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Common.TestSupport</RootNamespace>
     <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Common.TestSupport</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <StartupObject>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment><StartupObject>
     </StartupObject>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -35,9 +30,12 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
+    <RestorePackages>true</RestorePackages>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,7 +48,7 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <RunFxCop>false</RunFxCop>
     <FxCopRules>-Microsoft.Design#CA2210;-Microsoft.Reliability#CA2007</FxCopRules>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>false</DebugSymbols>
@@ -59,13 +57,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -90,27 +84,13 @@
     <Compile Include="Configuration\ConfigurationSourceBuilderFixture.cs" />
     <Compile Include="Configuration\ConfigurationSourceUpdatable.cs" />
     <Compile Include="Configuration\ConfigurationTestHelper.cs" />
-    <Compile Include="Configuration\ContainerModel\ContainerSwitcher.cs" />
-    <Compile Include="Configuration\ContainerModel\TypeRegistrationExtension.cs" />
-    <Compile Include="Configuration\Manageability\KeyValuePairParsingTestHelper.cs" />
-    <Compile Include="Configuration\Manageability\Mocks\MockAdmContent.cs" />
-    <Compile Include="Configuration\Manageability\Mocks\MockAdmContentBuilder.cs" />
-    <Compile Include="Configuration\Manageability\Mocks\MockConfigurationElementManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\Mocks\MockConfigurationSectionManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\Mocks\MockConfigurationSectionManageabilityProviderAlt.cs" />
-    <Compile Include="Configuration\Manageability\Mocks\MockConfigurationSectionManageabilityProviderBase.cs" />
-    <Compile Include="Configuration\Manageability\Mocks\MockRegistryAccessor.cs" />
-    <Compile Include="Configuration\Manageability\Mocks\MockRegistryKey.cs" />
-    <Compile Include="Configuration\Manageability\Mocks\TestConfigurationSection.cs" />
     <Compile Include="Configuration\MockCustomProviderBase.cs" />
-    <Compile Include="Configuration\SectionBuilder.cs" />
     <Compile Include="ContextBase\ArrangeActAssert.cs" />
     <Compile Include="CrossThreadTestRunner.cs" />
     <Compile Include="EventLogExtensions.cs" />
     <Compile Include="EventLogTracker.cs" />
     <Compile Include="Instrumentation\WmiEventWatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\AssemblyInfo.Desktop.cs" />
     <Compile Include="ResourceHelper.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -130,13 +110,11 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\..\.nuget\nuget.targets" />
+  <!-- Cannot remove the following because NuGet will re-add it, and will break relative paths -->
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" Condition="False" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

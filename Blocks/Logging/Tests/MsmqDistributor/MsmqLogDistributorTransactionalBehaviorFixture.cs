@@ -33,13 +33,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         MsmqLogDistributor msmqDistributor;
         LogSource clientSource;
         MsmqTraceListener clientListener;
-        LogWriter logWriter;
         DistributorEventLogger eventLogger;
         public const string TestEventSource = "Test Log Distributor";
 
         [TestInitialize]
         public void SetUp()
         {
+            CommonUtil.ValidateMsmqIsRunning();
             CommonUtil.DeletePrivateTestQ();
             CreateQueueForTesting();
 
@@ -48,16 +48,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
                                       MessagePriority.Normal, false, new TimeSpan(0, 1, 0), new TimeSpan(0, 1, 0),
                                       false, true, false, MessageQueueTransactionType.Single);
 
-            clientSource = new LogSource("unnamed", SourceLevels.All);
-            clientSource.Listeners.Add(clientListener);
+            clientSource = new LogSource("unnamed", new[] { clientListener }, SourceLevels.All);
 
-            LogSource distributorSource = new LogSource("unnamed", SourceLevels.All);
-            distributorSource.Listeners.Add(new MockTraceListener());
+            LogSource distributorSource = new LogSource("unnamed", new[] { new MockTraceListener() }, SourceLevels.All);
             Dictionary<string, LogSource> traceSources = new Dictionary<string, LogSource>();
-            logWriter =
-                new LogWriterImpl(new List<ILogFilter>(), traceSources, distributorSource, null, new LogSource("errors"), "default", false, false);
+            Logger.SetLogWriter(new LogWriter(new List<ILogFilter>(), traceSources, distributorSource, null, new LogSource("errors"), "default", false, false), false);
             eventLogger = new DistributorEventLogger(TestEventSource);
-            msmqDistributor = new MsmqLogDistributor(logWriter, CommonUtil.MessageQueuePath, eventLogger);
+            msmqDistributor = new MsmqLogDistributor(CommonUtil.MessageQueuePath, eventLogger);
             msmqDistributor.StopReceiving = false;
         }
 
@@ -71,12 +68,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         {
             CommonUtil.DeletePrivateTestQ();
             MockTraceListener.Reset();
+            Logger.Reset();
         }
 
         [TestMethod]
         public void Constructor()
         {
-            msmqDistributor = new MsmqLogDistributor(new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), new LogSource("errors"), "default"), CommonUtil.MessageQueuePath, new DistributorEventLogger());
+            msmqDistributor = new MsmqLogDistributor(CommonUtil.MessageQueuePath, new DistributorEventLogger());
 
             Assert.IsNotNull(msmqDistributor);
         }
@@ -220,7 +218,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         [TestMethod]
         public void MsmqAccessDenied()
         {
-            MsmqReceiverTestWrapper testSync = new MsmqReceiverTestWrapper(logWriter, CommonUtil.MessageQueuePath, eventLogger);
+            MsmqReceiverTestWrapper testSync = new MsmqReceiverTestWrapper(CommonUtil.MessageQueuePath, eventLogger);
             testSync.LogMsgQueueException(MessageQueueErrorCode.AccessDenied);
 
             string expected = string.Format(Resources.MsmqAccessDenied, CommonUtil.MessageQueuePath, WindowsIdentity.GetCurrent().Name);

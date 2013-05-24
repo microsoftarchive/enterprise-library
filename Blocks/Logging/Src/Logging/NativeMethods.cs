@@ -11,6 +11,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
@@ -18,6 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// <summary>
     /// Platform Invocation methods used to support Tracer.
     /// </summary>
+    [SecurityCritical]
     internal static class NativeMethods
     {
         // Constants for use with GetSecurityInfo
@@ -36,44 +38,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         [DllImport("kernel32.dll")]
         internal static extern int QueryPerformanceFrequency(out Int64 lpPerformanceCount);
 
-        [DllImport("mtxex.dll", CallingConvention=CallingConvention.Cdecl)]
+        [DllImport("mtxex.dll", CallingConvention = CallingConvention.Cdecl)]
         internal static extern int GetObjectContext([Out]
         [MarshalAs(UnmanagedType.Interface)] out IObjectContext pCtx);
 
         [DllImport("kernel32.dll")]
         internal static extern IntPtr GetCurrentProcess();
 
-		/// <summary>
-		/// Made public for testing purposes.
-		/// </summary>
-		/// <returns></returns>
+        /// <summary>
+        /// Made public for testing purposes.
+        /// </summary>
+        /// <returns></returns>
         [DllImport("kernel32.dll")]
         public static extern int GetCurrentProcessId();
 
-		/// <summary>
-		/// Made public for testing purposes.
-		/// </summary>
-		/// <returns></returns>
+        /// <summary>
+        /// Made public for testing purposes.
+        /// </summary>
+        /// <returns></returns>
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [PreserveSig]
         public static extern int GetModuleFileName([In] IntPtr hModule, [Out] StringBuilder lpFilename, [In]
         [MarshalAs(UnmanagedType.U4)] int nSize);
 
-		/// <summary>
-		/// Made public for testing purposes.
-		/// </summary>
-		/// <returns></returns>
+        /// <summary>
+        /// Made public for testing purposes.
+        /// </summary>
+        /// <returns></returns>
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-		public static extern IntPtr GetModuleHandle(string moduleName);
+        public static extern IntPtr GetModuleHandle(string moduleName);
 
-        [DllImport("secur32.dll", CharSet=CharSet.Unicode, EntryPoint="GetUserNameExW", SetLastError=true)]
-		[return: MarshalAs(UnmanagedType.I1)]
+        [DllImport("secur32.dll", CharSet = CharSet.Unicode, EntryPoint = "GetUserNameExW", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.I1)]
         internal static extern bool GetUserNameEx([In] ExtendedNameFormat nameFormat, StringBuilder nameBuffer, ref uint size);
 
         [DllImport("advapi32.dll")]
         internal static extern int GetSecurityInfo(IntPtr handle, SE_OBJECT_TYPE objectType, uint securityInformation, ref IntPtr ppSidOwner, ref IntPtr ppSidGroup, ref IntPtr ppDacl, ref IntPtr ppSacl, out IntPtr ppSecurityDescriptor);
 
-        [DllImport("advapi32.dll", CharSet=CharSet.Unicode)]
+        [DllImport("advapi32.dll", CharSet = CharSet.Unicode)]
         internal static extern bool LookupAccountSid(
             IntPtr systemName, // name of local or remote computer
             IntPtr sid, // security identifier
@@ -84,11 +86,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             out int sidType // SID type
             );
 
-		/// <summary>
-		/// Made public for testing purposes.
-		/// </summary>
-		/// <returns></returns>
-		[DllImport("kernel32.dll")]
+        /// <summary>
+        /// Made public for testing purposes.
+        /// </summary>
+        /// <returns></returns>
+        [DllImport("kernel32.dll")]
         public static extern int GetCurrentThreadId();
 
         [ComImport]
@@ -96,7 +98,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         internal interface IObjectContext
         {
-            [return : MarshalAs(UnmanagedType.Interface)]
+            [return: MarshalAs(UnmanagedType.Interface)]
             Object CreateInstance([MarshalAs(UnmanagedType.LPStruct)] Guid rclsid, [MarshalAs(UnmanagedType.LPStruct)] Guid riid);
 
             void SetComplete();
@@ -108,14 +110,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             void DisableCommit();
 
             [PreserveSig]
-            [return : MarshalAs(UnmanagedType.Bool)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             bool IsInTransaction();
 
             [PreserveSig]
-            [return : MarshalAs(UnmanagedType.Bool)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             bool IsSecurityEnabled();
 
-            [return : MarshalAs(UnmanagedType.Bool)]
+            [return: MarshalAs(UnmanagedType.Bool)]
             bool IsCallerInRole([In]
             [MarshalAs(UnmanagedType.BStr)] String role);
         }

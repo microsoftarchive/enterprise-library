@@ -10,17 +10,13 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Console.Wpf.Tests.VSTS</RootNamespace>
     <AssemblyName>Console.Wpf.Tests.VSTS</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <FileUpgradeFlags>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids><FileUpgradeFlags>
     </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -36,6 +32,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,7 +44,7 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>
     </NoWarn>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -56,29 +53,35 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Lib\Desktop\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.dll</HintPath>
+      <HintPath>..\..\..\..\..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5, Version=5.0.414.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Lib\Desktop\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5.dll</HintPath>
+      <HintPath>..\..\..\..\..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.dll</HintPath>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\..\..\..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Unity">
+      <HintPath>..\..\..\..\packages\Unity.3.0.1304.0\lib\Net45\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Moq, Version=3.1.416.3, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Lib\Desktop\ThirdParty\Moq\Moq.dll</HintPath>
+    <Reference Include="Microsoft.Practices.Unity.Configuration">
+      <HintPath>..\..\..\..\packages\Unity.3.0.1304.0\lib\Net45\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception">
+      <HintPath>..\..\..\..\packages\Unity.Interception.3.0.1304.0\lib\Net45\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception.Configuration">
+      <HintPath>..\..\..\..\packages\Unity.Interception.3.0.1304.0\lib\Net45\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+    <Reference Include="Moq">
+      <HintPath>..\..\..\..\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
@@ -122,8 +125,6 @@
     <Compile Include="DevTests\given_app_settings_configuration\when_creating_app_settings_view_model.cs" />
     <Compile Include="DevTests\given_assembly_location\when_locating_assemblies_from_current_directory.cs" />
     <Compile Include="DevTests\given_assembly_location\when_locating_assembly_sections.cs" />
-    <Compile Include="BlockSpecific\Caching\given_caching_configuraton\when_adding_caching_configuration_model.cs" />
-    <Compile Include="BlockSpecific\Caching\given_caching_configuraton\when_saving_caching_configuration.cs" />
     <Compile Include="DevTests\given_configuration_element_with_properties\when_initializing_new_section.cs" />
     <Compile Include="DevTests\given_configuration_element_with_properties\when_creating_property_model_from_configuration.cs" />
     <Compile Include="DevTests\given_configuration_element_with_properties\when_creating_property_model_from_property_descriptor.cs">
@@ -139,9 +140,6 @@
     <Compile Include="DevTests\given_configuration_source_model\when_initializing_new_configuration.cs" />
     <Compile Include="DevTests\given_configuration_source_model\when_loading_configuration.cs" />
     <Compile Include="DevTests\given_configuration_source_model\when_removing_section.cs" />
-    <Compile Include="BlockSpecific\Cryptography\given_keyed_hash_algorithm_provider_element.cs" />
-    <Compile Include="BlockSpecific\Cryptography\given_crypto_configuration.cs" />
-    <Compile Include="BlockSpecific\Cryptography\given_symmetric_crypto_provider_element.cs" />
     <Compile Include="DevTests\given_custom_provider_configuration\when_creating_custom_provider_element.cs" />
     <Compile Include="BlockSpecific\Data\given_data_configuration\when_creating_data_section_view_model.cs" />
     <Compile Include="BlockSpecific\Data\given_data_configuration\when_saving_data_configuration_section.cs" />
@@ -165,7 +163,6 @@
     <Compile Include="DevTests\given_environment_node_in_view_model\when_overriding_properties.cs" />
     <Compile Include="DevTests\given_environment_node_in_view_model\when_removing_environment.cs" />
     <Compile Include="Contexts\LoggingConfigurationContext.cs" />
-    <Compile Include="BlockSpecific\Security\given_security_configuration\given_security_configuration.cs" />
     <Compile Include="DevTests\given_application_model\when_opening_configuration_source.cs" />
     <Compile Include="DevTests\given_application_model\when_saving_configuration_source_to_file.cs" />
     <Compile Include="DevTests\given_view_model_and_config_collection\when_seeking_collection_add_commands.cs" />
@@ -192,22 +189,9 @@
     <Compile Include="Mocks\SectionWithExtendedViewModel.cs" />
     <Compile Include="Mocks\TestHandler.cs" />
     <Compile Include="Mocks\TestHandlerData.cs" />
-    <Compile Include="Properties\AssemblyInfo.2010.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Caching\Src\Caching\Caching.csproj">
-      <Project>{E725A5B4-A379-492F-89E3-3D8021376C3F}</Project>
-      <Name>Caching</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Caching\Src\Cryptography\Caching.Cryptography.csproj">
-      <Project>{A03EA97B-97CB-41EF-A55D-15C6496D8943}</Project>
-      <Name>Caching.Cryptography</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Caching\Src\Database\Caching.Database.csproj">
-      <Project>{674B06A5-A61C-4546-8475-90D4A7FE31D8}</Project>
-      <Name>Caching.Database</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Common\Src\Common.csproj">
       <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
       <Name>Common</Name>
@@ -239,18 +223,6 @@
     <ProjectReference Include="..\..\..\..\PolicyInjection\Src\PolicyInjection\PolicyInjection.csproj">
       <Project>{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}</Project>
       <Name>PolicyInjection</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Security.Cryptography\Src\Cryptography\Security.Cryptography.csproj">
-      <Project>{6A4E6A8A-A39F-4643-BA9B-87AED00BB03E}</Project>
-      <Name>Security.Cryptography</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Security\Src\CachingStore\Security.Cache.CachingStore.csproj">
-      <Project>{933575C4-BCAC-47E0-B651-C57FBC5CE58E}</Project>
-      <Name>Security.Cache.CachingStore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Security\Src\Security\Security.csproj">
-      <Project>{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}</Project>
-      <Name>Security</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Validation\Src\Validation\Validation.csproj">
       <Project>{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}</Project>
@@ -290,15 +262,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BlockSpecific\Caching\given_caching_configuraton\when_backing_store_reference_is_found.cs" />
-    <Compile Include="BlockSpecific\Caching\given_caching_configuraton\given_caching_configuration.cs" />
-    <Compile Include="BlockSpecific\Caching\given_caching_configuraton\when_backing_store_is_deleted.cs" />
-    <Compile Include="BlockSpecific\Caching\given_caching_configuraton\when_cache_manager_view_model_constructed.cs" />
     <Compile Include="BlockSpecific\Core\when_converting_redirected_section_name.cs" />
     <Compile Include="BlockSpecific\Core\when_getting_suggested_values_for_redirect_section.cs" />
-    <Compile Include="BlockSpecific\Core\when_manageable_configuration_source_view_model_constructed.cs" />
-    <Compile Include="BlockSpecific\Core\with_new_providers.cs" />
-    <Compile Include="BlockSpecific\Core\with_no_new_providers.cs" />
     <Compile Include="BlockSpecific\Data\when_creating_new_database_section.cs" />
     <Compile Include="BlockSpecific\Logging\given_logging_configuration\given_email_trace_listener.cs" />
     <Compile Include="BlockSpecific\Logging\given_logging_configuration\given_trace_source.cs" />
@@ -311,7 +276,6 @@
     <Compile Include="ConfigFiles\ConfigFileLocator.cs" />
     <Compile Include="Contexts\NewConfigurationSourceModelContext.cs" />
     <Compile Include="BlockSpecific\Logging\when_logging_filter_priorities_invalid.cs" />
-    <Compile Include="Contexts\CachingConfigurationContext.cs" />
     <Compile Include="Controls\given_elementcontainer\when_creating_new_container.cs" />
     <Compile Include="Controls\given_elementcontainer\when_is_selected_changes_on_bound_element.cs" />
     <Compile Include="Controls\given_elementcontainer\when_properties_shown_changes_on_bound_element.cs" />
@@ -327,8 +291,10 @@
     <Compile Include="Controls\TypeBrowser\TypeFilterFixture.cs" />
     <Compile Include="Converters\given_enumerable_to_boolean_value_converter.cs" />
     <Compile Include="Converters\given_reference_property_converter.cs" />
+    <Compile Include="DevTests\AssemblyMatchFilterFixture.cs" />
+    <Compile Include="DevTests\AddBlockCommandMatchFilterFixture.cs" />
+    <Compile Include="DevTests\CommandMatchFilterFixture.cs" />
     <Compile Include="DevTests\given_add_application_block_command\when_executing_add_application_block_command.cs" />
-    <Compile Include="DevTests\given_add_instrumentation_command\when_executing_add.cs" />
     <Compile Include="DevTests\given_annotation_service\when_type_is_found_with_metadata_type_attribute.cs" />
     <Compile Include="DevTests\given_application_model\when_saving_opened_readonly_configuration_as.cs" />
     <Compile Include="DevTests\given_application_model\when_opening_composed_source.cs" />
@@ -342,13 +308,12 @@
     <Compile Include="DevTests\given_app_settings_configuration\when_saving_application_settings_after_adding_new_settings.cs" />
     <Compile Include="BlockSpecific\ExceptionHandling\given_an_exception_policy_add_command\when_adding_an_exception_policy.cs" />
     <Compile Include="Contexts\SectionWithValidatablePropertiesContext.cs" />
-    <Compile Include="BlockSpecific\Caching\given_caching_configuraton\when_adding_cache_manager.cs" />
     <Compile Include="DevTests\given_app_settings_view_model\given_application_settings.cs" />
     <Compile Include="DevTests\given_app_settings_view_model\when_overriding_app_settings.cs" />
+    <Compile Include="DevTests\given_assembly_name_matcher.cs" />
     <Compile Include="DevTests\given_command_attribute.cs" />
     <Compile Include="DevTests\given_app_settings_view_model\when_getting_all_properties.cs" />
     <Compile Include="DevTests\given_configuration_container\when_requesting_save_operation.cs" />
-    <Compile Include="DevTests\given_configuration_source\when_creating_mgmt_design_source_with_relative_path_sub_dir.cs" />
     <Compile Include="DevTests\given_configuration_source\when_creating_design_configuration_source_to_readonly_file.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -381,6 +346,10 @@
     <Compile Include="DevTests\given_selected_source_and_parent_source\when_validating_sources_section.cs" />
     <Compile Include="DevTests\given_selected_source_and_redirected_sections\given_selected_source_and_redirects.cs" />
     <Compile Include="DevTests\given_selected_source_and_redirected_sections\when_validating_sources_section.cs" />
+    <Compile Include="DevTests\ProfileDeserializationFixture.cs" />
+    <Compile Include="DevTests\ProfileFixture.cs" />
+    <Compile Include="DevTests\TestCommandModel.cs" />
+    <Compile Include="DevTests\TypeMatchFilterFixture.cs" />
     <Compile Include="Mocks\ExceptionThrowingValidator.cs" />
     <Compile Include="DevTests\given_logging_settings_and_overrides\when_overriding_protection_provider.cs" />
     <Compile Include="DevTests\given_merge_configuration\when_overriding_protection_provider_from_none.cs" />
@@ -408,8 +377,6 @@
     <Compile Include="DevTests\given_throwing_command_model\when_exception_is_thrown.cs" />
     <Compile Include="DevTests\given_view_model_needing_initialization\when_loading_configurationsourcemodel.cs" />
     <Compile Include="DevTests\given_configuration_source_model\when_removing_an_environment.cs" />
-    <Compile Include="BlockSpecific\Cryptography\when_creating_add_command_for_keyed_hash_provider_with_child_commands.cs" />
-    <Compile Include="BlockSpecific\Cryptography\when_creating_add_command_for_keyed_hash_provider.cs" />
     <Compile Include="BlockSpecific\Data\given_data_configuration\when_executing_add_database_section_command.cs" />
     <Compile Include="DevTests\given_config_with_nametype_elements\when_creating_view_models.cs" />
     <Compile Include="DevTests\given_default_add_command\when_executing_default_add_command.cs" />
@@ -457,7 +424,7 @@
     <Compile Include="DevTests\given_host_adapter\when_selecting_element.cs" />
     <Compile Include="DevTests\given_host_adapter\when_vialoting_validation_rule.cs" />
     <Compile Include="DevTests\given_invalid_model\when_building_validation_model.cs" />
-    <Compile Include="DevTests\given_invalid_model\when_invalidating_caching_section.cs" />
+    <Compile Include="DevTests\given_invalid_model\when_invalidating_logging_section.cs" />
     <Compile Include="Mocks\ElementForValidation.cs" />
     <Compile Include="DevTests\given_property_to_validate\when_loading_a_validation_source_with_errors.cs" />
     <Compile Include="DevTests\given_property_to_validate\when_validating_a_property.cs" />
@@ -496,7 +463,6 @@
     <Compile Include="WizardTests\given_wizard_command\when_executing_command.cs" />
     <EmbeddedResource Include="ConfigFiles\configurationsource_satellite.config" />
     <EmbeddedResource Include="ConfigFiles\configurationsource_main.config" />
-    <EmbeddedResource Include="ConfigFiles\configurationsourcemanageable_main.config" />
     <EmbeddedResource Include="ConfigFiles\configurationsource_main_with_missing.config" />
     <EmbeddedResource Include="ConfigFiles\configurationsource_with_invalid_satellite.config" />
     <EmbeddedResource Include="ConfigFiles\configurationsource_invalid_satellite.config" />
@@ -510,6 +476,10 @@
     <EmbeddedResource Include="ConfigFiles\override_lab_protection_dpapi.dconfig" />
     <EmbeddedResource Include="ConfigFiles\override_lab_protection_none.dconfig" />
     <EmbeddedResource Include="ConfigFiles\configuration_with_all_blocks.config" />
+    <None Include="..\..\..\..\test.exe.config">
+      <Link>test.exe.config</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="merge_environment.dconfig">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -525,6 +495,7 @@
     <None Include="merge_main.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="packages.config" />
     <None Include="redirected_sections.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -535,7 +506,7 @@
     <None Include="temp.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="test.design.config">
+    <None Include="test.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -566,9 +537,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
       <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
+      <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>

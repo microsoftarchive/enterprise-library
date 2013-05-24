@@ -14,7 +14,6 @@ using System.Configuration;
 using System.IO;
 using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
@@ -40,7 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         public void CanSaveConfigurationSectionToFile()
         {
             FileConfigurationSource source = new FileConfigurationSource(file, false);
-            source.Save(InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
+            source.Save(TestConfigurationSection.SectionName, CreateTestSection());
 
             ValidateConfiguration(file);
         }
@@ -57,18 +56,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
 
         void ValidateConfiguration(string configFile)
         {
-            InstrumentationConfigurationSection section = GetSection(configFile);
+            TestConfigurationSection section = GetSection(configFile);
 
-            Assert.IsTrue(section.PerformanceCountersEnabled);
-            Assert.IsTrue(section.EventLoggingEnabled);
+            Assert.AreEqual(true, section.BoolValue);
+            Assert.AreEqual(42, section.IntValue);
         }
 
-        InstrumentationConfigurationSection GetSection(string configFile)
+        TestConfigurationSection GetSection(string configFile)
         {
             ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
             fileMap.ExeConfigFilename = configFile;
             System.Configuration.Configuration config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
-            InstrumentationConfigurationSection section = (InstrumentationConfigurationSection)config.GetSection(InstrumentationConfigurationSection.SectionName);
+            TestConfigurationSection section = (TestConfigurationSection)config.GetSection(TestConfigurationSection.SectionName);
             return section;
         }
 
@@ -76,7 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         public void TryToSaveWithAFileConfigurationSaveParameter()
         {
             FileConfigurationSource source = new FileConfigurationSource(file, false);
-            source.Add(InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
+            source.Add(TestConfigurationSection.SectionName, CreateTestSection());
 
             ValidateConfiguration(file);
         }
@@ -89,11 +88,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
             {
                 using (var source = new FileConfigurationSource(tempFile, false))
                 {
-                    source.Add(InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
+                    source.Add(TestConfigurationSection.SectionName, CreateTestSection());
                     ValidateConfiguration(tempFile);
-                    source.Add(InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
+                    source.Add(TestConfigurationSection.SectionName, CreateTestSection());
                     ValidateConfiguration(tempFile);
-                    source.Add(InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
+                    source.Add(TestConfigurationSection.SectionName, CreateTestSection());
                     ValidateConfiguration(tempFile);
                 }
             }
@@ -108,7 +107,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         public void TryToSaveWithNullOrEmptySectionNameThrows()
         {
             FileConfigurationSource source = new FileConfigurationSource(file, false);
-            source.Save(null, CreateInstrumentationSection());
+            source.Save(null, CreateTestSection());
         }
 
         [TestMethod]
@@ -116,12 +115,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         public void TryToSaveWithNullSectionThrows()
         {
             FileConfigurationSource source = new FileConfigurationSource(file, false);
-            source.Save(InstrumentationConfigurationSection.SectionName, null);
+            source.Save(TestConfigurationSection.SectionName, null);
         }
 
-        InstrumentationConfigurationSection CreateInstrumentationSection()
+        TestConfigurationSection CreateTestSection()
         {
-            return new InstrumentationConfigurationSection(true, true, "fooApplicationName");
+            return new TestConfigurationSection { BoolValue = true, IntValue = 42 };
+        }
+    }
+
+    public class TestConfigurationSection : ConfigurationSection
+    {
+        public const string SectionName = "testSection";
+
+        [ConfigurationProperty("boolValue")]
+        public bool BoolValue
+        {
+            get { return (bool)this["boolValue"]; }
+            set { this["boolValue"] = value; }
+        }
+
+        [ConfigurationProperty("intValue")]
+        public int IntValue
+        {
+            get { return (int)this["intValue"]; }
+            set { this["intValue"] = value; }
         }
     }
 }

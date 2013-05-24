@@ -63,8 +63,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF
         public static readonly DependencyProperty ValidatesOnTargetUpdatedProperty =
             DependencyProperty.RegisterAttached(
                 "ValidatesOnTargetUpdated",
-                typeof (bool),
-                typeof (Validate),
+                typeof(bool),
+                typeof(Validate),
                 new PropertyMetadata(false, OnConfigurationPropertyChanged));
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF
         {
             if (element == null) throw new ArgumentNullException("element");
 
-            return (bool) element.GetValue(ValidatesOnTargetUpdatedProperty);
+            return (bool)element.GetValue(ValidatesOnTargetUpdatedProperty);
         }
 
         /// <summary>

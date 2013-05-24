@@ -24,7 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.Obje
     {
         void Log(string message);
     }
-#if !SILVERLIGHT
+
     public class MockDal : MarshalByRefObject, IDal, IMonitor
     {
         private bool throwException;
@@ -77,5 +77,4 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.Obje
             return "Don't intercept me";
         }
     }
-#endif
 }

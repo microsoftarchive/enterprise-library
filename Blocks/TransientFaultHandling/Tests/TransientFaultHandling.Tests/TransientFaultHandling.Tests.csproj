@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{851D1031-8E5C-40F7-9D4C-CEE71BCD82A8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.Tests</RootNamespace>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids><RestorePackages>true</RestorePackages>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.ApplicationServer.Caching.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Microsoft.WindowsAzure.Caching.1.8.1.0\lib\net35-full\Microsoft.ApplicationServer.Caching.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.Edm, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Data.Edm.5.2.0\lib\net40\Microsoft.Data.Edm.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.OData, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Data.OData.5.2.0\lib\net40\Microsoft.Data.OData.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceBus, Version=1.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\WindowsAzure.ServiceBus.1.8.0.0\lib\net40-full\Microsoft.ServiceBus.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.WindowsAzure.Configuration, Version=1.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Microsoft.WindowsAzure.ConfigurationManager.1.8.0.0\lib\net35-full\Microsoft.WindowsAzure.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Storage, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\WindowsAzure.Storage.2.0.5.1\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.StorageClient, Version=1.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\WindowsAzure.Storage.1.7.0.0\lib\net35-full\Microsoft.WindowsAzure.StorageClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Moq">
+      <HintPath>..\..\..\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data.Services.Client" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Spatial, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\System.Spatial.5.2.0\lib\net40\System.Spatial.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
+      <Visible>False</Visible>
+    </CodeAnalysisDependentAssemblyPaths>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Cache\given_cache_detection_strategy.cs" />
+    <Compile Include="ConfigurationScenarios\given_retry_policy_settings_from_system_config.cs" />
+    <Compile Include="ConfigurationScenarios\given_retry_policy_settings_with_policies.cs" />
+    <Compile Include="ConfigurationScenarios\given_empty_retry_policy_settings.cs" />
+    <Compile Include="ConfigurationTests.cs" />
+    <Compile Include="ServiceBus\service_bus_integration.cs" />
+    <Compile Include="ServiceBus\given_service_bus_detection_strategy.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="FakeSqlExceptionGenerator.cs" />
+    <Compile Include="GeneralRetryPolicyTests.cs" />
+    <Compile Include="Storage\storage20_integration.cs" />
+    <Compile Include="Storage\given_storage_detection_strategy.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ReliableConnectionScenarios\given_invalid_connection_string.cs" />
+    <Compile Include="ReliableConnectionScenarios\given_successfull_execute_xml_reader_command.cs" />
+    <Compile Include="ReliableConnectionScenarios\given_failing_execute_xml_reader_command.cs" />
+    <Compile Include="ReliableConnectionScenarios\given_successfull_execute_scalar_command.cs" />
+    <Compile Include="ReliableConnectionScenarios\given_failing_execute_scalar_command.cs" />
+    <Compile Include="ReliableConnectionScenarios\given_failing_execute_non_query_command.cs" />
+    <Compile Include="ReliableConnectionScenarios\given_successfull_execute_non_query_command.cs" />
+    <Compile Include="ReliableConnectionScenarios\given_failing_execute_reader_command.cs" />
+    <Compile Include="ReliableConnectionScenarios\given_successfull_execute_reader_command.cs" />
+    <Compile Include="ReliableSqlConnectionTest.cs" />
+    <Compile Include="ReliableSqlConnectionTest2.cs" />
+    <Compile Include="RetryManagerScenarios\given_the_default_retry_manager.cs" />
+    <Compile Include="RetryPolicyFactoryScenarios\given_retry_policy_factory.cs" />
+    <Compile Include="SqlAzureRetryPolicyTests.cs" />
+    <Compile Include="SqlCommandExtensionsScenarios\given_failing_execute_non_query_command.cs" />
+    <Compile Include="SqlCommandExtensionsScenarios\given_failing_execute_reader_command.cs" />
+    <Compile Include="SqlCommandExtensionsScenarios\given_failing_execute_scalar_command.cs" />
+    <Compile Include="SqlCommandExtensionsScenarios\given_failing_execute_xml_reader_command.cs" />
+    <Compile Include="SqlCommandExtensionsScenarios\given_invalid_connection_string.cs" />
+    <Compile Include="SqlCommandExtensionsScenarios\given_successfull_execute_non_query_command.cs" />
+    <Compile Include="SqlCommandExtensionsScenarios\given_successfull_execute_reader_command.cs" />
+    <Compile Include="SqlCommandExtensionsScenarios\given_successfull_execute_scalar_command.cs" />
+    <Compile Include="SqlCommandExtensionsScenarios\given_successfull_execute_xml_reader_command.cs" />
+    <Compile Include="SqlCommandExtensionsTest.cs" />
+    <Compile Include="SqlConnectionExtensionsTest.cs" />
+    <Compile Include="Storage\storage_integration.cs" />
+    <Compile Include="StrategyTests.cs" />
+    <Compile Include="ThrottlingConditionTest.cs" />
+    <Compile Include="TransactionRetryScopeTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
+      <Project>{a09297c8-2c40-470b-8856-d856676ddffa}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Source\TransientFaultHandling.Caching\TransientFaultHandling.Caching.csproj">
+      <Project>{694f23b5-c150-4965-b3bb-9906b2245019}</Project>
+      <Name>TransientFaultHandling.Caching</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Source\TransientFaultHandling.Data\TransientFaultHandling.Data.csproj">
+      <Project>{373b9b52-66d1-406d-b2b3-43c370804ad3}</Project>
+      <Name>TransientFaultHandling.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Source\TransientFaultHandling.ServiceBus\TransientFaultHandling.ServiceBus.csproj">
+      <Project>{939e2d99-434c-49a7-96ca-372d78fa0d7c}</Project>
+      <Name>TransientFaultHandling.ServiceBus</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Source\TransientFaultHandling.WindowsAzure.Storage\TransientFaultHandling.WindowsAzure.Storage.csproj">
+      <Project>{3d1f8654-ba08-472e-9a5d-f2d1eee59134}</Project>
+      <Name>TransientFaultHandling.WindowsAzure.Storage</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Source\TransientFaultHandling\TransientFaultHandling.csproj">
+      <Project>{E7A6F876-1FA6-45A8-898C-9EE3D33440CC}</Project>
+      <Name>TransientFaultHandling</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Source\TransientFaultHandling.Configuration\TransientFaultHandling.Configuration.csproj">
+      <Project>{F1FA20FB-5634-41B8-8196-14589DF98684}</Project>
+      <Name>TransientFaultHandling.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransientFaultHandling.TestSupport\TransientFaultHandling.TestSupport.csproj">
+      <Project>{BF660C02-400E-4230-B8F1-9AB48B164EFF}</Project>
+      <Name>TransientFaultHandling.TestSupport</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\TransientFaultHandling.licenseheader">
+      <Link>TransientFaultHandling.licenseheader</Link>
+    </None>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\..\.nuget\nuget.targets" />
+  <!-- Cannot remove the following because NuGet will re-add it, and will break relative paths -->
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" Condition="False" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

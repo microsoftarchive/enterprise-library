@@ -11,6 +11,7 @@
 
 using System.Data;
 using System.Data.Common;
+using System.Data.SqlClient;
 using System.Threading;
 using System.Transactions;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
@@ -162,11 +163,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Sql
         {
             Database db2 = new SqlDatabase(db.ConnectionString.ToString() + ";Persist Security Info=false;");
 
-            using (TransactionScope scope = new TransactionScope())
+            try
             {
-                DatabaseConnectionWrapper connection1 = TransactionScopeConnections.GetConnection(db);
-                DatabaseConnectionWrapper connection2 = TransactionScopeConnections.GetConnection(db2);
-                Assert.AreNotSame(connection1, connection2);
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    DatabaseConnectionWrapper connection1 = TransactionScopeConnections.GetConnection(db);
+                    DatabaseConnectionWrapper connection2 = TransactionScopeConnections.GetConnection(db2);
+                    Assert.AreNotSame(connection1, connection2);
+                }
+            }
+            catch (SqlException ex)
+            {
+                if (ex.Message.Contains("MSDTC"))
+                {
+                    Assert.Inconclusive("In order to run the test, enable the Distributed Transaction Coordinator service (MSDTC).\r\n{0}", ex.ToString());
+                }
+
+                throw;
             }
         }
 

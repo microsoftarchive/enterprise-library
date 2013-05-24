@@ -31,7 +31,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
                               .Returns(MessageBoxResult.Yes)
                               .Verifiable();
 
-            ApplicationModel.ConfigurationFilePath = "test.design.config";
+            ApplicationModel.ConfigurationFilePath = "test.config";
         }
 
         protected override void Act()

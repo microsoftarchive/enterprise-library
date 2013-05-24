@@ -10,21 +10,17 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Console.Wpf.Tests.VSTS.TestSupport;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services.PlatformProfile;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using System.ComponentModel.Design;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.Practices.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Console.Wpf.Tests.VSTS.Contexts
 {
@@ -207,6 +203,37 @@ namespace Console.Wpf.Tests.VSTS.Contexts
 
             var suggestedValues = categoryTraceListener.Property("Name").SuggestedValues.Cast<string>();
             CollectionAssert.AreEquivalent(expectedSuggestions.ToArray(), suggestedValues.ToArray());
+        }
+    }
+
+    [TestClass]
+    public class when_creating_logging_view_model_with_filtering_profile : LoggingConfigurationContext
+    {
+        SectionViewModel loggingViewModel;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+            var profile = new Profile
+            {
+                MatchFilters =
+                    new MatchFilter[] { new TypeMatchFilter { Name = typeof(CustomTraceListenerData).AssemblyQualifiedName } }
+            };
+
+            Container.RegisterInstance(profile);
+        }
+
+        protected override void Act()
+        {
+            var configurationSourceModel = Container.Resolve<ConfigurationSourceModel>();
+            loggingViewModel = configurationSourceModel.AddSection(LoggingSettings.SectionName, LoggingSection);
+        }
+
+        [TestMethod]
+        public void then_trace_listener_collection_has_custom_trace_listener_type_filtered()
+        {
+            var tracelistenerCollection = (ElementCollectionViewModel)loggingViewModel.DescendentElements().Where(x => typeof(TraceListenerDataCollection) == x.ConfigurationType).First();
+            Assert.IsFalse(tracelistenerCollection.PolymorphicCollectionElementTypes.Contains(typeof(CustomTraceListenerData)));
         }
     }
 }

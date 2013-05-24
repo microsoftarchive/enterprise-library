@@ -20,13 +20,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
     [TestClass]
     public class ExceptionUtilityFixture
     {
-        const string idMessage = "ID : {handlingInstanceID}";
-#if !SILVERLIGHT
         const string EventLogName = "Application";
         static readonly string EventLogSource = "Enterprise Library Exception Handling";
+        const string idMessage = "ID : {handlingInstanceID}";
         const string exceptionMessage = "Unable to handle exception";
         const string policy = "policy";
-#endif
 
         [TestMethod]
         public void FormatTokenInMessage()
@@ -37,8 +35,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             Assert.AreEqual("ID : " + id.ToString(), formattedMessage);
         }
 
-#if !SILVERLIGHT
         [TestMethod]
+        [Ignore]    // TODO remove with instrumentation
         public void LogHandlingError()
         {
             if (!EventLog.SourceExists(EventLogSource)) return;
@@ -70,6 +68,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
                 Assert.AreEqual(EventLogSource, entry.Source);
             }
         }
-#endif
     }
 }

@@ -11,112 +11,119 @@
 
 using System.EnterpriseServices;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation.Helpers
 {
-	internal class ContextUtils : IContextUtils
-	{
-		private SecurityCallContext currentCall;
+    [SecurityCritical]
+    internal class ContextUtils : IContextUtils
+    {
+        private SecurityCallContext currentCall;
 
-		public string GetActivityId()
-		{
-			return ContextUtil.ActivityId.ToString();
-		}
+        [SecurityCritical]
+        public string GetActivityId()
+        {
+            return ContextUtil.ActivityId.ToString();
+        }
 
-		public string GetApplicationId()
-		{
-			return ContextUtil.ApplicationId.ToString();
-		}
+        [SecurityCritical]
+        public string GetApplicationId()
+        {
+            return ContextUtil.ApplicationId.ToString();
+        }
 
-		public string GetTransactionId()
-		{
-			return ContextUtil.TransactionId.ToString();
-		}
+        [SecurityCritical]
+        public string GetTransactionId()
+        {
+            return ContextUtil.TransactionId.ToString();
+        }
 
-		public string GetDirectCallerAccountName()
-		{
-			string directCallerAccountName;
-			SecurityCallContext currentCall = this.CurrentCall;
+        [SecurityCritical]
+        public string GetDirectCallerAccountName()
+        {
+            string directCallerAccountName;
+            SecurityCallContext currentCall = this.CurrentCall;
 
-			if (currentCall != null)
-			{
-				if (currentCall.IsSecurityEnabled) 
-                {
-					directCallerAccountName = currentCall.DirectCaller.AccountName;
-                }
-				else
-                {
-					directCallerAccountName = string.Empty;
-			}
-            }
-			else
+            if (currentCall != null)
             {
-				directCallerAccountName = string.Empty;
-            }
-
-			return directCallerAccountName;
-		}
-
-		public string GetOriginalCallerAccountName()
-		{
-			string originalCallerAccountName;
-			SecurityCallContext currentCall = this.CurrentCall;
-
-			if (currentCall != null)
-			{
-				if (currentCall.IsSecurityEnabled) 
+                if (currentCall.IsSecurityEnabled)
                 {
-					originalCallerAccountName = currentCall.OriginalCaller.AccountName;
+                    directCallerAccountName = currentCall.DirectCaller.AccountName;
                 }
-				else
+                else
                 {
-					originalCallerAccountName = string.Empty;
-			}
+                    directCallerAccountName = string.Empty;
+                }
             }
-			else
+            else
             {
-				originalCallerAccountName = string.Empty;
+                directCallerAccountName = string.Empty;
             }
-			return originalCallerAccountName;
-		}
 
-		private SecurityCallContext CurrentCall
-		{
-			get 
-			{
-				NativeMethods.IObjectContext objectContext = ObjectContext;
+            return directCallerAccountName;
+        }
 
-				if (objectContext != null)
-				{
-					if (objectContext.IsSecurityEnabled())
+        [SecurityCritical]
+        public string GetOriginalCallerAccountName()
+        {
+            string originalCallerAccountName;
+            SecurityCallContext currentCall = this.CurrentCall;
+
+            if (currentCall != null)
+            {
+                if (currentCall.IsSecurityEnabled)
+                {
+                    originalCallerAccountName = currentCall.OriginalCaller.AccountName;
+                }
+                else
+                {
+                    originalCallerAccountName = string.Empty;
+                }
+            }
+            else
+            {
+                originalCallerAccountName = string.Empty;
+            }
+            return originalCallerAccountName;
+        }
+
+        private SecurityCallContext CurrentCall
+        {
+            get
+            {
+                NativeMethods.IObjectContext objectContext = ObjectContext;
+
+                if (objectContext != null)
+                {
+                    if (objectContext.IsSecurityEnabled())
                     {
-						currentCall = SecurityCallContext.CurrentCall;
+                        currentCall = SecurityCallContext.CurrentCall;
                     }
-					else
+                    else
                     {
-						currentCall = null;
-				}
+                        currentCall = null;
+                    }
                 }
 
-				return currentCall;
-			}
-		}
+                return currentCall;
+            }
+        }
 
-		private NativeMethods.IObjectContext ObjectContext
-		{
-			get 
-			{
-				NativeMethods.IObjectContext objectContext;
+        private NativeMethods.IObjectContext ObjectContext
+        {
+            get
+            {
+                NativeMethods.IObjectContext objectContext;
 
-				int hr = NativeMethods.GetObjectContext(out objectContext);
+                int hr = NativeMethods.GetObjectContext(out objectContext);
 
-				if ( ! (hr == 0 || hr == NativeMethods.E_NOINTERFACE || hr == NativeMethods.CONTEXT_E_NOCONTEXT) )
-				{
-					Marshal.ThrowExceptionForHR(hr);
-				}
+                if (!(hr == 0 || hr == NativeMethods.E_NOINTERFACE || hr == NativeMethods.CONTEXT_E_NOCONTEXT))
+                {
+                    Marshal.ThrowExceptionForHR(hr);
+                }
 
-				return objectContext;
-			}
-		}
-	}
+                return objectContext;
+            }
+        }
+    }
 }

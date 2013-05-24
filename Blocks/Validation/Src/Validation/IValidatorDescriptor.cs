@@ -19,7 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
     public interface IValidatorDescriptor
     {
         /// <summary>
-        /// Creates the represented <see cref="Validator"/>.
+        /// Creates the respresented <see cref="Validator"/>.
         /// </summary>
         /// <param name="targetType">The type of object that will be validated by the validator.</param>
         /// <param name="ownerType">The type of the object from which the value to validate is extracted.</param>

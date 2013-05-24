@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation
@@ -25,7 +24,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
     /// <seealso cref="CompositeValidatorFactory"/>
     public abstract class ValidatorFactory
     {
-        private readonly IValidationInstrumentationProvider instrumentationProvider;
         private readonly object validatorCacheLock = new object();
         private readonly IDictionary<ValidatorCacheKey, Validator> validatorCache
             = new Dictionary<ValidatorCacheKey, Validator>();
@@ -33,20 +31,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         ///<summary>
         /// Initializes a ValidatorFactory factory.
         ///</summary>
-        /// <param name="instrumentationProvider">The <see cref="IValidationInstrumentationProvider"/>
-        /// to attach to created validators.  Validators will gain this instrumentation behavior
-        /// automatically when they are wrapped with <see cref="GenericValidatorWrapper{T}"/></param>
-        protected ValidatorFactory(IValidationInstrumentationProvider instrumentationProvider)
+        protected ValidatorFactory()
         {
-            this.instrumentationProvider = instrumentationProvider;
-        }
-
-        ///<summary>
-        /// The <see cref="IValidationInstrumentationProvider"/> to attach to validators.
-        ///</summary>
-        protected IValidationInstrumentationProvider InstrumentationProvider
-        {
-            get { return instrumentationProvider; }
         }
 
         /// <summary>
@@ -60,7 +46,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             var validatorWrapperType = typeof(GenericValidatorWrapper<>).MakeGenericType(type);
             var validatorWrapper = (Validator)Activator.CreateInstance(
                 validatorWrapperType,
-                new object[] { validator, InstrumentationProvider });
+                new object[] { validator });
 
             return validatorWrapper;
         }
@@ -74,10 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <returns>A new, wrapped validator.</returns>
         protected virtual Validator<T> WrapAndInstrumentValidator<T>(Validator validator, Type unusedType)
         {
-            var validatorWrapper = new GenericValidatorWrapper<T>(
-                    validator,
-                    InstrumentationProvider
-                );
+            var validatorWrapper = new GenericValidatorWrapper<T>(validator);
             return validatorWrapper;
         }
 
@@ -132,7 +115,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
 
         /// <summary>
         /// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
-        /// through configuration and attributes on type <paramref name="targetType"/> and its ancestors for the default ruleset.
+        /// through configuration and aatributes on type <paramref name="targetType"/> and its ancestors for the default ruleset.
         /// </summary>
         /// <param name="targetType">The type to get the validator for.</param>
         /// <returns>The validator.</returns>

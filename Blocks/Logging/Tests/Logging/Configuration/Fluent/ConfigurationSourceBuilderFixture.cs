@@ -9,10 +9,18 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using System.Diagnostics;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
+using System.Messaging;
+using System.Collections.Specialized;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
 {
@@ -52,7 +60,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             Assert.IsNotNull(configurationSource.GetSection(LoggingSettings.SectionName));
         }
 
-#if !SILVERLIGHT
         [TestMethod]
         public void Then_RevertImpersonationIsTrue()
         {
@@ -61,7 +68,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
 
             Assert.IsTrue(loggingSettings.RevertImpersonation);
         }
-#endif
 
         [TestMethod]
         public void Then_EnableTracingIsTrue()
@@ -72,6 +78,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             Assert.IsTrue(loggingSettings.TracingEnabled);
         }
 
+
         [TestMethod]
         public void Then_LogWarningsWhenNoCategoryExistsIsTrue()
         {
@@ -80,5 +87,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
 
             Assert.IsTrue(loggingSettings.LogWarningWhenNoCategoriesMatch);
         }
+
     }
 }

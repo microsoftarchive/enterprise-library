@@ -14,7 +14,6 @@ using System.Configuration;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation
@@ -27,7 +26,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         private static readonly Validator EmptyValidator = new AndCompositeValidator();
 
         private readonly ValidationSettings validationSettings;
-        private readonly IValidationInstrumentationProvider instrumentationProvider;
 
         ///<summary>
         ///</summary>
@@ -40,19 +38,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             MemberAccessValidatorBuilderFactory memberAccessValidatorBuilderFactory,
             ValidatorFactory validatorFactory)
         {
-            var instrumentationProvider =
-#if !SILVERLIGHT
-                ValidationInstrumentationProvider.FromConfigurationSource(configurationSource);
-#else
-                new NullValidationInstrumentationProvider();
-#endif
-
-            var settings = ValidationSettings.TryGet(configurationSource, instrumentationProvider);
+            var settings = ValidationSettings.TryGet(configurationSource);
 
             return
                 new ConfigurationValidatorBuilder(
                     settings,
-                    instrumentationProvider,
                     memberAccessValidatorBuilderFactory,
                     validatorFactory);
         }
@@ -60,13 +50,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         ///<summary>
         ///</summary>
         ///<param name="validationSettings"></param>
-        ///<param name="instrumentationProvider"></param>
-        public ConfigurationValidatorBuilder(
-            ValidationSettings validationSettings,
-            IValidationInstrumentationProvider instrumentationProvider)
+        public ConfigurationValidatorBuilder(ValidationSettings validationSettings)
             : this(
                 validationSettings,
-                instrumentationProvider,
                 MemberAccessValidatorBuilderFactory.Default,
                 ValidationFactory.DefaultCompositeValidatorFactory)
         { }
@@ -74,18 +60,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         ///<summary>
         ///</summary>
         ///<param name="validationSettings"></param>
-        ///<param name="instrumentationProvider"></param>
         ///<param name="memberAccessValidatorFactory"></param>
         ///<param name="validatorFactory"></param>
         public ConfigurationValidatorBuilder(
             ValidationSettings validationSettings,
-            IValidationInstrumentationProvider instrumentationProvider,
             MemberAccessValidatorBuilderFactory memberAccessValidatorFactory,
             ValidatorFactory validatorFactory)
             : base(memberAccessValidatorFactory, validatorFactory)
         {
             this.validationSettings = validationSettings;
-            this.instrumentationProvider = instrumentationProvider;
         }
 
         /// <summary>
@@ -106,23 +89,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
 
         private ValidatedTypeReference GetTypeReference(Type type)
         {
-            try
-            {
-                if (null == validationSettings)
-                    return null;
+            if (null == validationSettings)
+                return null;
 
-                ValidatedTypeReference typeReference = validationSettings.Types.Get(type.FullName);
-                return typeReference;
-            }
-#if SILVERLIGHT     //TODO: is this separation needed? Can Desktop use Exception instead?
-            catch (Exception configurationErrors)
-#else
-            catch (ConfigurationErrorsException configurationErrors)
-#endif
-            {
-                instrumentationProvider.NotifyConfigurationFailure(configurationErrors);
-                throw;
-            }
+            ValidatedTypeReference typeReference = validationSettings.Types.Get(type.FullName);
+            return typeReference;
         }
 
         /// <summary>

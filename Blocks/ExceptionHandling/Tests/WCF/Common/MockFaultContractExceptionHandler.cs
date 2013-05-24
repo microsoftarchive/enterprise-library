@@ -10,11 +10,8 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests
 {
@@ -45,12 +42,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests
         {
         }
 
-        public override IEnumerable<TypeRegistration> GetRegistrations(string namePrefix)
+        public override IExceptionHandler BuildExceptionHandler()
         {
-            yield return new TypeRegistration<IExceptionHandler>(() => new MockFaultContractExceptionHandler())
-            {
-                Name = namePrefix + "." + this.Name
-            };
+            return new MockFaultContractExceptionHandler();
         }
     }
 

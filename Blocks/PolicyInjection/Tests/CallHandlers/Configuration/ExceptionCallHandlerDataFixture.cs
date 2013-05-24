@@ -9,21 +9,13 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.PolicyInjection;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport;
-using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests.Configuration
 {
     [TestClass]
-    [DeploymentItem("test.exe.config")]
     public class ExceptionCallHandlerDataFixture : CallHandlerDataFixtureBase
     {
         [TestMethod]
@@ -40,5 +32,4 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             Assert.AreEqual(handlerData.ExceptionPolicyName, deserializedHandler.ExceptionPolicyName);
         }
     }
-
 }

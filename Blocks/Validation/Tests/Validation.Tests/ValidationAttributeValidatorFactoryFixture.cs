@@ -10,11 +10,7 @@
 //===============================================================================
 
 using System.ComponentModel.DataAnnotations;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-#if SILVERLIGHT
-using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
-#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 {
@@ -26,8 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestInitialize]
         public void Setup()
         {
-            var factory =
-                new ValidationAttributeValidatorFactory(new ValidationInstrumentationProvider(false, false, ""));
+            var factory = new ValidationAttributeValidatorFactory();
             this.validator = factory.CreateValidator<TypeWithNoValidationAttributes>();
         }
 
@@ -68,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void Setup()
         {
             var factory =
-                new ValidationAttributeValidatorFactory(new ValidationInstrumentationProvider(false, false, ""));
+                new ValidationAttributeValidatorFactory();
             this.validator = factory.CreateValidator<TypeWithValidationAttributes>();
         }
 
@@ -123,7 +118,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void Setup()
         {
             var factory =
-                new ValidationAttributeValidatorFactory(new ValidationInstrumentationProvider(false, false, ""));
+                new ValidationAttributeValidatorFactory();
             this.validator = factory.CreateValidator<TypeWithValidationAttributes>("ruleset");
         }
 

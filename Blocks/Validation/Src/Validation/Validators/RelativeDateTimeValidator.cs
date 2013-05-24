@@ -11,6 +11,8 @@
 
 using System;
 using System.Globalization;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
@@ -18,9 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
     /// <summary>
     /// Validates a <see cref="DateTime"/> value by checking it belongs to a range relative to the current date.
     /// </summary>
-#if !SILVERLIGHT
-    [Common.Configuration.ConfigurationElementType(typeof(Configuration.RelativeDateTimeValidatorData))]
-#endif
+    [ConfigurationElementType(typeof(RelativeDateTimeValidatorData))]
     public class RelativeDateTimeValidator : ValueValidator<DateTime>
     {
         private int lowerBound;
@@ -219,7 +219,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <param name="key">The key that identifies the source of <paramref name="objectToValidate"/>.</param>
         /// <param name="validationResults">The validation results to which the outcome of the validation should be stored.</param>
         /// <remarks>
-        /// The implementation for this method will perform type checking and conversation before forwarding the 
+        /// The implementation for this method will perform type checking and converstion before forwarding the 
         /// validation request to method <see cref="Validator{T}.DoValidate(T, object, string, ValidationResults)"/>.
         /// </remarks>
         /// <see cref="Validator.DoValidate"/>

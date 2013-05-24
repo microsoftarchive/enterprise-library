@@ -28,10 +28,9 @@ using Moq;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
 {
-    [DeploymentItem("test.design.config")]
     public abstract class given_clean_application_model : ContainerContext
     {
-        protected static string TestConfigurationFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "test.design.config");
+        protected static string TestConfigurationFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "test.config");
 
         protected ApplicationViewModel ApplicationModel;
 
@@ -199,7 +198,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
                          .Verifiable();
 
             UIServiceMock.Setup(x => x.ShowFileDialog(It.IsAny<OpenFileDialog>())).Callback(() => Assert.Fail());
-            
+
         }
 
         protected override void Act()
@@ -278,6 +277,4 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
             Assert.AreEqual(0, ApplicationModel.Environments.Count());
         }
     }
-
-    
 }

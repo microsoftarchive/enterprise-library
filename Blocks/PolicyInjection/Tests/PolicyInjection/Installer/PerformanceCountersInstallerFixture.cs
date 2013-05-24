@@ -19,6 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Security;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Installer
 {
@@ -83,7 +84,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Installer
         {
             PerformanceCountersInstaller installer = GetCommandLineConfiguredInstaller(firstCategory);
             Hashtable savedState = new Hashtable();
-            installer.Install(savedState);
+            try
+            {
+                installer.Install(savedState);
+            }
+            catch (SecurityException ex)
+            {
+                Assert.Inconclusive("In order to run the tests, please run Visual Studio as Administrator.\r\n{0}", ex.ToString());
+            }
             installer.Rollback(savedState);
 
             Assert.IsFalse(PerformanceCounterCategory.Exists(secondCategory));
@@ -178,7 +186,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Installer
         static void DoCommitInstall(System.Configuration.Install.Installer installer)
         {
             Hashtable savedData = new Hashtable();
-            installer.Install(savedData);
+            try
+            {
+                installer.Install(savedData);
+            }
+            catch (SecurityException ex)
+            {
+                Assert.Inconclusive("In order to run the tests, please run Visual Studio as Administrator.\r\n{0}", ex.ToString());
+            }
+
             installer.Commit(savedData);
         }
 

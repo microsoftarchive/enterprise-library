@@ -20,8 +20,6 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
 {
-    [DeploymentItem(@"MergedConfigurationFile.config")]
-    [DeploymentItem(@"ExternalFileSource.config")]
     public abstract class Given_ConfigurationFileWithParentSource : ArrangeActAssert
     {
         protected string FileSourceDummySectionName = "externaldummy.filesource";

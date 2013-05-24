@@ -12,16 +12,12 @@
 using System;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-#if !SILVERLIGHT
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-#endif
 using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.ObjectsUnderTest
 {
-#if !SILVERLIGHT
     [ConfigurationElementType(typeof(CustomMatchingRuleData))]
-#endif
     public class TypeMatchingAssignmentRule : IMatchingRule
     {
         private Type matchType;

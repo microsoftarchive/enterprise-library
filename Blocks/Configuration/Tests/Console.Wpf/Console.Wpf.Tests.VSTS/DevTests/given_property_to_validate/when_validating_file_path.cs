@@ -64,7 +64,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
 
             var applicationModel = new Mock<IApplicationModel>();
             applicationModel.Setup(x => x.ConfigurationFilePath).Returns(Path.Combine(Environment.CurrentDirectory,
-                                                                                      "test.design.config"));
+                                                                                      "test.config"));
             validator = new FilePathValidator() {ApplicationModel = applicationModel.Object};
 
             CreateTestFile("somefile.txt");
@@ -107,7 +107,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
 
             var applicationModel = new Mock<IApplicationModel>();
             applicationModel.Setup(x => x.ConfigurationFilePath).Returns(Path.Combine(Environment.CurrentDirectory,
-                                                                                      "test.design.config"));
+                                                                                      "test.config"));
 
             PathProperty.Value = "some/invalid/path/somefile.txt";
             validator = new FilePathValidator() {ApplicationModel = applicationModel.Object};
@@ -138,7 +138,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
 
             var applicationModel = new Mock<IApplicationModel>();
             applicationModel.Setup(x => x.ConfigurationFilePath).Returns(Path.Combine(Environment.CurrentDirectory,
-                                                                                      "test.design.config"));
+                                                                                      "test.config"));
 
             PathProperty.Value = ">??<";
             validator = new FilePathValidator() { ApplicationModel = applicationModel.Object };
@@ -168,7 +168,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
 
             var applicationModel = new Mock<IApplicationModel>();
             applicationModel.Setup(x => x.ConfigurationFilePath).Returns(Path.Combine(Environment.CurrentDirectory,
-                                                                                      "test.design.config"));
+                                                                                      "test.config"));
 
             PathProperty.Value = "some/invalid/path/somefile.txt";
             validator = new FilePathExistsValidator() { ApplicationModel = applicationModel.Object };
@@ -198,7 +198,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
 
             var applicationModel = new Mock<IApplicationModel>();
             applicationModel.Setup(x => x.ConfigurationFilePath).Returns(Path.Combine(Environment.CurrentDirectory,
-                                                                                      "test.design.config"));
+                                                                                      "test.config"));
 
             PathProperty.Value = "\\\\server\\file\\somefile.txt";
             validator = new FilePathExistsValidator() { ApplicationModel = applicationModel.Object };

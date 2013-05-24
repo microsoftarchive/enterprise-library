@@ -9,11 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Diagnostics;
-using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -36,97 +35,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
         }
 
         [TestMethod]
-        public void ThenCreatesTwoTypeRegistrations()
+        public void WhenCreatingListener_ThenCreatesEventLogListener()
         {
-            Assert.AreEqual(2, listenerData.GetRegistrations().Count());
-        }
-        
+            var settings = new LoggingSettings { Formatters = { new TextFormatterData { Name = "formatter", Template = "template" } } };
 
-        [TestMethod]
-        public void WhenCreatingInstanceUsingDefaultContructor_ThenListenerDataTypeIsSet()
-        {
-            var listener = new FormattedEventLogTraceListenerData();
-            Assert.AreEqual(typeof(FormattedEventLogTraceListenerData), listener.ListenerDataType);
-        }
+            var listener = (FormattedEventLogTraceListener)listenerData.BuildTraceListener(settings);
 
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatesATypeRegistrationForTheWrapperWithTheOriginalName()
-        {
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener").First()
-                .AssertForServiceType(typeof(TraceListener))
-                .ForName("listener")
-                .ForImplementationType(typeof(ReconfigurableTraceListenerWrapper));
+            Assert.IsNotNull(listener);
+            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual(TraceOptions.DateTime | TraceOptions.Callstack, listener.TraceOutputOptions);
+            Assert.IsNotNull(listener.Filter);
+            Assert.AreEqual(SourceLevels.Warning, ((EventTypeFilter)listener.Filter).EventType);
+            Assert.IsInstanceOfType(listener.Formatter, typeof(TextFormatter));
         }
 
         [TestMethod]
-        public void WhenCreatesRegistration_ThenWrapperRegistrationIsSingleton()
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ShouldThrowArgumentNull()
         {
-            Assert.AreEqual(
-                TypeRegistrationLifetime.Singleton,
-                listenerData.GetRegistrations().Where(tr => tr.Name == "listener").First().Lifetime);
-        }
+            string name = null;
 
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenWrapperRegistrationIsInjectedWithTheWrappedTraceListenerAndTheLoggingUpdateCoordinator()
-        {
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener").First()
-                .AssertConstructor()
-                .WithContainerResolvedParameter<TraceListener>("listener\u200Cimplementation")
-                .WithContainerResolvedParameter<ILoggingUpdateCoordinator>(null)
-                .VerifyConstructorParameters();
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenWrapperRegistrationIsInjectedWithTheNameProperty()
-        {
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener").First()
-                .AssertProperties()
-                .WithValueProperty("Name", "listener")
-                .VerifyProperties();
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationMapsTraceListenerToFormattedEventLogTraceListenerForTheSuppliedName()
-        {
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First()
-                .AssertForServiceType(typeof(TraceListener))
-                .ForName("listener\u200Cimplementation")
-                .ForImplementationType(typeof(FormattedEventLogTraceListener));
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationHasTheExpectedConstructorParameters()
-        {
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First()
-                .AssertConstructor()
-                .WithValueConstructorParameter("source")
-                .WithValueConstructorParameter("log")
-                .WithValueConstructorParameter("machine")
-                .WithContainerResolvedParameter<ILogFormatter>("formatter")
-                .VerifyConstructorParameters();
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationInjectsFilterAndNameAndTraceOutputOptionsProperties()
-        {
-            TraceFilter filter;
-
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First()
-                .AssertProperties()
-                .WithValueProperty("Name", "listener\u200Cimplementation")
-                .WithValueProperty("TraceOutputOptions", TraceOptions.DateTime | TraceOptions.Callstack)
-                .WithValueProperty("Filter", out filter)
-                .VerifyProperties();
-
-            Assert.AreEqual(SourceLevels.Warning, ((EventTypeFilter)filter).EventType);
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenWrappedRegistrationIsTransient()
-        {
-            Assert.AreEqual(
-                TypeRegistrationLifetime.Transient,
-                listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First().Lifetime);
+            var listener = new FormattedEventLogTraceListener(name);
         }
     }
 }

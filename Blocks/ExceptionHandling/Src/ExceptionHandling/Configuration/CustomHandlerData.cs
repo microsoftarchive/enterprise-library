@@ -11,14 +11,13 @@
 
 using System;
 using System.Collections.Specialized;
-using System.Configuration;
-using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 using System.ComponentModel;
+using System.Configuration;
+using System.Globalization;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {
@@ -61,12 +60,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
             TypeName = typeName;
         }
 
-		/// <summary>
-		/// Gets or sets the fully qualified name of the <see cref="Type"/> the element is the configuration for.
-		/// </summary>
-		/// <value>
-		/// the fully qualified name of the <see cref="Type"/> the element is the configuration for.
-		/// </value>
+        /// <summary>
+        /// Gets or sets the fully qualified name of the <see cref="Type"/> the element is the configuration for.
+        /// </summary>
+        /// <value>
+        /// the fully qualified name of the <see cref="Type"/> the element is the configuration for.
+        /// </value>
         [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
         [BaseType(typeof(IExceptionHandler), typeof(CustomHandlerData))]
         [ResourceDescription(typeof(DesignResources), "CustomHandlerDataTypeNameDescription")]
@@ -83,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
                 base.TypeName = value;
             }
         }
-        
+
         /// <summary>
         /// Gets the custom configuration attributes.
         /// </summary>
@@ -199,19 +198,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         }
 
         /// <summary>
-        /// Retrieves the <see cref="TypeRegistration"/> container configuration model for custom exception handling data.
+        /// Builds the exception handler represented by this configuration object.
         /// </summary>
-        /// <param name="namePrefix">The child prefix to use when reference child elements</param>
-        /// <returns>The type registration for the custom exception handler</returns>
-        public override IEnumerable<TypeRegistration> GetRegistrations(string namePrefix)
+        /// <returns>An <see cref="IExceptionHandler"/>.</returns>
+        public override IExceptionHandler BuildExceptionHandler()
         {
-            yield return new TypeRegistration(
-                RegistrationExpressionBuilder.BuildExpression(this.Type, Attributes),
-                typeof(IExceptionHandler)) 
-                { 
-                    Name = BuildName(namePrefix),
-                    Lifetime = TypeRegistrationLifetime.Transient
-                };
+            if (string.IsNullOrEmpty(this.TypeName))
+            {
+                throw new InvalidOperationException(
+                    string.Format(CultureInfo.CurrentCulture, Resources.CustomHandlerNoTypeException, this.ElementInformation.Source, this.ElementInformation.LineNumber, this.Name));
+            }
+
+            System.Type handlerType;
+
+            try
+            {
+                handlerType = this.Type;
+            }
+            catch(Exception e)
+            {
+                throw new InvalidOperationException(
+                    string.Format(CultureInfo.CurrentCulture, Resources.CustomHandlerNoTypeException, this.ElementInformation.Source, this.ElementInformation.LineNumber, this.Name, this.TypeName),
+                    e);
+            }
+
+            if (!typeof(IExceptionHandler).IsAssignableFrom(handlerType))
+            {
+                throw new InvalidOperationException(
+                    string.Format(CultureInfo.CurrentCulture, Resources.CustomHandlerNotHandlerTypeException, this.ElementInformation.Source, this.ElementInformation.LineNumber, this.Name, this.TypeName));
+            }
+
+            var ctor = handlerType.GetConstructor(new[] { typeof(NameValueCollection) });
+            if (ctor == null)
+            {
+                throw new InvalidOperationException(
+                    string.Format(CultureInfo.CurrentCulture, Resources.CustomHandlerMissingConstructorException, this.ElementInformation.Source, this.ElementInformation.LineNumber, this.Name, this.TypeName));
+            }
+
+            return (IExceptionHandler)Activator.CreateInstance(handlerType, this.Attributes);
         }
     }
 }

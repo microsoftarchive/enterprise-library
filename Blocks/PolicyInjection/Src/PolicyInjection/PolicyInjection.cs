@@ -10,7 +10,8 @@
 //===============================================================================
 
 using System;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
 {
@@ -22,6 +23,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
     /// </summary>
     public static class PolicyInjection
     {
+        private static PolicyInjector policyInjector;
+
         /// <summary>
         /// Creates a new object of type <typeparamref name="TObject"/> and
         /// adds interception as needed to match the policies specified in
@@ -32,10 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         /// <returns>The intercepted object (or possibly a raw instance if no policies apply).</returns>
         public static TObject Create<TObject>(params object[] args)
         {
-            using (var policyInjector = new PolicyInjector(EnterpriseLibraryContainer.Current))
-            {
-                return policyInjector.Create<TObject>(args);
-            }
+            return GetPolicyInjector().Create<TObject>(args);
         }
 
         /// <summary>
@@ -50,10 +50,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         public static TInterface Create<TObject, TInterface>(params object[] args)
             where TObject : TInterface
         {
-            using (var policyInjector = new PolicyInjector(EnterpriseLibraryContainer.Current))
-            {
-                return policyInjector.Create<TObject, TInterface>(args);
-            }
+            return GetPolicyInjector().Create<TObject, TInterface>(args);
         }
 
         /// <summary>
@@ -66,10 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         /// <returns>The intercepted object (or possibly a raw instance if no policies apply).</returns>
         public static object Create(Type typeToCreate, params object[] args)
         {
-            using (var policyInjector = new PolicyInjector(EnterpriseLibraryContainer.Current))
-            {
-                return policyInjector.Create(typeToCreate, args);
-            }
+            return GetPolicyInjector().Create(typeToCreate, args);
         }
 
         /// <summary>
@@ -83,10 +77,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         /// <returns>The intercepted object (or possibly a raw instance if no policies apply).</returns>
         public static object Create(Type typeToCreate, Type typeToReturn, params object[] args)
         {
-            using (var policyInjector = new PolicyInjector(EnterpriseLibraryContainer.Current))
-            {
-                return policyInjector.Create(typeToCreate, typeToReturn, args);
-            }
+            return GetPolicyInjector().Create(typeToCreate, typeToReturn, args);
         }
 
         /// <summary>
@@ -103,10 +94,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         /// <returns>The proxy for the instance, or the raw object if no policies apply.</returns>
         public static TInterface Wrap<TInterface>(object instance)
         {
-            using (var policyInjector = new PolicyInjector(EnterpriseLibraryContainer.Current))
-            {
-                return policyInjector.Wrap<TInterface>(instance);
-            }
+            return GetPolicyInjector().Wrap<TInterface>(instance);
         }
 
         /// <summary>
@@ -118,10 +106,58 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         /// <returns>The proxy for the instance, or the raw object if no policies apply.</returns>
         public static object Wrap(Type typeToReturn, object instance)
         {
-            using (var policyInjector = new PolicyInjector(EnterpriseLibraryContainer.Current))
+            return GetPolicyInjector().Wrap(typeToReturn, instance);
+        }
+
+        /// <summary>
+        /// Sets the policy injector for the static facade.
+        /// </summary>
+        /// <param name="policyInjector">The policy injector.</param>
+        /// <param name="throwIfSet"><see langword="true"/> to throw an exception if the policy injector is already set; otherwise, <see langword="false"/>. Defaults to <see langword="true"/>.</param>
+        /// <exception cref="InvalidOperationException">The policy injector is already set and <paramref name="throwIfSet"/> is <see langword="true"/>.</exception>
+        public static void SetPolicyInjector(PolicyInjector policyInjector, bool throwIfSet = true)
+        {
+            Guard.ArgumentNotNull(policyInjector, "policyInjector");
+
+            var currentPolicyInjector = PolicyInjection.policyInjector;
+            if (currentPolicyInjector != null && throwIfSet)
             {
-                return policyInjector.Wrap(typeToReturn, instance);
+                throw new InvalidOperationException(Resources.ExceptionPolicyInjectorAlreadySet);
             }
+
+            PolicyInjection.policyInjector = policyInjector;
+
+            if (currentPolicyInjector != null)
+            {
+                currentPolicyInjector.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Resets the policy injector for the static facade.
+        /// </summary>
+        /// <remarks>
+        /// Used for tests.
+        /// </remarks>
+        public static void Reset()
+        {
+            var currentPolicyInjector = policyInjector;
+            policyInjector = null;
+            if (currentPolicyInjector != null)
+            {
+                currentPolicyInjector.Dispose();
+            }
+        }
+
+        private static PolicyInjector GetPolicyInjector()
+        {
+            var currentPolicyInjector = policyInjector;
+            if (currentPolicyInjector == null)
+            {
+                throw new InvalidOperationException(Resources.ExceptionPolicyInjectorNotSet);
+            }
+
+            return currentPolicyInjector;
         }
     }
 }

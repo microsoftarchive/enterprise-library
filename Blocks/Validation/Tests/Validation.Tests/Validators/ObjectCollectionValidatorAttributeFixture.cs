@@ -22,6 +22,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
     [TestClass]
     public class ObjectCollectionValidatorAttributeFixture
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new ConfigurationValidatorFactory(new SystemConfigurationSource(false)));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
+        }
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void SettingNullTargetRulesetThrows()
@@ -188,7 +200,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
 
             Validator validator =
                 ((IValidatorDescriptor)validatorAttribute)
-                    .CreateValidator(null, null, null, EnterpriseLibraryContainer.Current.GetInstance<AttributeValidatorFactory>());
+                    .CreateValidator(null, null, null, new AttributeValidatorFactory());
             ValidationResults validationResults = validator.Validate(target);
 
             Assert.IsFalse(validationResults.IsValid);

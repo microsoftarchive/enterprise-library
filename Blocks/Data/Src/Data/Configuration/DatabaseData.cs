@@ -9,10 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
 {
@@ -29,7 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         ///<param name="connectionStringSettings">The <see cref="ConnectionStringSettings"/> for the represented database.</param>
         ///<param name="configurationSource">The <see cref="IConfigurationSource"/> from which additional information can 
         /// be retrieved if necessary.</param>
-        protected DatabaseData(ConnectionStringSettings connectionStringSettings, IConfigurationSource configurationSource)
+        protected DatabaseData(ConnectionStringSettings connectionStringSettings, Func<string, ConfigurationSection> configurationSource)
         {
             ConnectionStringSettings = connectionStringSettings;
             ConfigurationSource = configurationSource;
@@ -41,9 +40,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         protected ConnectionStringSettings ConnectionStringSettings { get; private set; }
 
         ///<summary>
-        /// Gets the <see cref="IConfigurationSource"/> for the database data.
+        /// Gets the function to access configuration information.
         ///</summary>
-        protected IConfigurationSource ConfigurationSource { get; private set; }
+        protected Func<string, ConfigurationSection> ConfigurationSource { get; private set; }
 
         /// <summary>
         /// Gets the name for the represented database.
@@ -62,10 +61,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         }
 
         /// <summary>
-        /// Creates a <see cref="TypeRegistration"/> instance describing the database represented by 
-        /// this configuration object.
+        /// Builds the <see cref="Database"/> represented by this configuration object.
         /// </summary>
-        /// <returns>A <see cref="TypeRegistration"/> instance describing a database.</returns>
-        public abstract IEnumerable<TypeRegistration> GetRegistrations();
+        /// <returns>A database.</returns>
+        public abstract Database BuildDatabase();
     }
 }

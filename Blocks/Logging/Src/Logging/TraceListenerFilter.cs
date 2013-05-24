@@ -9,13 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections;
-#if !SILVERLIGHT
-using System.Diagnostics;
-#else
-using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
-#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
@@ -36,9 +32,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         }
 
         /// <summary>
-        /// Gets the available trace listeners from a list of all the trace listeners.
+        /// Gets the availiable trace listners from a list of all the trace listners.
         /// </summary>
-        /// <param name="traceListeners">The list of all the trace listeners.</param>
+        /// <param name="traceListeners">The list of all the trace listners.</param>
         /// <returns>A filtered list of trace listeners.</returns>
         public IEnumerable<TraceListener> GetAvailableTraceListeners(IEnumerable<TraceListener> traceListeners)
         {

@@ -75,14 +75,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
             while (pos < messageBuilder.Length)
             {
                 string messageString = messageBuilder.ToString();
-                if (messageString.IndexOf(this.startDelimiter) == -1)
+                if (messageString.IndexOf(this.startDelimiter, StringComparison.Ordinal) == -1)
                 {
                     break;
                 }
 
                 string tokenTemplate = GetInnerTemplate(pos, messageString);
                 string tokenToReplace = this.startDelimiter + tokenTemplate + this.endDelimiter;
-                pos = messageBuilder.ToString().IndexOf(tokenToReplace);
+                pos = messageBuilder.ToString().IndexOf(tokenToReplace, StringComparison.Ordinal);
 
                 string tokenValue = FormatToken(tokenTemplate, log);
 
@@ -107,8 +107,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
         /// <returns>Inner template of the function.</returns>
         protected virtual string GetInnerTemplate(int startPos, string message)
         {
-            int tokenStartPos = message.IndexOf(this.startDelimiter, startPos) + this.startDelimiter.Length;
-            int endPos = message.IndexOf(this.endDelimiter, tokenStartPos);
+            int tokenStartPos = message.IndexOf(this.startDelimiter, startPos, StringComparison.Ordinal) + this.startDelimiter.Length;
+            int endPos = message.IndexOf(this.endDelimiter, tokenStartPos, StringComparison.Ordinal);
             return message.Substring(tokenStartPos, endPos - tokenStartPos);
         }
     }

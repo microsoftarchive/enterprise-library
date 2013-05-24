@@ -40,9 +40,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
             DictionaryConfigurationSource dictSource = new DictionaryConfigurationSource();
             dictSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            settings.ConfigureContainer(container, dictSource);
+            settings.ConfigureContainer(container);
 
-            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -60,9 +60,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
             DictionaryConfigurationSource dictSource = new DictionaryConfigurationSource();
             dictSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            settings.ConfigureContainer(container, dictSource);
+            settings.ConfigureContainer(container);
 
-            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -80,9 +80,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
             DictionaryConfigurationSource dictSource = new DictionaryConfigurationSource();
             dictSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            settings.ConfigureContainer(container, dictSource);
+            settings.ConfigureContainer(container);
 
-            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -100,9 +100,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
             DictionaryConfigurationSource dictSource = new DictionaryConfigurationSource();
             dictSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            settings.ConfigureContainer(container, dictSource);
+            settings.ConfigureContainer(container);
 
-            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -120,9 +120,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
             DictionaryConfigurationSource dictSource = new DictionaryConfigurationSource();
             dictSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            settings.ConfigureContainer(container, dictSource);
+            settings.ConfigureContainer(container);
 
-            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -140,9 +140,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
             DictionaryConfigurationSource dictSource = new DictionaryConfigurationSource();
             dictSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            settings.ConfigureContainer(container, dictSource);
+            settings.ConfigureContainer(container);
 
-            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -160,9 +160,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
             DictionaryConfigurationSource dictSource = new DictionaryConfigurationSource();
             dictSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            settings.ConfigureContainer(container, dictSource);
+            settings.ConfigureContainer(container);
 
-            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -180,9 +180,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
             DictionaryConfigurationSource dictSource = new DictionaryConfigurationSource();
             dictSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            settings.ConfigureContainer(container, dictSource);
+            settings.ConfigureContainer(container);
 
-            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -200,9 +200,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
             DictionaryConfigurationSource dictSource = new DictionaryConfigurationSource();
             dictSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            settings.ConfigureContainer(container, dictSource);
+            settings.ConfigureContainer(container);
 
-            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -221,9 +221,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
             DictionaryConfigurationSource dictSource = new DictionaryConfigurationSource();
             dictSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            settings.ConfigureContainer(container, dictSource);
+            settings.ConfigureContainer(container);
 
-            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -242,9 +242,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
             DictionaryConfigurationSource dictSource = new DictionaryConfigurationSource();
             dictSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            settings.ConfigureContainer(container, dictSource);
+            settings.ConfigureContainer(container);
 
-            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
             List<ICallHandler> handlers
                 = new List<ICallHandler>(policy.GetHandlersFor(MakeMethodImplementationInfo(MethodBase.GetCurrentMethod()), container));
 
@@ -264,9 +264,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
             DictionaryConfigurationSource dictSource = new DictionaryConfigurationSource();
             dictSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            settings.ConfigureContainer(container, dictSource);
+            settings.ConfigureContainer(container);
 
-            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
             List<ICallHandler> handlers1
                 = new List<ICallHandler>(policy.GetHandlersFor(MakeMethodImplementationInfo(MethodBase.GetCurrentMethod()), container));
             List<ICallHandler> handlers2

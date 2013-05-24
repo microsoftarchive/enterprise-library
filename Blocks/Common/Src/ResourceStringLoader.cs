@@ -63,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common
                 // Remove additional .resource token
                 const string token = ".resources";
                 string resourceToUse = resource;
-                if (resource.EndsWith(token))
+                if (resource.EndsWith(token, StringComparison.OrdinalIgnoreCase))
                 {
                     resourceToUse = resource.Replace(token, string.Empty);
                 }

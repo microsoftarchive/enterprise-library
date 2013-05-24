@@ -12,13 +12,13 @@
 using System;
 using System.Configuration;
 using System.Diagnostics;
-using System.Linq.Expressions;
+using System.Globalization;
 using System.Messaging;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.Security;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using ComponentModel = System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
@@ -28,6 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "MsmqTraceListenerDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "MsmqTraceListenerDataDisplayName")]
+    [SecurityCritical]
     public class MsmqTraceListenerData : TraceListenerData
     {
         private const string queuePathProperty = "queuePath";
@@ -167,7 +168,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the message queue path.
         /// </summary>
-        [ConfigurationProperty(queuePathProperty, Options=ConfigurationPropertyOptions.IsRequired)]
+        [ConfigurationProperty(queuePathProperty, Options = ConfigurationPropertyOptions.IsRequired)]
         [DesigntimeDefaultAttribute(".\\Private$\\myQueue")]
         [ResourceDescription(typeof(DesignResources), "MsmqTraceListenerDataQueuePathDescription")]
         [ResourceDisplayName(typeof(DesignResources), "MsmqTraceListenerDataQueuePathDisplayName")]
@@ -349,25 +350,60 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         }
 
         /// <summary>
-        /// Returns a lambda expression that represents the creation of the trace listener described by this
-        /// configuration object.
+        /// Builds the <see cref="TraceListener" /> object represented by this configuration object.
         /// </summary>
-        /// <returns>A lambda expression to create a trace listener.</returns>
-        protected override Expression<Func<TraceListener>> GetCreationExpression()
+        /// <param name="settings">The logging configuration settings.</param>
+        /// <returns>
+        /// A <see cref="MsmqTraceListener"/>.
+        /// </returns>
+        [SecuritySafeCritical]
+        protected override TraceListener CoreBuildTraceListener(LoggingSettings settings)
         {
-            return () =>
-                    new MsmqTraceListener(
-                        this.Name,
-                        this.QueuePath,
-                        Container.ResolvedIfNotNull<ILogFormatter>(this.Formatter),
-                        this.MessagePriority,
-                        this.Recoverable,
-                        this.TimeToReachQueue,
-                        this.TimeToBeReceived,
-                        this.UseAuthentication,
-                        this.UseDeadLetterQueue,
-                        this.UseEncryption,
-                        this.TransactionType);
+            this.CheckQueuePath();
+            this.CheckFormatter();
+
+            var formatter = this.BuildFormatterSafe(settings, this.Formatter);
+
+            return new MsmqTraceListener(
+                this.Name,
+                this.QueuePath,
+                formatter,
+                this.MessagePriority,
+                this.Recoverable,
+                this.TimeToReachQueue,
+                this.TimeToBeReceived,
+                this.UseAuthentication,
+                this.UseDeadLetterQueue,
+                this.UseEncryption,
+                this.TransactionType);
+        }
+
+        private void CheckQueuePath()
+        {
+            if (string.IsNullOrEmpty(this.QueuePath))
+            {
+                throw new InvalidOperationException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.ExceptionMsmqQueuePathMissing,
+                        this.ElementInformation.Source,
+                        this.ElementInformation.LineNumber,
+                        this.Name));
+            }
+        }
+
+        private void CheckFormatter()
+        {
+            if (string.IsNullOrEmpty(this.Formatter))
+            {
+                throw new InvalidOperationException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.ExceptionFormatterNameRequired,
+                        this.ElementInformation.Source,
+                        this.ElementInformation.LineNumber,
+                        this.Name));
+            }
         }
     }
 }

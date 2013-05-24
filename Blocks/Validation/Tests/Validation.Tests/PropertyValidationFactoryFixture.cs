@@ -21,6 +21,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
     [TestClass]
     public class PropertyValidationFactoryFixture
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
+        }
+
         [TestMethod]
         public void RequestForValidatorBasedOnAttributesReturnsAppropriateValidator()
         {
@@ -268,14 +280,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
                 invalidResults.Any(vr =>
                     vr.Key == "PropertyWithMixedAttributes" && vr.Message == "vab-mixed"));
         }
-
-#if SILVERLIGHT
-        [TestInitialize]
-        public void Setup()
-        {
-            var configurationSource = DictionaryConfigurationSource.FromXaml(new Uri("/Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight.Tests;component/Configuration.xaml", UriKind.Relative));
-            EnterpriseLibraryContainer.Current = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
-        }
-#endif
     }
 }

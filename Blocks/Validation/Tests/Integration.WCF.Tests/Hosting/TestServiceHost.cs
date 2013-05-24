@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.Text;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.Tests.VSTS.Hosting
 {
@@ -34,7 +35,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.Tests
         public TestServiceHost(string serviceAddress)
         {
             serviceHost = new ServiceHost(typeof(TService), new Uri(serviceAddress));
-            serviceHost.Open();
+
+            try
+            {
+                serviceHost.Open();
+            }
+            catch (AddressAccessDeniedException ex)
+            {
+                Assert.Inconclusive("In order to run the tests, please run Visual Studio as Administrator.\r\n{0}", ex.ToString());
+            }
 
             EndpointAddress address = new EndpointAddress(new Uri(serviceAddress));
             factory = new ChannelFactory<TContract>(new BasicHttpBinding(), address);

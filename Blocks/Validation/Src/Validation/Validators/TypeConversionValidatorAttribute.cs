@@ -47,18 +47,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 	        get { return targetType; }
 	    }
 
-	    /// <summary>
+		/// <summary>
 		/// Creates the <see cref="TypeConversionValidator"/> described by the attribute object.
 		/// </summary>
 		/// <param name="targetType">The type of object that will be validated by the validator.</param>
-        /// <remarks>This operation must be overridden by subclasses.</remarks>
+		/// <remarks>This operation must be overriden by subclasses.</remarks>
 		/// <returns>The created <see cref="TypeConversionValidator"/>.</returns>
 		protected override Validator DoCreateValidator(Type targetType)
 		{
 			return new TypeConversionValidator(this.TargetType, Negated);
 		}
 
-#if !SILVERLIGHT
         private readonly Guid typeId = Guid.NewGuid();
 
         /// <summary>
@@ -71,7 +70,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                 return this.typeId;
             }
         }
-#endif
     }
 }
 

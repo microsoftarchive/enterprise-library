@@ -10,11 +10,15 @@
 //===============================================================================
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Fluent
 {
@@ -57,13 +61,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Flue
             Assert.AreEqual(logEnabledFilterName, GetLogEnabledFilterData().Name);
         }
 
-#if !SILVERLIGHT
         [TestMethod]
         public void Then_LogEnabledFilterHasCorrectType()
         {
-            Assert.AreEqual(typeof(Microsoft.Practices.EnterpriseLibrary.Logging.Filters.LogEnabledFilter), GetLogEnabledFilterData().Type);
+            Assert.AreEqual(typeof(LogEnabledFilter), GetLogEnabledFilterData().Type);
         }
-#endif
     }
 
     [TestClass]
@@ -76,6 +78,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Flue
             ConfigureLogging.WithOptions.FilterEnableOrDisable(null);
         }
     }
+
 
     [TestClass]
     public class When_EnablingLoggingOnLogEnabledFilterBuilder : Given_LogEnabledFilterBuilder

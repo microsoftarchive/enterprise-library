@@ -41,15 +41,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 		/// Formats an exception message so that it can be sent to the event log later, by someone else.
         /// </summary>
         /// <param name="policyName">The policy that is running.</param>
-        /// <param name="offendingException">The exception that occurred in the chain.</param>
+        /// <param name="offendingException">The exception that occured in the chain.</param>
         /// <param name="chainException">The exception when the chain failed.</param>
         /// <param name="originalException">The original exception.</param>		
 		public static string FormatExceptionHandlingExceptionMessage(string policyName, Exception offendingException, Exception chainException, Exception originalException)
         {
             if(policyName == null) throw new ArgumentNullException("policyName");
 
-            using (var writer = new StringWriter(CultureInfo.CurrentCulture))
+            StringBuilder message = new StringBuilder();
+            StringWriter writer = null;
+			string result = null;
+            try
             {
+                writer = new StringWriter(message, CultureInfo.CurrentCulture);
+
                 if (policyName.Length > 0)
                 {
                     writer.WriteLine(string.Format(CultureInfo.CurrentCulture, Resources.PolicyName, policyName));
@@ -58,9 +63,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
                 FormatHandlingException(writer, Resources.OffendingException, offendingException);
                 FormatHandlingException(writer, Resources.OriginalException, originalException);
                 FormatHandlingException(writer, Resources.ChainException, chainException);
-
-                return writer.ToString();
             }
+            finally
+            {
+                if (writer != null)
+                {
+					result = writer.ToString();
+                    writer.Close();
+                }
+            }
+
+			return result;
         }
 
         private static void FormatHandlingException(StringWriter writer, string header, Exception ex)

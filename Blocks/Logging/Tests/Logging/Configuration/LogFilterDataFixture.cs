@@ -9,11 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
+using System;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests;
@@ -29,41 +26,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestInitialize]
         public void Setup()
         {
-            filterData = new PriorityFilterData { Name = "filter", MinimumPriority = 100, MaximumPriority = 200 };
+            filterData = new PriorityFilterData("filter", 100) { MaximumPriority = 200 };
         }
 
         [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationMapsLogFilterToPriorityFilterForTheSuppliedName()
+        public void WhenBuildingFilter_ThenCreatesPriorityFilter()
         {
-            filterData.GetRegistrations().First()
-                .AssertForServiceType(typeof(ILogFilter))
-                .ForName("filter")
-                .ForImplementationType(typeof(PriorityFilter));
-        }
+            var filter = (PriorityFilter)filterData.BuildFilter();
 
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationHasTheExpectedConstructorParameters()
-        {
-            filterData.GetRegistrations().First()
-                .AssertConstructor()
-                .WithValueConstructorParameter("filter")
-                .WithValueConstructorParameter(100)
-                .WithValueConstructorParameter(200)
-                .VerifyConstructorParameters();
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenCreatedRegistrationsAreTransient()
-        {
-            Assert.AreEqual(
-                0,
-                filterData.GetRegistrations().Where(tr => tr.Lifetime != TypeRegistrationLifetime.Transient).Count());
-        }
-
-        [TestMethod]
-        public void WhenUsingDefaultCtor_ThenDefaultValuesAreSettedProperly()
-        {
-            Assert.AreEqual(2147483647, new PriorityFilterData().MaximumPriority);
+            Assert.AreEqual("filter", filter.Name);
+            Assert.AreEqual(100, filter.MinimumPriority);
+            Assert.AreEqual(200, filter.MaximumPriority);
         }
     }
 
@@ -76,48 +49,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         public void Setup()
         {
             filterData =
-                new CategoryFilterData
-                {
-                    Name = "filter",
-                    CategoryFilters = 
-                    { 
-                        new CategoryFilterEntry{ Name = "category 1" }, 
-                        new CategoryFilterEntry{ Name = "category 2" } 
-                    },
-                    CategoryFilterMode = CategoryFilterMode.DenyAllExceptAllowed
-                };
+                new CategoryFilterData(
+                    "filter",
+                    new NamedElementCollection<CategoryFilterEntry> { 
+                        new CategoryFilterEntry("category 1"), 
+                        new CategoryFilterEntry("category 2") },
+                    CategoryFilterMode.DenyAllExceptAllowed);
         }
 
         [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationMapsLogFilterToCategoryFilterForTheSuppliedName()
+        public void WhenBuildingFilter_ThenCreatesCategoryFilter()
         {
-            filterData.GetRegistrations().First()
-                .AssertForServiceType(typeof(ILogFilter))
-                .ForName("filter")
-                .ForImplementationType(typeof(CategoryFilter));
-        }
+            var filter = (CategoryFilter)filterData.BuildFilter();
 
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationHasTheExpectedConstructorParameters()
-        {
-            ICollection<string> categories;
-
-            filterData.GetRegistrations().First()
-                .AssertConstructor()
-                .WithValueConstructorParameter("filter")
-                .WithValueConstructorParameter(out categories)
-                .WithValueConstructorParameter(CategoryFilterMode.DenyAllExceptAllowed)
-                .VerifyConstructorParameters();
-
-            CollectionAssert.AreEqual(new[] { "category 1", "category 2" }, (ICollection)categories);
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenCreatedRegistrationsAreTransient()
-        {
-            Assert.AreEqual(
-                0,
-                filterData.GetRegistrations().Where(tr => tr.Lifetime != TypeRegistrationLifetime.Transient).Count());
+            Assert.AreEqual("filter", filter.Name);
+            Assert.AreEqual(2, filter.CategoryFilters.Count);
+            Assert.IsTrue(filter.CategoryFilters.Contains("category 1"));
+            Assert.IsTrue(filter.CategoryFilters.Contains("category 2"));
+            Assert.AreEqual(CategoryFilterMode.DenyAllExceptAllowed, filter.CategoryFilterMode);
         }
     }
 
@@ -129,38 +78,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestInitialize]
         public void Setup()
         {
-            filterData = new LogEnabledFilterData { Name = "filter", Enabled = true };
+            filterData = new LogEnabledFilterData("filter", true);
         }
 
         [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationMapsLogFilterToCategoryFilterForTheSuppliedName()
+        public void WhenBuildingFilter_ThenCreatesEnabledFilter()
         {
-            filterData.GetRegistrations().First()
-                .AssertForServiceType(typeof(ILogFilter))
-                .ForName("filter")
-                .ForImplementationType(typeof(LogEnabledFilter));
-        }
+            var filter = (LogEnabledFilter)filterData.BuildFilter();
 
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationHasTheExpectedConstructorParameters()
-        {
-            filterData.GetRegistrations().First()
-                .AssertConstructor()
-                .WithValueConstructorParameter("filter")
-                .WithValueConstructorParameter(true)
-                .VerifyConstructorParameters();
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenCreatedRegistrationsAreTransient()
-        {
-            Assert.AreEqual(
-                0,
-                filterData.GetRegistrations().Where(tr => tr.Lifetime != TypeRegistrationLifetime.Transient).Count());
+            Assert.AreEqual("filter", filter.Name);
+            Assert.IsTrue(filter.Enabled);
         }
     }
 
-#if !SILVERLIGHT
     [TestClass]
     public class GivenCustomFilterDataForLogFilterType
     {
@@ -172,35 +102,128 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             filterData =
                 new CustomLogFilterData("filter", typeof(MockCustomLogFilter))
                 {
-                    Attributes = { { "foo", "bar" } }
+                    Attributes = { { MockCustomLogFilter.AttributeKey, "bar" } }
                 };
         }
 
         [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationMapsLogFilterToCustomFilterForTheSuppliedName()
+        public void WhenBuildingFilter_ThenCreatesCustomFilter()
         {
-            filterData.GetRegistrations().First()
-                .AssertForServiceType(typeof(ILogFilter))
-                .ForName("filter")
-                .ForImplementationType(typeof(MockCustomLogFilter));
-        }
+            var filter = (MockCustomLogFilter)filterData.BuildFilter();
 
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationHasTheExpectedConstructorParameters()
-        {
-            filterData.GetRegistrations().First()
-                .AssertConstructor()
-                .WithValueConstructorParameter(((CustomLogFilterData)filterData).Attributes)
-                .VerifyConstructorParameters();
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenCreatedRegistrationsAreTransient()
-        {
-            Assert.AreEqual(
-                0,
-                filterData.GetRegistrations().Where(tr => tr.Lifetime != TypeRegistrationLifetime.Transient).Count());
+            Assert.AreEqual("bar", filter.customValue);
         }
     }
-#endif
+
+    [TestClass]
+    public class GivenCustomFilterDataWithEmptyTypeName
+    {
+        private LogFilterData filterData;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            filterData =
+                new CustomLogFilterData()
+                {
+                    Name = "filter",
+                    Attributes = { { MockCustomLogFilter.AttributeKey, "bar" } }
+                };
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenBuildingFilter_ThenThrows()
+        {
+            this.filterData.BuildFilter();
+        }
+    }
+
+    [TestClass]
+    public class GivenCustomFilterDataWithInvalidTypeName
+    {
+        private LogFilterData filterData;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            filterData =
+                new CustomLogFilterData()
+                {
+                    TypeName = "some invalid name",
+                    Name = "filter",
+                    Attributes = { { MockCustomLogFilter.AttributeKey, "bar" } }
+                };
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenBuildingFilter_ThenThrows()
+        {
+            this.filterData.BuildFilter();
+        }
+    }
+
+    [TestClass]
+    public class GivenCustomFilterDataWithNonFilterTypeName
+    {
+        private LogFilterData filterData;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            filterData =
+                new CustomLogFilterData()
+                {
+                    Type = typeof(string),
+                    Name = "filter",
+                    Attributes = { { MockCustomLogFilter.AttributeKey, "bar" } }
+                };
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenBuildingFilter_ThenThrows()
+        {
+            this.filterData.BuildFilter();
+        }
+    }
+
+    [TestClass]
+    public class GivenCustomFilterDataWithFilterTypeWithoutExpectedConstructor
+    {
+        private LogFilterData filterData;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            filterData =
+                new CustomLogFilterData()
+                {
+                    Type = typeof(MockCustomLogFilterWithoutConstructor),
+                    Name = "filter",
+                    Attributes = { { MockCustomLogFilter.AttributeKey, "bar" } }
+                };
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenBuildingFilter_ThenThrows()
+        {
+            this.filterData.BuildFilter();
+        }
+
+        public class MockCustomLogFilterWithoutConstructor : ILogFilter
+        {
+            public bool Filter(LogEntry log)
+            {
+                throw new NotImplementedException();
+            }
+
+            public string Name
+            {
+                get { throw new NotImplementedException(); }
+            }
+        }
+    }
 }

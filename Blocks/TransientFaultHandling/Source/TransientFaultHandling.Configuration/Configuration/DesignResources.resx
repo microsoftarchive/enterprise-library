@@ -1,0 +1,244 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddRetryPolicyConfigurationSettings" xml:space="preserve">
+    <value>Add Transient Fault Handling Settings</value>
+  </data>
+  <data name="CustomRetryStrategyDataDescription" xml:space="preserve">
+    <value>A custom retry strategy implementing the RetryStrategy abstract class.</value>
+  </data>
+  <data name="CustomRetryStrategyDataDisplayName" xml:space="preserve">
+    <value>Custom Retry Strategy</value>
+  </data>
+  <data name="DefaultAzureCachingRetryStrategyDescription" xml:space="preserve">
+    <value>The name of a retry strategy dedicated to handling transient conditions in Windows Azure Caching services.</value>
+  </data>
+  <data name="DefaultAzureCachingRetryStrategyDisplayName" xml:space="preserve">
+    <value>Default Caching Retry Strategy</value>
+  </data>
+  <data name="DefaultAzureServiceBusRetryStrategyDescription" xml:space="preserve">
+    <value>The name of a retry policy dedicated to handling transient conditions in the Windows Azure Service Bus infrastructure.</value>
+  </data>
+  <data name="DefaultAzureServiceBusRetryStrategyDisplayName" xml:space="preserve">
+    <value>Default Service Bus Retry Strategy</value>
+  </data>
+  <data name="DefaultAzureStorageRetryStrategyDescription" xml:space="preserve">
+    <value>The name of a retry strategy dedicated to handling transient conditions in Windows Azure Storage services.</value>
+  </data>
+  <data name="DefaultAzureStorageRetryStrategyDisplayName" xml:space="preserve">
+    <value>Default Windows Azure Storage Retry Strategy</value>
+  </data>
+  <data name="DefaultRetryStrategyDescription" xml:space="preserve">
+    <value>The default general-purpose retry strategy.</value>
+  </data>
+  <data name="DefaultRetryStrategyDisplayName" xml:space="preserve">
+    <value>Default Retry Strategy</value>
+  </data>
+  <data name="DefaultSqlCommandRetryStrategyDescription" xml:space="preserve">
+    <value>The name of a retry strategy dedicated to handling transient conditions with SQL commands.</value>
+  </data>
+  <data name="DefaultSqlCommandRetryStrategyDisplayName" xml:space="preserve">
+    <value>Default SQL Command Retry Strategy</value>
+  </data>
+  <data name="DefaultSqlConnectionRetryStrategyDescription" xml:space="preserve">
+    <value>The name of a retry strategy dedicated to handling transient conditions with SQL connections.</value>
+  </data>
+  <data name="DefaultSqlConnectionRetryStrategyDisplayName" xml:space="preserve">
+    <value>Default SQL Connection Retry Strategy</value>
+  </data>
+  <data name="DeltaBackoffDescription" xml:space="preserve">
+    <value>The time that will be used for calculating a random delta in the exponential delay between retries.</value>
+  </data>
+  <data name="DeltaBackoffDisplayName" xml:space="preserve">
+    <value>Delta Back-off</value>
+  </data>
+  <data name="ExponentialBackoffDataDescription" xml:space="preserve">
+    <value>A retry strategy with backoff parameters for calculating the exponential delay between retries.</value>
+  </data>
+  <data name="ExponentialBackoffDataDisplayName" xml:space="preserve">
+    <value>Exponential Backoff</value>
+  </data>
+  <data name="FirstFastRetryDescription" xml:space="preserve">
+    <value>Indicating whether or not the very first retry attempt will be made immediately whereas the 
+subsequent retries will remain subject to retry interval.</value>
+  </data>
+  <data name="FirstFastRetryDisplayName" xml:space="preserve">
+    <value>First Fast Retry</value>
+  </data>
+  <data name="FixedIntervalDataDescription" xml:space="preserve">
+    <value>A retry strategy with a fixed interval between retry attempts.</value>
+  </data>
+  <data name="FixedIntervalDataDisplayName" xml:space="preserve">
+    <value>Fixed Interval</value>
+  </data>
+  <data name="FixedIntervalDataRetryIntervalDescription" xml:space="preserve">
+    <value>The interval between retry attempts.</value>
+  </data>
+  <data name="FixedIntervalDataRetryIntervalDisplayName" xml:space="preserve">
+    <value>Interval</value>
+  </data>
+  <data name="IncrementalDataDescription" xml:space="preserve">
+    <value>A retry strategy with progressive delay between retries.</value>
+  </data>
+  <data name="IncrementalDataDisplayName" xml:space="preserve">
+    <value>Incremental</value>
+  </data>
+  <data name="IncrementalDataInitialIntervalDescription" xml:space="preserve">
+    <value>The initial interval that will apply for the first retry.</value>
+  </data>
+  <data name="IncrementalDataInitialIntervalDisplayName" xml:space="preserve">
+    <value>Initial Interval</value>
+  </data>
+  <data name="MaxBackoffDescription" xml:space="preserve">
+    <value>The maximum backoff time.</value>
+  </data>
+  <data name="MaxBackoffDisplayName" xml:space="preserve">
+    <value>Maximum Back-off</value>
+  </data>
+  <data name="MaxRetryCountDescription" xml:space="preserve">
+    <value>The maximum number of retry attempts.</value>
+  </data>
+  <data name="MaxRetryCountDisplayName" xml:space="preserve">
+    <value>Max Retry Count</value>
+  </data>
+  <data name="MinBackoffDescription" xml:space="preserve">
+    <value>The minimum backoff time.</value>
+  </data>
+  <data name="MinBackoffDisplayName" xml:space="preserve">
+    <value>Minimum Back-off</value>
+  </data>
+  <data name="RetryIncrementDescription" xml:space="preserve">
+    <value>The incremental time value for calculating progressive delay between retries.</value>
+  </data>
+  <data name="RetryIncrementDisplayName" xml:space="preserve">
+    <value>Increment</value>
+  </data>
+  <data name="RetryPolicyConfigurationSettingsDescription" xml:space="preserve">
+    <value>Configuration settings for the Transient Fault Handling Application Block.</value>
+  </data>
+  <data name="RetryPolicyConfigurationSettingsDisplayName" xml:space="preserve">
+    <value>Transient Fault Handling Settings</value>
+  </data>
+  <data name="RetryStrategiesDescription" xml:space="preserve">
+    <value>The Retry Strategies.</value>
+  </data>
+  <data name="RetryStrategiesDisplayName" xml:space="preserve">
+    <value>Retry Strategies</value>
+  </data>
+</root>

@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exception Handling Application Block", "Exception Handling Application Block", "{F4120CFD-499B-408B-BCE7-418E62C2C35C}"
 	ProjectSection(FolderStartupServices) = postProject
 		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
@@ -24,7 +24,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E4A1B291-3584-48A3-8F24-02DD3A4FC8C0}"
 	ProjectSection(SolutionItems) = preProject
 		..\EnterpriseLibrary.testrunconfig = ..\EnterpriseLibrary.testrunconfig
-		ExceptionHandling.VSTS.vsmdi = ExceptionHandling.VSTS.vsmdi
 	EndProjectSection
 	ProjectSection(FolderStartupServices) = postProject
 		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
@@ -42,79 +41,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionHandling.WCF", "Sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionHandling.Tests.VSTS", "Tests\ExceptionHandling\ExceptionHandling.Tests.VSTS.csproj", "{708C6E4C-1380-44A6-ABE9-0C25E633AD85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionHandling.Configuration.Manageability.Tests.VSTS", "Tests\Configuration.Manageability\ExceptionHandling.Configuration.Manageability.Tests.VSTS.csproj", "{DCCE0065-167F-477B-950A-01C481F9BD88}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionHandling.Logging.Tests.VSTS", "Tests\Logging\ExceptionHandling.Logging.Tests.VSTS.csproj", "{5179BF96-3EDA-43DD-A636-D98E4C7BE7BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionHandling.Logging.Configuration.Manageability.Tests.VSTS", "Tests\Logging.Configuration.Manageability\ExceptionHandling.Logging.Configuration.Manageability.Tests.VSTS.csproj", "{BD8FCEC3-EA39-44EF-8937-9DF520DE43BF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionHandling.WCF.Tests.VSTS", "Tests\WCF\ExceptionHandling.WCF.Tests.VSTS.csproj", "{F703A7CA-B0BB-4EA2-B918-E7BC05C52CD7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionHandling.WCF.Configuration.Manageability.Tests.VSTS", "Tests\WCF.Configuration.Manageability\ExceptionHandling.WCF.Configuration.Manageability.Tests.VSTS.csproj", "{E8BEE232-7A16-43F8-9729-BEAF47B5589A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.TestSupport", "..\Common\Tests\Common.TestSupport\Common.TestSupport.csproj", "{C6DE0220-E31B-486B-AB57-107636AEB927}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging.TestSupport", "..\Logging\Tests\Logging.TestSupport\Logging.TestSupport.csproj", "{BA6BBE25-09D1-47F8-9BAB-F0FF66AD0D70}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 14
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://pagtfs2008:8080/
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = ..\\Common\\Src\\Common.csproj
-		SccProjectTopLevelParentUniqueName1 = ExceptionHandling.sln
-		SccProjectName1 = ../Common/Src
-		SccLocalPath1 = ..\\Common\\Src
-		SccProjectUniqueName2 = ..\\Logging\\Src\\Logging\\Logging.csproj
-		SccProjectTopLevelParentUniqueName2 = ExceptionHandling.sln
-		SccProjectName2 = ../Logging/Src/Logging
-		SccLocalPath2 = ..\\Logging\\Src\\Logging
-		SccProjectUniqueName3 = Src\\ExceptionHandling\\ExceptionHandling.csproj
-		SccProjectTopLevelParentUniqueName3 = ExceptionHandling.sln
-		SccProjectName3 = Src/ExceptionHandling
-		SccLocalPath3 = Src\\ExceptionHandling
-		SccProjectUniqueName4 = Src\\Logging\\ExceptionHandling.Logging.csproj
-		SccProjectTopLevelParentUniqueName4 = ExceptionHandling.sln
-		SccProjectName4 = Src/Logging
-		SccLocalPath4 = Src\\Logging
-		SccProjectUniqueName5 = Src\\WCF\\ExceptionHandling.WCF.csproj
-		SccProjectTopLevelParentUniqueName5 = ExceptionHandling.sln
-		SccProjectName5 = Src/WCF
-		SccLocalPath5 = Src\\WCF
-		SccProjectUniqueName6 = Tests\\ExceptionHandling\\ExceptionHandling.Tests.VSTS.csproj
-		SccProjectTopLevelParentUniqueName6 = ExceptionHandling.sln
-		SccProjectName6 = Tests/ExceptionHandling
-		SccLocalPath6 = Tests\\ExceptionHandling
-		SccProjectUniqueName7 = Tests\\Configuration.Manageability\\ExceptionHandling.Configuration.Manageability.Tests.VSTS.csproj
-		SccProjectTopLevelParentUniqueName7 = ExceptionHandling.sln
-		SccProjectName7 = Tests/Configuration.Manageability
-		SccLocalPath7 = Tests\\Configuration.Manageability
-		SccProjectUniqueName8 = Tests\\Logging\\ExceptionHandling.Logging.Tests.VSTS.csproj
-		SccProjectTopLevelParentUniqueName8 = ExceptionHandling.sln
-		SccProjectName8 = Tests/Logging
-		SccLocalPath8 = Tests\\Logging
-		SccProjectUniqueName9 = Tests\\Logging.Configuration.Manageability\\ExceptionHandling.Logging.Configuration.Manageability.Tests.VSTS.csproj
-		SccProjectTopLevelParentUniqueName9 = ExceptionHandling.sln
-		SccProjectName9 = Tests/Logging.Configuration.Manageability
-		SccLocalPath9 = Tests\\Logging.Configuration.Manageability
-		SccProjectUniqueName10 = Tests\\WCF\\ExceptionHandling.WCF.Tests.VSTS.csproj
-		SccProjectTopLevelParentUniqueName10 = ExceptionHandling.sln
-		SccProjectName10 = Tests/WCF
-		SccLocalPath10 = Tests\\WCF
-		SccProjectUniqueName11 = Tests\\WCF.Configuration.Manageability\\ExceptionHandling.WCF.Configuration.Manageability.Tests.VSTS.csproj
-		SccProjectTopLevelParentUniqueName11 = ExceptionHandling.sln
-		SccProjectName11 = Tests/WCF.Configuration.Manageability
-		SccLocalPath11 = Tests\\WCF.Configuration.Manageability
-		SccProjectUniqueName12 = ..\\Common\\Tests\\Common.TestSupport\\Common.TestSupport.csproj
-		SccProjectTopLevelParentUniqueName12 = ExceptionHandling.sln
-		SccProjectName12 = ../Common/Tests/Common.TestSupport
-		SccLocalPath12 = ..\\Common\\Tests\\Common.TestSupport
-		SccProjectUniqueName13 = ..\\Logging\\Tests\\Logging.TestSupport\\Logging.TestSupport.csproj
-		SccProjectTopLevelParentUniqueName13 = ExceptionHandling.sln
-		SccProjectName13 = ../Logging/Tests/Logging.TestSupport
-		SccLocalPath13 = ..\\Logging\\Tests\\Logging.TestSupport
-	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = ExceptionHandling.VSTS.vsmdi
 	EndGlobalSection
@@ -147,26 +82,14 @@ Global
 		{708C6E4C-1380-44A6-ABE9-0C25E633AD85}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{708C6E4C-1380-44A6-ABE9-0C25E633AD85}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{708C6E4C-1380-44A6-ABE9-0C25E633AD85}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DCCE0065-167F-477B-950A-01C481F9BD88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DCCE0065-167F-477B-950A-01C481F9BD88}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DCCE0065-167F-477B-950A-01C481F9BD88}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DCCE0065-167F-477B-950A-01C481F9BD88}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5179BF96-3EDA-43DD-A636-D98E4C7BE7BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5179BF96-3EDA-43DD-A636-D98E4C7BE7BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5179BF96-3EDA-43DD-A636-D98E4C7BE7BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5179BF96-3EDA-43DD-A636-D98E4C7BE7BC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BD8FCEC3-EA39-44EF-8937-9DF520DE43BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BD8FCEC3-EA39-44EF-8937-9DF520DE43BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BD8FCEC3-EA39-44EF-8937-9DF520DE43BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BD8FCEC3-EA39-44EF-8937-9DF520DE43BF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F703A7CA-B0BB-4EA2-B918-E7BC05C52CD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F703A7CA-B0BB-4EA2-B918-E7BC05C52CD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F703A7CA-B0BB-4EA2-B918-E7BC05C52CD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F703A7CA-B0BB-4EA2-B918-E7BC05C52CD7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E8BEE232-7A16-43F8-9729-BEAF47B5589A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E8BEE232-7A16-43F8-9729-BEAF47B5589A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E8BEE232-7A16-43F8-9729-BEAF47B5589A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E8BEE232-7A16-43F8-9729-BEAF47B5589A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C6DE0220-E31B-486B-AB57-107636AEB927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C6DE0220-E31B-486B-AB57-107636AEB927}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6DE0220-E31B-486B-AB57-107636AEB927}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -190,11 +113,8 @@ Global
 		{C6DE0220-E31B-486B-AB57-107636AEB927} = {BA5DCED7-794F-4379-8958-44F0D6F75232}
 		{BA6BBE25-09D1-47F8-9BAB-F0FF66AD0D70} = {BA5DCED7-794F-4379-8958-44F0D6F75232}
 		{708C6E4C-1380-44A6-ABE9-0C25E633AD85} = {DCC5D994-8B8A-49D3-A32B-C3E512670CEA}
-		{DCCE0065-167F-477B-950A-01C481F9BD88} = {DCC5D994-8B8A-49D3-A32B-C3E512670CEA}
 		{5179BF96-3EDA-43DD-A636-D98E4C7BE7BC} = {DCC5D994-8B8A-49D3-A32B-C3E512670CEA}
-		{BD8FCEC3-EA39-44EF-8937-9DF520DE43BF} = {DCC5D994-8B8A-49D3-A32B-C3E512670CEA}
 		{F703A7CA-B0BB-4EA2-B918-E7BC05C52CD7} = {DCC5D994-8B8A-49D3-A32B-C3E512670CEA}
-		{E8BEE232-7A16-43F8-9729-BEAF47B5589A} = {DCC5D994-8B8A-49D3-A32B-C3E512670CEA}
 	EndGlobalSection
 	GlobalSection(TextTemplating) = postSolution
 		TextTemplating = 1

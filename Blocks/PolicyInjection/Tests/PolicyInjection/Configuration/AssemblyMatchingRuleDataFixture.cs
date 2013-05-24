@@ -12,17 +12,15 @@
 using System;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
     [TestClass]
-    [DeploymentItem("test.exe.config")]
     public class AssemblyNameMatchingRuleDataFixture : MatchingRuleDataFixtureBase
     {
-
-#if !SILVERLIGHT
         [TestInitialize]
         public void TestInitialize()
         {
@@ -32,11 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         [TestMethod]
         public void CanSerializeTypeMatchingRule()
         {
-            var asmMatchingRule = new AssemblyMatchingRuleData
-                {
-                    Name = "RuleName",
-                    Match = typeof(object).Assembly.FullName
-                };
+            AssemblyMatchingRuleData asmMatchingRule = new AssemblyMatchingRuleData("RuleName", "mscorlib");
 
             AssemblyMatchingRuleData deserializedRule = SerializeAndDeserializeMatchingRule(asmMatchingRule) as AssemblyMatchingRuleData;
 
@@ -44,18 +38,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.AreEqual(asmMatchingRule.Name, deserializedRule.Name);
             Assert.AreEqual(asmMatchingRule.Match, deserializedRule.Match);
         }
-#endif
+
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {
-            var asmMatchingRule = new AssemblyMatchingRuleData
-                {
-                    Name = "RuleName",
-                    Match = typeof(object).Assembly.FullName
-                };
-            TypeRegistration registration = asmMatchingRule.GetRegistrations("").First();
+            AssemblyMatchingRuleData asmMatchingRule = new AssemblyMatchingRuleData("RuleName", "mscorlib");
 
-            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+            using (var container = new UnityContainer())
+            {
+                asmMatchingRule.ConfigureContainer(container, "-test");
+                var registration = container.Registrations.Single(r => r.Name == "RuleName-test");
+                Assert.AreSame(typeof(IMatchingRule), registration.RegisteredType);
+                Assert.AreSame(typeof(AssemblyMatchingRule), registration.MappedToType);
+                Assert.AreSame(typeof(TransientLifetimeManager), registration.LifetimeManagerType);
+            }
         }
     }
 }

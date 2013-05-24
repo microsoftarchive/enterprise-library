@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F1FA20FB-5634-41B8-8196-14589DF98684}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling</RootNamespace>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.Configuration</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment><RestorePackages>true</RestorePackages>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\..\bin\Debug\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.Configuration.xml</DocumentationFile>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <CodeAnalysisRuleSet>..\..\..\EnterpriseLibrary.ruleset</CodeAnalysisRuleSet>
+    <WarningsAsErrors>
+    </WarningsAsErrors>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\..\bin\Release\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.Configuration.xml</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Configuration\DesignResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DesignResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\ExponentialBackoffData.cs" />
+    <Compile Include="Configuration\FixedIntervalData.cs" />
+    <Compile Include="Configuration\CustomRetryStrategyData.cs" />
+    <Compile Include="Configuration\IncrementalData.cs" />
+    <Compile Include="Configuration\WellKnownRetryStrategies.cs" />
+    <Compile Include="Configuration\RetryStrategyCollection.cs" />
+    <Compile Include="Configuration\RetryStrategyData.cs" />
+    <Compile Include="Configuration\RetryPolicyConfigurationSettings.cs" />
+    <Compile Include="Configuration\TransientFaultHandlingDesignTime.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RetryPolicyFactory.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\DesignResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
+      <Project>{a09297c8-2c40-470b-8856-d856676ddffa}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransientFaultHandling.Caching\TransientFaultHandling.Caching.csproj">
+      <Project>{694f23b5-c150-4965-b3bb-9906b2245019}</Project>
+      <Name>TransientFaultHandling.Caching</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransientFaultHandling.Data\TransientFaultHandling.Data.csproj">
+      <Project>{373b9b52-66d1-406d-b2b3-43c370804ad3}</Project>
+      <Name>TransientFaultHandling.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransientFaultHandling.ServiceBus\TransientFaultHandling.ServiceBus.csproj">
+      <Project>{939e2d99-434c-49a7-96ca-372d78fa0d7c}</Project>
+      <Name>TransientFaultHandling.ServiceBus</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransientFaultHandling.WindowsAzure.Storage\TransientFaultHandling.WindowsAzure.Storage.csproj">
+      <Project>{3d1f8654-ba08-472e-9a5d-f2d1eee59134}</Project>
+      <Name>TransientFaultHandling.WindowsAzure.Storage</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TransientFaultHandling\TransientFaultHandling.csproj">
+      <Project>{e7a6f876-1fa6-45a8-898c-9ee3d33440cc}</Project>
+      <Name>TransientFaultHandling</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\..\CustomDictionary.xml">
+      <Link>CustomDictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\TransientFaultHandling.licenseheader">
+      <Link>TransientFaultHandling.licenseheader</Link>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <Import Project="..\..\..\.nuget\nuget.targets" />
+  <!-- Cannot remove the following because NuGet will re-add it, and will break relative paths -->
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" Condition="False" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -10,15 +10,14 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
-using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -190,20 +189,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         }
 
         /// <summary>
-        /// Creates an enumeration of <see cref="TypeRegistration"/> instances describing the filter represented by 
-        /// this configuration object.
+        /// Builds the <see cref="ILogFilter" /> object represented by this configuration object.
         /// </summary>
-        /// <returns>A an enumeration of <see cref="TypeRegistration"/> instance describing a filter.</returns>
-        public override IEnumerable<TypeRegistration> GetRegistrations()
+        /// <returns>
+        /// A filter.
+        /// </returns>
+        public override ILogFilter BuildFilter()
         {
-            yield return
-                   new TypeRegistration(
-                       RegistrationExpressionBuilder.BuildExpression(this.Type, Attributes),
-                        typeof(ILogFilter))
-                   {
-                       Name = Name,
-                       Lifetime = TypeRegistrationLifetime.Transient
-                   };
+            return CustomProviderBuildHelper.Build<ILogFilter, CustomLogFilterData>(
+                this,
+                () => Resources.ExceptionCustomFilterDataHasNoType,
+                () => Resources.ExceptionCustomFilterDataTypeCannotBeLoaded,
+                () => Resources.ExceptionCustomFilterDataNotFormatter,
+                () => Resources.ExceptionCustomFilterTypeDoesNotHaveConstructor);
         }
     }
 }

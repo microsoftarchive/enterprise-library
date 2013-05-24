@@ -30,11 +30,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
     public class OpenEnvironmentConfigurationDeltaCommand : CommandModel
     {
         readonly ApplicationViewModel sourceModel;
+        private readonly bool canExecute;
 
-        public OpenEnvironmentConfigurationDeltaCommand(IUIServiceWpf uiService, ApplicationViewModel sourceModel)
+        public OpenEnvironmentConfigurationDeltaCommand(IUIServiceWpf uiService, ApplicationViewModel sourceModel, bool canExecute)
             :base(uiService)
         {
             this.sourceModel = sourceModel;
+            this.canExecute = canExecute;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
@@ -71,7 +73,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
 
         protected override bool InnerCanExecute(object parameter)
         {
-            return true;
+            return canExecute;
         }
     }
 

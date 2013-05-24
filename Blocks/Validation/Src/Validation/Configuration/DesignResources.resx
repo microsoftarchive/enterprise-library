@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddValidationSettings" xml:space="preserve">
     <value>Add Validation Settings</value>
@@ -1389,46 +1389,6 @@ It can be accessed from code, and is typically used to sort or categorize the va
   </data>
   <data name="ValidatedTypeReferenceRulesetsDisplayName" xml:space="preserve">
     <value>Rule Sets</value>
-  </data>
-  <data name="ValidationCallHandlerDataDescription" xml:space="preserve">
-    <value>A Call Handler that provides the capability to test whether the value provided for the selected property, or the values specified for the parameters of the selected method, are valid against specific rules. 
-This handler uses the Validation Application Block to perform the validation.</value>
-  </data>
-  <data name="ValidationCallHandlerDataDisplayName" xml:space="preserve">
-    <value>Validation Call Handler</value>
-  </data>
-  <data name="ValidationCallHandlerDataNameDescription" xml:space="preserve">
-    <value>The name of the Validation Call Handler.</value>
-  </data>
-  <data name="ValidationCallHandlerDataNameDisplayName" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="ValidationCallHandlerDataOrderDescription" xml:space="preserve">
-    <value>The position of the handler within the policy handler chain, starting from 1. 
-The default value is zero, which means that there is no explicit order specified for the handler in relation to other handlers in the same handler chain.</value>
-  </data>
-  <data name="ValidationCallHandlerDataOrderDisplayName" xml:space="preserve">
-    <value>Order</value>
-  </data>
-  <data name="ValidationCallHandlerDataRuleSetDescription" xml:space="preserve">
-    <value>The name of the rule set to use for all target object types, as configured in the Validation Application Block. 
-An empty string causes the handler to use the default rule set.</value>
-  </data>
-  <data name="ValidationCallHandlerDataRuleSetDisplayName" xml:space="preserve">
-    <value>Rule Set</value>
-  </data>
-  <data name="ValidationCallHandlerDataSpecificationSourceDescription" xml:space="preserve">
-    <value>A value from the SpecificationSource enumeration that defines the locations where the handler will look for validation rules. 
-Valid values are Attributes, Configuration, ParameterAttributesOnly, and Both.</value>
-  </data>
-  <data name="ValidationCallHandlerDataSpecificationSourceDisplayName" xml:space="preserve">
-    <value>Rule Source</value>
-  </data>
-  <data name="ValidationCallHandlerDataTypeNameDescription" xml:space="preserve">
-    <value>The fully qualified type name of the Validation Call Handler.</value>
-  </data>
-  <data name="ValidationCallHandlerDataTypeNameDisplayName" xml:space="preserve">
-    <value>Type</value>
   </data>
   <data name="ValidationRulesetDataCollectionDescription" xml:space="preserve">
     <value>A collection of validated properties.</value>

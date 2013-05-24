@@ -9,60 +9,34 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Collections.Specialized;
-using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
 {
-
     [TestClass]
     public class GivenCustomerFormatterDataRegistry
     {
-        private TypeRegistration registration;
         private CustomFormatterData formatterData;
 
         [TestInitialize]
         public void Given()
         {
-            formatterData = new CustomFormatterData("myName", typeof(MockCustomLogFormatter));
-            formatterData.Attributes.Add("foo", "bar");
-            registration = formatterData.GetRegistrations().First();
+            this.formatterData = new CustomFormatterData("myName", typeof(MockCustomLogFormatter));
+            this.formatterData.Attributes.Add(MockCustomLogFormatter.AttributeKey, "bar");
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
         }
 
         [TestMethod]
-        public void ThenRegistryEntryMapsLogFormatterToProvidedTypeByName()
+        public void when_creating_formatter_then_creates_custom_formatter()
         {
-            registration.AssertForServiceType(typeof(ILogFormatter))
-                .ForName(formatterData.Name)
-                .ForImplementationType(formatterData.Type);
-        }
-
-        [TestMethod]
-        public void ThenConstructorParametersProvideAttributes()
-        {
-            NameValueCollection attributes;
-            registration.AssertConstructor()
-                .WithValueConstructorParameter<NameValueCollection>(out attributes)
-                .VerifyConstructorParameters();
-
-
-            CollectionAssert.AreEquivalent(
-                attributes,
-                ((ConstantParameterValue)registration.ConstructorParameters.ElementAt(0)).Value as NameValueCollection
-                );
-        }
-
-        [TestMethod]
-        public void ThenRegistrationIsTransient()
-        {
-            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+            var formatter = (MockCustomLogFormatter)this.formatterData.BuildFormatter();
+            Assert.AreEqual("bar", formatter.customValue);
         }
     }
-
 }

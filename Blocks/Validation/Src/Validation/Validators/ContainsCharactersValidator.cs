@@ -11,6 +11,8 @@
 
 using System.Collections.Generic;
 using System.Globalization;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
@@ -18,9 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
     /// <summary>
     /// Performs validation on strings by verifying if it contains a character set using the <see cref="ContainsCharacters"/> mode.
     /// </summary>
-#if !SILVERLIGHT
-    [Common.Configuration.ConfigurationElementType(typeof(Configuration.ContainsCharactersValidatorData))]
-#endif
+    [ConfigurationElementType(typeof(ContainsCharactersValidatorData))]
     public class ContainsCharactersValidator : ValueValidator<string>
     {
         private string characterSet;

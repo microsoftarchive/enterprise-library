@@ -1,6 +1,6 @@
 ﻿<configuration>
   <configSections>
-    <section name="environmentallyOverriddenProperties" type="Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration.EnvironmentalOverridesSection, Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null" />
+    <section name="environmentallyOverriddenProperties" type="Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration.EnvironmentalOverridesSection, Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides" />
   </configSections>
   <environmentallyOverriddenProperties environmentName="Environment" environmentConfigurationFile="environmentoutput.config">
     <designtimeLogicalPropertyGroups>

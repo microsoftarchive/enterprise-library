@@ -9,13 +9,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration
 {
@@ -32,11 +31,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration
         ///<param name="connectionStringSettings">The <see cref="ConnectionStringSettings"/> for the represented database.</param>
         ///<param name="configurationSource">The <see cref="IConfigurationSource"/> from which Oracle-specific information 
         /// should be retrieved.</param>
-        public OracleDatabaseData(ConnectionStringSettings connectionStringSettings, IConfigurationSource configurationSource)
+        public OracleDatabaseData(ConnectionStringSettings connectionStringSettings, Func<string, ConfigurationSection> configurationSource)
             : base(connectionStringSettings, configurationSource)
         {
             var settings = (OracleConnectionSettings)
-                           configurationSource.GetSection(OracleConnectionSettings.SectionName);
+                           configurationSource(OracleConnectionSettings.SectionName);
 
             if (settings != null)
             {
@@ -60,21 +59,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration
         private OracleConnectionData ConnectionData { get; set; }
 
         /// <summary>
-        /// Creates a <see cref="TypeRegistration"/> instance describing the <see cref="OracleDatabase"/> represented by 
-        /// this configuration object.
+        /// Builds the <see cref="Database" /> represented by this configuration object.
         /// </summary>
-        /// <returns>A <see cref="TypeRegistration"/> instance describing a database.</returns>
-        public override IEnumerable<TypeRegistration> GetRegistrations()
+        /// <returns>
+        /// A database.
+        /// </returns>
+        public override Database BuildDatabase()
         {
-            yield return new TypeRegistration<Database>(
-                () => new OracleDatabase(
-                    ConnectionString,
-                    from opd in PackageMappings select (IOraclePackage)opd,
-                    Container.Resolved<IDataInstrumentationProvider>(Name)))
-                {
-                    Name = Name,
-                    Lifetime = TypeRegistrationLifetime.Transient
-                };
+#pragma warning disable 612, 618
+            return new OracleDatabase(this.ConnectionString, this.PackageMappings.Cast<IOraclePackage>().ToArray());
+#pragma warning restore 612, 618
         }
     }
 }

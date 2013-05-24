@@ -55,7 +55,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_source
         [TestMethod]
         public void then_configuration_model_contains_exception_section()
         {
-            Assert.AreEqual(1, configurationSourceViewModel.Sections.Count(s => s.Name == Resources_Desktop.SectionDisplayName));
+            Assert.AreEqual(1, configurationSourceViewModel.Sections.Count(s => s.Name == Resources.SectionDisplayName));
         }
 
         [TestMethod]

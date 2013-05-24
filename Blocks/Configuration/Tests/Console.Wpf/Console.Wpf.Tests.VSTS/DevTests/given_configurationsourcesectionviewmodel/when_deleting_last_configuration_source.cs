@@ -9,19 +9,13 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Windows;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.Unity;
-using Moq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_configurationsourcesectionviewmodel
 {
@@ -36,7 +30,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configurationsourcesectionviewmo
             base.Arrange();
 
             var section = new ConfigurationSourceSection();
-            section.Sources.Add(new SystemConfigurationSourceElement(){Name = "System Source"});
+            section.Sources.Add(new SystemConfigurationSourceElement() { Name = "System Source" });
 
             var configSource = Container.Resolve<ConfigurationSourceModel>();
             configSourceSectionViewModel = configSource.AddSection(ConfigurationSourceSection.SectionName, section);
@@ -73,7 +67,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configurationsourcesectionviewmo
 
             var section = new ConfigurationSourceSection();
             section.Sources.Add(new SystemConfigurationSourceElement() { Name = "System Source" });
-            section.Sources.Add(new ManageableConfigurationSourceElement() { Name = "Maneable Configuration" });
+            section.Sources.Add(new SystemConfigurationSourceElement() { Name = "System Source 2" });
 
             var configSource = Container.Resolve<ConfigurationSourceModel>();
             configSourceSectionViewModel = configSource.AddSection(ConfigurationSourceSection.SectionName, section);

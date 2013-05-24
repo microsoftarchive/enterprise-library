@@ -10,13 +10,11 @@
 //===============================================================================
 
 using System.Reflection;
-using System.Security.Permissions;
 using System.Runtime.ConstrainedExecution;
-using System.Runtime.CompilerServices;
 
-[assembly: SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly: ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 
 [assembly: AssemblyTitle("Enterprise Library Handlers for Policy Injection Application Block Tests")]
 [assembly: AssemblyDescription("Enterprise Library Handlers for Policy Injection Application Block Tests")]
-[assembly: AssemblyVersion("5.0.505.0")]
+[assembly: AssemblyVersion("6.0.0.0")]
+[assembly: AssemblyFileVersion("6.0.1304.0")]

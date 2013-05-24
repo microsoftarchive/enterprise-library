@@ -10,9 +10,18 @@
 //===============================================================================
 
 using System;
-using System.Globalization;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using System.Diagnostics;
+using System.Messaging;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
+using System.Collections.Specialized;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
 {
@@ -27,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
         /// <summary>
         /// Creates a new instance of <see cref="SendToTraceListenerExtension"/>.
         /// </summary>
-        /// <param name="context">The fluent interface extension used to configure Trace Listeners. <br/>
+        /// <param name="context">The fluent interface extesion used to configure Trace Listeners. <br/>
         /// Must implement <see cref="ILoggingConfigurationSendToExtension"/>.
         /// </param>
         protected SendToTraceListenerExtension(ILoggingConfigurationSendTo context)
@@ -42,11 +51,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
         /// <summary>
         /// Adds a <see cref="TraceListenerData"/> instance to the logging settings and adds a <see cref="TraceListenerReferenceData"/> to the current Category Source.
         /// </summary>
-        /// <param name="traceListenerData">The <see cref="TraceListenerData"/> that should be added to configuration.</param>
+        /// <param name="traceListenerData">The <see cref="TraceListenerData"/> that sould be added to configuration.</param>
         protected void AddTraceListenerToSettingsAndCategory(TraceListenerData traceListenerData)
         {
             extensionContext.LoggingSettings.TraceListeners.Add(traceListenerData);
-            extensionContext.CurrentTraceSource.TraceListeners.Add(new TraceListenerReferenceData { Name = traceListenerData.Name });
+            extensionContext.CurrentTraceSource.TraceListeners.Add(new TraceListenerReferenceData(traceListenerData.Name));
         }
 
         /// <summary>

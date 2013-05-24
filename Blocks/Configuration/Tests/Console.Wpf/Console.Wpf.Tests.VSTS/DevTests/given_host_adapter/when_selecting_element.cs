@@ -9,18 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Hosting;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
-using Console.Wpf.Tests.VSTS.TestSupport;
 using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_host_adapter
 {
@@ -38,7 +29,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_host_adapter
 
         protected override void Act()
         {
-            CacheManager.Select();
+            TraceListener.Select();
         }
 
         [TestMethod]
@@ -52,6 +43,5 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_host_adapter
         {
             Assert.IsNotNull(selectedChangedEvent.SelectedComponent.Site);
         }
-
     }
 }

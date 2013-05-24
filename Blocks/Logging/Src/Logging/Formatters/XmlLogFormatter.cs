@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -33,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
         public override string Format(LogEntry log)
         {
             StringBuilder result = new StringBuilder();
-            using (XmlWriter writer = new XmlTextWriter(new StringWriter(result)))
+            using (XmlWriter writer = new XmlTextWriter(new StringWriter(result, CultureInfo.InvariantCulture)))
             {
                 Format(log, writer);
             }

@@ -11,20 +11,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
+using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
-using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Converters
 {
@@ -44,17 +39,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         public RedirectedSectionNameConverter()
         {
             sectionDisplayNames = new Dictionary<string, string>();
-            sectionDisplayNames.Add(CacheManagerSettings.SectionName, Resources.CachingSettingsDisplayName);
-            sectionDisplayNames.Add(InstrumentationConfigurationSection.SectionName, Resources.InstrumentationSettingsDisplayName);
             sectionDisplayNames.Add(DataAccessDesignTime.ConnectionStringSettingsSectionName, Resources.ConnectionStringsDisplayName);
             sectionDisplayNames.Add(OracleConnectionSettings.SectionName, Resources.OracleConnectionStringsDisplayName);
             sectionDisplayNames.Add(DatabaseSettings.SectionName, Resources.CustomDatabaseSettingsDisplayName);
             sectionDisplayNames.Add(ExceptionHandlingSettings.SectionName, Resources.ExceptionHandlingSettingsDisplayName);
             sectionDisplayNames.Add(LoggingSettings.SectionName, Resources.LoggingSettingsDisplayName);
             sectionDisplayNames.Add(PolicyInjectionSettings.SectionName, Resources.PolicyInjectionSettingsDisplayName);
-            sectionDisplayNames.Add(SecuritySettings.SectionName, Resources.SecuritySettingsDisplayName);
             sectionDisplayNames.Add(ValidationSettings.SectionName, Resources.ValidationSettingsDisplayName);
-            sectionDisplayNames.Add(CryptographySettings.SectionName, Resources.CryptographySettingsDisplayName);
         }
 
         /// <summary>

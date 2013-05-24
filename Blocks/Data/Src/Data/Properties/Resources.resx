@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="UserName" xml:space="preserve">
     <value>user id=,uid=</value>
@@ -147,9 +147,6 @@
   <data name="ExceptionNoProviderDefinedForConnectionString" xml:space="preserve">
     <value>The requested database {0} does not have provider name set in the connection string.</value>
   </data>
-  <data name="CounterCategoryHelpResourceName" xml:space="preserve">
-    <value>Enterprise Library Data Performance Counter Instances</value>
-  </data>
   <data name="ExceptionParameterDiscoveryNotSupportedOnGenericDatabase" xml:space="preserve">
     <value>Parameter discovery is not supported for connections using GenericDatabase. You must specify the parameters explicitly, or configure the connection to use a type deriving from Database that supports parameter discovery.</value>
   </data>
@@ -173,30 +170,6 @@
   </data>
   <data name="ErrorConnectionFailedMessage" xml:space="preserve">
     <value>The error occurred using the "{0}" database instance while attempting to open the database connection.</value>
-  </data>
-  <data name="CommandExecutedCounterHelpResource" xml:space="preserve">
-    <value>Commands Executed/sec is the rate at which database commands were executed.</value>
-  </data>
-  <data name="CommandFailedCounterHelpResource" xml:space="preserve">
-    <value>Commands Failed/sec is tha rate at which database commands failed to execute.</value>
-  </data>
-  <data name="ConnectionFailedCounterHelpResource" xml:space="preserve">
-    <value>Connections Failed/sec is the rate at which database connections failed to open.</value>
-  </data>
-  <data name="ConnectionOpenedCounterHelpResource" xml:space="preserve">
-    <value>Connections Opened/sec is the rate at which database connections were opened.</value>
-  </data>
-  <data name="TotalConnectionOpenedHelpResource" xml:space="preserve">
-    <value>Total Connections Opened is the total number which database connections were opened.</value>
-  </data>
-  <data name="TotalCommandsExecutedHelpResource" xml:space="preserve">
-    <value>Total Commands Executed is the total number which database commands were executed.</value>
-  </data>
-  <data name="TotalCommandsFailedHelpResource" xml:space="preserve">
-    <value>Total Commands Failed is the total number which database commands failed to execute.</value>
-  </data>
-  <data name="TotalConnectionFailedHelpResource" xml:space="preserve">
-    <value>Total Connections Failed is the total number which database connections failed to open.</value>
   </data>
   <data name="ExceptionNoConfigurationElementTypeAttribute" xml:space="preserve">
     <value>The type {0} does not contain the ConfigurationElementTypeAttribute.</value>
@@ -233,5 +206,23 @@
   </data>
   <data name="ExceptionCannotCreateRowMapping" xml:space="preserve">
     <value>Cannot create a mapping for type {0}.</value>
+  </data>
+  <data name="ExceptionDatabaseInvalid" xml:space="preserve">
+    <value>The connection string for the database '{0}' does not exist or does not have a valid provider.</value>
+  </data>
+  <data name="ExceptionDefaultDatabaseInvalid" xml:space="preserve">
+    <value>The connection string for the default database '{0}' does not exist or does not have a valid provider.</value>
+  </data>
+  <data name="ExceptionNoDefaultDatabaseDefined" xml:space="preserve">
+    <value>The configuration file does not define a default database.</value>
+  </data>
+  <data name="ExceptionNoValidProviderForConnectionString" xml:space="preserve">
+    <value>The requested database {0} does not have a valid ADO.NET provider name set in the connection string.</value>
+  </data>
+  <data name="ExceptionDatabaseProviderFactoryAlreadySet" xml:space="preserve">
+    <value>The static DatabaseFactory already has a database provider factory or custom methods set.</value>
+  </data>
+  <data name="ExceptionDatabaseProviderFactoryNotSet" xml:space="preserve">
+    <value>Database provider factory not set for the static DatabaseFactory. Set a provider factory invoking the DatabaseFactory.SetProviderFactory method or by specifying custom mappings by calling the DatabaseFactory.SetDatabases method.</value>
   </data>
 </root>

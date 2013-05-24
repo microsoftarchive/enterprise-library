@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
@@ -21,6 +22,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
     [TestClass]
     public class ObjectValidatorFixture
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
+        }
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void ValidatorCreatedWithNullTypeThrows()
@@ -129,7 +142,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         public void ValidatorCanValidateSubclassOfTargetTypeUsingSubclassValidationRulesIfConfiguredToDoSo()
         {
             object target = new ObjectValidatorFixtureReferencedTestClassSubclass();
-            ValidatorFactory factory = new AttributeValidatorFactory(new MockValidationInstrumentationProvider());
+            ValidatorFactory factory = new AttributeValidatorFactory();
             Validator validator = new ObjectValidator(factory, "RuleB");
 
             ValidationResults validationResults = new ValidationResults();

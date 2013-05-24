@@ -11,37 +11,34 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Reflection;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#if !SILVERLIGHT
 using System.Configuration;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-#endif
+using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
 {
     [TestClass]
     public class LogFormatterFixture
     {
-#if !SILVERLIGHT
         [TestInitialize]
         public void SetUp()
         {
             AppDomain.CurrentDomain.SetData("APPBASE", Environment.CurrentDirectory);
         }
-#endif
 
         private static ILogFormatter GetFormatter(string name, IConfigurationSource configurationSource)
         {
-            var container = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
-            return container.GetInstance<ILogFormatter>(name);
+            var settings = LoggingSettings.GetLoggingSettings(configurationSource);
+            return settings.Formatters.Get(name).BuildFormatter();
         }
 
         [TestMethod]
@@ -143,7 +140,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
             Assert.AreEqual("Title: " + entry.Title, actual);
         }
 
-#if !SILVERLIGHT
         [TestMethod]
         public void FormatsMachineToken()
         {
@@ -187,7 +183,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
                 AppDomain.Unload(sandbox);
             }
         }
-#endif
 
         [TestMethod]
         public void FormatsAppDomainToken()
@@ -211,7 +206,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
             Assert.AreEqual("App domain: " + AppDomain.CurrentDomain.FriendlyName, actual);
         }
 
-#if !SILVERLIGHT
         [TestMethod]
         public void FormatsLocalAppDomainTokenWhenInDifferentAppDomain()
         {
@@ -334,12 +328,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
 
                 Assert.AreNotEqual("Process name: " + LogEntry.GetProcessName(), actual);
             }
+            catch
+            {
+                throw;
+            }
             finally
             {
                 AppDomain.Unload(sandbox);
             }
         }
-#endif
 
         [TestMethod]
         public void FormatsThreadNameToken()
@@ -352,7 +349,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
             Assert.AreEqual("Thread name: " + entry.ManagedThreadName, actual);
         }
 
-#if !SILVERLIGHT
         [TestMethod]
         public void FormatsThreadIdToken()
         {
@@ -363,7 +359,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
 
             Assert.AreEqual("Thread id: " + entry.Win32ThreadId, actual);
         }
-#endif
 
         [TestMethod]
         public void FormatsActivityIdToken()
@@ -695,7 +690,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
         [TestMethod]
         public void CanRecognizeFixedFormatLocalTimeForTimestamp()
         {
-            TimeSpan offset = new DateTimeOffset(new DateTime(2009, 12, 31, 23, 58, 16, 1, DateTimeKind.Local)).Offset;
+            TimeSpan offset =
+               TimeZone.CurrentTimeZone.GetUtcOffset(new DateTime(2009, 12, 31, 23, 58, 16, 1, DateTimeKind.Local));
 
             DateTime utcTimestamp = new DateTime(2009, 12, 31, 23, 58, 16, 1, DateTimeKind.Utc).Subtract(offset);
 
@@ -730,7 +726,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
         [TestMethod]
         public void CanRecognizeUSDateFormatForLocalTimestamp()
         {
-            TimeSpan offset = new DateTimeOffset(new DateTime(2009, 12, 31, 0, 0, 0, DateTimeKind.Local)).Offset;
+            TimeSpan offset =
+                TimeZone.CurrentTimeZone.GetUtcOffset(new DateTime(2009, 12, 31, 0, 0, 0, DateTimeKind.Local));
 
             if (offset.Ticks == 0)
                 return; // can't test on GMT
@@ -750,7 +747,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
         [TestMethod]
         public void CanRecognizeISOInternationalDateFormatForLocalTimestamp()
         {
-            TimeSpan offset = new DateTimeOffset(new DateTime(2009, 12, 31, 0, 0, 0, DateTimeKind.Local)).Offset;
+            TimeSpan offset =
+                TimeZone.CurrentTimeZone.GetUtcOffset(new DateTime(2009, 12, 31, 0, 0, 0, DateTimeKind.Local));
 
             if (offset.Ticks == 0)
                 return; // can't test on GMT
@@ -867,27 +865,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
             LogEntry entry = CommonUtil.GetDefaultLogEntry();
             entry.Title = Guid.NewGuid().ToString();
             entry.AppDomainName = Guid.NewGuid().ToString();
+            entry.MachineName = Guid.NewGuid().ToString();
             entry.ManagedThreadName = Guid.NewGuid().ToString();
             entry.Message = Guid.NewGuid().ToString();
             string category = Guid.NewGuid().ToString();
             entry.Categories = new string[] { category };
-#if !SILVERLIGHT
-            entry.MachineName = Guid.NewGuid().ToString();
             entry.ProcessName = Guid.NewGuid().ToString();
-#endif
 
             string formattedMessage = formatter.Format(entry);
 
             Assert.IsTrue(formattedMessage.IndexOf(AppDomain.CurrentDomain.FriendlyName) != -1);
             Assert.IsTrue(formattedMessage.IndexOf(entry.Title) != -1);
+            Assert.IsTrue(formattedMessage.IndexOf(Environment.MachineName) != -1);
             Assert.IsTrue(formattedMessage.IndexOf(entry.ManagedThreadName) != -1);
             Assert.IsTrue(formattedMessage.IndexOf(entry.Message) != -1);
             Assert.IsTrue(formattedMessage.IndexOf(entry.Title) != -1);
             Assert.IsTrue(formattedMessage.IndexOf(category) != -1);
-#if !SILVERLIGHT
-            Assert.IsTrue(formattedMessage.IndexOf(Environment.MachineName) != -1);
             Assert.IsTrue(formattedMessage.IndexOf(LogEntry.GetProcessName()) != -1);
-#endif
         }
 
         [TestMethod]
@@ -898,27 +892,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
             LogEntry entry = CommonUtil.GetDefaultLogEntry();
             entry.Title = Guid.NewGuid().ToString();
             entry.AppDomainName = Guid.NewGuid().ToString();
+            entry.MachineName = Guid.NewGuid().ToString();
             entry.ManagedThreadName = Guid.NewGuid().ToString();
             entry.Message = Guid.NewGuid().ToString();
             string category = Guid.NewGuid().ToString();
             entry.Categories = new string[] { category };
-#if !SILVERLIGHT
-            entry.MachineName = Guid.NewGuid().ToString();
             entry.ProcessName = Guid.NewGuid().ToString();
-#endif
 
             string formattedMessage = formatter.Format(entry);
 
             Assert.IsTrue(formattedMessage.IndexOf(AppDomain.CurrentDomain.FriendlyName) != -1);
             Assert.IsTrue(formattedMessage.IndexOf(entry.Title) != -1);
+            Assert.IsTrue(formattedMessage.IndexOf(Environment.MachineName) != -1);
             Assert.IsTrue(formattedMessage.IndexOf(entry.ManagedThreadName) != -1);
             Assert.IsTrue(formattedMessage.IndexOf(entry.Message) != -1);
             Assert.IsTrue(formattedMessage.IndexOf(entry.Title) != -1);
             Assert.IsTrue(formattedMessage.IndexOf(category) != -1);
-#if !SILVERLIGHT
-            Assert.IsTrue(formattedMessage.IndexOf(Environment.MachineName) != -1);
             Assert.IsTrue(formattedMessage.IndexOf(LogEntry.GetProcessName()) != -1);
-#endif
         }
 
         string FormatEntry(string template,
@@ -928,7 +918,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
             return formatter.Format(entry);
         }
 
-#if !SILVERLIGHT
         // this is an obsolete test. Custom functions are still allowed, but the preferred
         // mechanism is to define a token handler/formatter combo
         [TestMethod]
@@ -942,7 +931,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
             string expected = "Acme custom token template: 1234";
             Assert.AreEqual(expected, actual);
         }
-#endif
 
         [TestMethod]
         public void FormatReflectedPropertyTokenFunctionPropertyFoundAndValue()
@@ -1056,7 +1044,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
             Assert.AreEqual("category1, category2, category3, category4", formatter.Format(entry));
         }
 
-#if !SILVERLIGHT
         [TestMethod]
         public void CanCreateFormatterFromFactory()
         {
@@ -1109,14 +1096,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
 
         private static AppDomain GetSandboxedAppDomain(params IPermission[] permissionsToUpdate)
         {
-            var level = PolicyLevel.CreateAppDomainLevel();
-            var permissionSet =
-                level.GetNamedPermissionSet("SkipVerification").Union(level.GetNamedPermissionSet("Everything"));
+            var evidence = new Evidence();
+            evidence.AddHostEvidence(new Zone(SecurityZone.Intranet));
+            var set = SecurityManager.GetStandardSandbox(evidence);
+            set.AddPermission(new ReflectionPermission(ReflectionPermissionFlag.MemberAccess));
+            set.AddPermission(new FileIOPermission(FileIOPermissionAccess.AllAccess, Path.GetDirectoryName(typeof(LogFormatter).Assembly.Location)));
 
             foreach (var permission in permissionsToUpdate)
             {
-                permissionSet.RemovePermission(permission.GetType());
-                permissionSet.AddPermission(permission);
+                set.RemovePermission(permission.GetType());
+                set.AddPermission(permission);
             }
 
             var sandbox =
@@ -1124,9 +1113,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
                     "test",
                     AppDomain.CurrentDomain.Evidence,
                     new AppDomainSetup() { ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase },
-                    permissionSet);
+                    set);
             return sandbox;
         }
-#endif
     }
 }

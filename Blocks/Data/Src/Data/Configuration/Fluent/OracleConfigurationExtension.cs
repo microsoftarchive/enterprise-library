@@ -34,7 +34,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Fluent
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
+#pragma warning disable 612, 618
         IDatabaseOracleConfiguration WithConnectionString(OracleConnectionStringBuilder builder);
+#pragma warning restore 612, 618
 
         /// <summary>
         /// Define an Oracle package with the specified name.
@@ -78,11 +80,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Fluent
             return this;
         }
 
+#pragma warning disable 612, 618
         IDatabaseOracleConfiguration IDatabaseOracleConfiguration.WithConnectionString(OracleConnectionStringBuilder builder)
         {
             base.WithConnectionString(builder);
             return this;
         }
+#pragma warning restore 612, 618
 
         /// <summary />
         IDatabaseConfigurationProperties IDatabaseOraclePackageConfiguration.AndPrefix(string prefix)

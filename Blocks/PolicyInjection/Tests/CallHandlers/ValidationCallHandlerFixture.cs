@@ -13,9 +13,9 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.ObjectsUnderTest;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
@@ -28,16 +28,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
     [TestClass]
     public class ValidationCallHandlerFixture
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
+        }
+
         [TestMethod]
-        [DeploymentItem("Validation.config")]
         public void CanCreateValidationCallHandlerThroughFactory()
         {
             ValidationCallHandlerData validationCallHandler = new ValidationCallHandlerData("validationHandler");
             IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
-            new UnityContainerConfigurator(container)
-                .RegisterAll(new DictionaryConfigurationSource(), new ValidationTypeRegistrationProvider());
 
-            InjectionFriendlyRuleDrivenPolicy policy = CreatePolicySetContainingCallHandler(validationCallHandler, container);
+            RuleDrivenPolicy policy = CreatePolicySetContainingCallHandler(validationCallHandler, container);
 
             ICallHandler runtimeHandler
                 = (policy.GetHandlersFor(new MethodImplementationInfo(null, (MethodInfo)MethodBase.GetCurrentMethod()), container)).ElementAt(0);
@@ -46,7 +55,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         }
 
         [TestMethod]
-        [DeploymentItem("Validation.config")]
         public void ValidationCallHandlerDoesNothingIfValidationPasses()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
@@ -58,7 +66,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         }
 
         [TestMethod]
-        [DeploymentItem("Validation.config")]
         [ExpectedException(typeof(ArgumentValidationException))]
         public void ValidationCallHandlerThrowsArgumentValidationExceptionIfValidationFailsFromMetaData()
         {
@@ -71,7 +78,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         }
 
         [TestMethod]
-        [DeploymentItem("Validation.config")]
         [ExpectedException(typeof(ArgumentValidationException))]
         public void ValidationCallHandlerThrowsArgumentValidationExceptionIfValidationFailsFromConfiguration()
         {
@@ -84,7 +90,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         }
 
         [TestMethod]
-        [DeploymentItem("Validation.config")]
         public void ValidationCallHandlerIgnoresAttributeValidationIfSpecificationSourceIsConfig()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
@@ -96,7 +101,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         }
 
         [TestMethod]
-        [DeploymentItem("Validation.config")]
         public void ValidationCallHandlerIgnoresConfigurationValidationIfSpecificationSourceIsAttributes()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
@@ -108,7 +112,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         }
 
         [TestMethod]
-        [DeploymentItem("Validation.config")]
         public void ValidationCallHandlerIgnoresConfigurationAndAttributesValidationIfSpecificationSourceIsParameterAttributesOnly()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
@@ -120,7 +123,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         }
 
         [TestMethod]
-        [DeploymentItem("Validation.config")]
         [ExpectedException(typeof(ArgumentValidationException))]
         public void ShouldThrowIfValidationOnParameterAttributesFails()
         {
@@ -134,7 +136,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         }
 
         [TestMethod]
-        [DeploymentItem("Validation.config")]
         public void ShouldNotThrowIfValidationOnParameterAttributePasses()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
@@ -146,7 +147,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             target.GetValueByKey("key");
         }
 
-        static InjectionFriendlyRuleDrivenPolicy CreatePolicySetContainingCallHandler(
+        static RuleDrivenPolicy CreatePolicySetContainingCallHandler(
             ValidationCallHandlerData validationCallHandler,
             IUnityContainer container)
         {
@@ -159,9 +160,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             DictionaryConfigurationSource dictionaryConfigurationSource = new DictionaryConfigurationSource();
             dictionaryConfigurationSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            settings.ConfigureContainer(container, dictionaryConfigurationSource);
+            settings.ConfigureContainer(container);
 
-            return container.Resolve<InjectionFriendlyRuleDrivenPolicy>("policy");
+            return container.Resolve<RuleDrivenPolicy>("policy");
         }
 
         void AddValidationPolicy(IUnityContainer factory,

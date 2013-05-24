@@ -12,6 +12,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Security;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -25,20 +26,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
     public class FormattedEventLogListenerFixture
     {
         [TestInitialize]
-        public void SetUp()
-        {
-            if (EventLog.SourceExists(CommonUtil.EventLogSourceName))
-            {
-                EventLog.DeleteEventSource(CommonUtil.EventLogSourceName);
-            }
-        }
-
         [TestCleanup]
-        public void TearDown()
+        public void SetUpCleanup()
         {
-            if (EventLog.SourceExists(CommonUtil.EventLogSourceName))
+            try
             {
-                EventLog.DeleteEventSource(CommonUtil.EventLogSourceName);
+                if (EventLog.SourceExists(CommonUtil.EventLogSourceName))
+                {
+                    EventLog.DeleteEventSource(CommonUtil.EventLogSourceName);
+                }
+            }
+            catch (SecurityException ex)
+            {
+                Assert.Inconclusive("In order to run the tests, please run Visual Studio as Administrator.\r\n{0}", ex.ToString());
             }
         }
 
@@ -50,8 +50,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
                 new FormattedEventLogTraceListener(CommonUtil.EventLogSourceName, CommonUtil.EventLogNameCustom, new TextFormatter("DUMMY{newline}DUMMY"));
 
             // need to go through the source to get a TraceEventCache
-            LogSource source = new LogSource("notfromconfig", SourceLevels.All);
-            source.Listeners.Add(listener);
+            LogSource source = new LogSource("notfromconfig", new[] { listener }, SourceLevels.All);
 
             LogEntry logEntry = CommonUtil.GetDefaultLogEntry();
             source.TraceData(TraceEventType.Error, 1, logEntry);
@@ -67,8 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             FormattedEventLogTraceListener listener = new FormattedEventLogTraceListener(CommonUtil.EventLogSourceName, CommonUtil.EventLogNameCustom, null);
 
             // need to go through the source to get a TraceEventCache
-            LogSource source = new LogSource("notfromconfig", SourceLevels.All);
-            source.Listeners.Add(listener);
+            LogSource source = new LogSource("notfromconfig", new[] { listener }, SourceLevels.All);
             source.TraceData(TraceEventType.Error, 1, testEntry);
 
             Assert.AreEqual(testEntry.ToString(), CommonUtil.GetLastEventLogEntryCustom());
@@ -147,8 +145,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
                                                    CommonUtil.EventLogNameCustom,
                                                    FormattedEventLogTraceListener.DefaultMachineName,
                                                    new TextFormatter("{message}"));
-            LogSource source = new LogSource("transient", SourceLevels.All);
-            source.Listeners.Add(listener);
+            LogSource source = new LogSource("transient", new[] { listener }, SourceLevels.All);
 
             LogEntry entry = CommonUtil.GetDefaultLogEntry();
             entry.Severity = TraceEventType.Error;
@@ -171,8 +168,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
                                                    FormattedEventLogTraceListener.DefaultMachineName,
                                                    new TextFormatter("{message}"));
             listener.Filter = new EventTypeFilter(SourceLevels.Critical);
-            LogSource source = new LogSource("transient", SourceLevels.All);
-            source.Listeners.Add(listener);
+            LogSource source = new LogSource("transient", new[] { listener }, SourceLevels.All);
 
             LogEntry entry = CommonUtil.GetDefaultLogEntry();
             entry.Severity = TraceEventType.Error;

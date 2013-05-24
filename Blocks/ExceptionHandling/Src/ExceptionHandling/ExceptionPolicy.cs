@@ -10,10 +10,7 @@
 //===============================================================================
 
 using System;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
-using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 {
@@ -23,6 +20,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
     /// </summary>
     public static class ExceptionPolicy
     {
+        private static volatile ExceptionManager exceptionManager;
+
         /// <summary>
         /// The main entry point into the Exception Handling Application Block.
         /// Handles the specified <see cref="Exception"/>
@@ -30,9 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// </summary>
         /// <param name="exceptionToHandle">An <see cref="Exception"/> object.</param>
         /// <param name="policyName">The name of the policy to handle.</param>        
-        /// <returns>
-        /// Whether or not a rethrow is recommended.
-        /// </returns>
+        /// <returns><see langword="true"/> if  rethrowing an exception is recommended; otherwise, <see langword="false"/>.</returns>
         /// <example>
         /// The following code shows the usage of the 
         /// exception handling framework.
@@ -52,8 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             if (exceptionToHandle == null) throw new ArgumentNullException("exceptionToHandle");
             if (string.IsNullOrEmpty(policyName)) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty);
 
-            ExceptionPolicyImpl policy = GetExceptionPolicy(exceptionToHandle, policyName);
-            return policy.HandleException(exceptionToHandle);
+            return EnsureManager().HandleException(exceptionToHandle, policyName);
         }
 
         /// <summary>
@@ -68,9 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// then the original exception <paramref name="exceptionToHandle"/> should be rethrown; otherwise,
         /// the exception returned in <paramref name="exceptionToThrow"/> should be thrown.
         /// </remarks>
-        /// <returns>
-        /// Whether or not a rethrow is recommended. 
-        /// </returns>
+        /// <returns><see langword="true"/> if  rethrowing an exception is recommended; otherwise, <see langword="false"/>.</returns>
         /// <example>
         /// The following code shows the usage of the 
         /// exception handling framework.
@@ -92,7 +86,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         ///	}
         /// </code>
         /// </example>
-        /// <seealso cref="ExceptionManagerImpl.HandleException(Exception, string)"/>
+        /// <seealso cref="ExceptionManager.HandleException(Exception, string)"/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "By Design. Core feature of block.")]
         public static bool HandleException(Exception exceptionToHandle, string policyName, out Exception exceptionToThrow)
         {
             if (exceptionToHandle == null) throw new ArgumentNullException("exceptionToHandle");
@@ -112,37 +107,41 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             }
         }
 
-
-        private static ExceptionPolicyImpl GetExceptionPolicy(Exception exception, string policyName)
+        /// <summary>
+        /// Sets the global exception manager.
+        /// </summary>
+        /// <param name="exceptionManager">The exception manager.</param>
+        /// <param name="throwIfSet"><see langword="true"/> to throw an exception if the manager is already set; otherwise, <see langword="false"/>. Defaults to <see langword="true"/>.</param>
+        /// <exception cref="InvalidOperationException">The manager is already set and <paramref name="throwIfSet"/> is <see langword="true"/>.</exception>
+        public static void SetExceptionManager(ExceptionManager exceptionManager, bool throwIfSet = true)
         {
-            try
+            var currentExceptionManager = ExceptionPolicy.exceptionManager;
+            if (currentExceptionManager != null && throwIfSet)
             {
-                return EnterpriseLibraryContainer.Current.GetInstance<ExceptionPolicyImpl>(policyName);
+                throw new InvalidOperationException(Resources.ExceptionManagerAlreadySet);
             }
-            catch (ActivationException configurationException)
+
+            ExceptionPolicy.exceptionManager = exceptionManager;
+        }
+
+        /// <summary>
+        /// Resets the global exception manager.
+        /// </summary>
+        public static void Reset()
+        {
+            exceptionManager = null;
+        }
+
+        private static ExceptionManager EnsureManager()
+        {
+            var manager = exceptionManager;
+
+            if (manager == null)
             {
-                try
-                {
-                    DefaultExceptionHandlingEventLogger logger = EnterpriseLibraryContainer.Current.GetInstance<DefaultExceptionHandlingEventLogger>();
-                    logger.LogConfigurationError(configurationException, policyName);
-                }
-                catch { }
-
-                throw;
+                throw new InvalidOperationException(Resources.ExceptionManagerNotSet);
             }
-            catch (Exception ex)
-            {
-                try
-                {
-                    string exceptionMessage = ExceptionUtility.FormatExceptionHandlingExceptionMessage(policyName, ex, null, exception);
 
-                    DefaultExceptionHandlingEventLogger logger = EnterpriseLibraryContainer.Current.GetInstance<DefaultExceptionHandlingEventLogger>();
-                    logger.LogInternalError(policyName, exceptionMessage);
-                }
-                catch { }
-
-                throw new ExceptionHandlingException(ex.Message, ex);
-            }
+            return manager;
         }
     }
 }

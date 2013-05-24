@@ -10,11 +10,8 @@
 //===============================================================================
 
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
-
-
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -24,16 +21,6 @@ using System.Security;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("25a0dedd-9395-48fe-9355-8cdf97b4445e")]
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-[assembly: AssemblyVersion("5.0.505.0")]
-[assembly: AssemblyFileVersion("5.0.505.0")]
-[assembly: AllowPartiallyTrustedCallers]
+[assembly: AssemblyVersion("6.0.0.0")]
+[assembly: AssemblyFileVersion("6.0.1304.0")]
 [assembly: SecurityTransparent]

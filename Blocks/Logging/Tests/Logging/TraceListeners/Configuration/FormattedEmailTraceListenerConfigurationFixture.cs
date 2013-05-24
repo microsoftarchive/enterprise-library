@@ -31,12 +31,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
         public void SetUp()
         {
             AppDomain.CurrentDomain.SetData("APPBASE", Environment.CurrentDirectory);
+            ConfigurationTestHelper.ConfigurationFileName = "test.exe.config";
         }
 
         private static TraceListener GetListener(string name, IConfigurationSource configurationSource)
         {
-            var container = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
-            return container.GetInstance<TraceListener>(name);
+            var settings = LoggingSettings.GetLoggingSettings(configurationSource);
+            return settings.TraceListeners.Get(name).BuildTraceListener(settings);
         }
 
         private EmailTraceListenerData CreateDefaultData()
@@ -76,10 +77,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
         [TestMethod]
         public void CanUseSSLWhenUnauthenticated()
         {
-            var listenerData = new EmailTraceListenerData("listener", 
-                "obviously.bad.email.address@127.0.0.1", "logging@entlib.com", 
-                "EntLib-Logging:", "has occurred", 
-                "smtphost", 25, 
+            var listenerData = new EmailTraceListenerData("listener",
+                "obviously.bad.email.address@127.0.0.1", "logging@entlib.com",
+                "EntLib-Logging:", "has occurred",
+                "smtphost", 25,
                 "formatter", TraceOptions.None, SourceLevels.All,
                 EmailAuthenticationMode.None, null, null, true);
 
@@ -100,7 +101,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             Assert.AreEqual("user", listenerData.UserName);
             Assert.AreEqual("secret", listenerData.Password);
         }
-        
+
         [TestMethod]
         public void CanDeserializeSerializedConfiguration()
         {
@@ -145,7 +146,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
 
             Assert.AreEqual(1, roSettings.TraceListeners.Count);
 
-            var loadedData = (EmailTraceListenerData) roSettings.TraceListeners.Get(name);
+            var loadedData = (EmailTraceListenerData)roSettings.TraceListeners.Get(name);
 
             Assert.IsNotNull(loadedData);
             Assert.AreEqual(TraceOptions.Callstack, loadedData.TraceOutputOptions);
@@ -164,6 +165,83 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             Assert.AreEqual(user, loadedData.UserName);
             Assert.AreEqual(password, loadedData.Password);
             Assert.IsTrue(loadedData.UseSSL);
+            Assert.AreEqual(false, loadedData.Asynchronous);
+            Assert.AreEqual(30000, loadedData.AsynchronousBufferSize);
+            Assert.AreEqual(System.Threading.Timeout.InfiniteTimeSpan, loadedData.AsynchronousDisposeTimeout);
+            Assert.AreEqual(null, loadedData.AsynchronousMaxDegreeOfParallelism);
+        }
+
+        [TestMethod]
+        public void CanDeserializeSerializedConfigurationWithNonDefaultAsyncValues()
+        {
+            const string name = "name";
+            const string toAddress = "obviously.bad.email.address@127.0.0.1";
+            const string fromAddress = "logging@entlib.com";
+            const string subjectStarter = "EntLib-Logging:";
+            const string subjectEnder = "has occurred";
+            const string server = "smtphost";
+            const int port = 25;
+            const string formatter = "formatter";
+            const string user = "user";
+            const string password = "secret";
+
+            var data = new EmailTraceListenerData
+            {
+                Name = name,
+                ToAddress = toAddress,
+                FromAddress = fromAddress,
+                SubjectLineStarter = subjectStarter,
+                SubjectLineEnder = subjectEnder,
+                SmtpServer = server,
+                SmtpPort = port,
+                Formatter = formatter,
+                TraceOutputOptions = TraceOptions.Callstack,
+                Filter = SourceLevels.Critical,
+                AuthenticationMode = EmailAuthenticationMode.UserNameAndPassword,
+                UserName = user,
+                Password = password,
+                UseSSL = true,
+                Asynchronous = true,
+                AsynchronousBufferSize = 300,
+                AsynchronousDisposeTimeout = TimeSpan.FromSeconds(100),
+                AsynchronousMaxDegreeOfParallelism = 200,
+            };
+
+            LoggingSettings settings = new LoggingSettings();
+            settings.TraceListeners.Add(data);
+
+            IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
+            sections[LoggingSettings.SectionName] = settings;
+            IConfigurationSource configurationSource
+                = ConfigurationTestHelper.SaveSectionsInFileAndReturnConfigurationSource(sections);
+
+            LoggingSettings roSettings = (LoggingSettings)configurationSource.GetSection(LoggingSettings.SectionName);
+
+            Assert.AreEqual(1, roSettings.TraceListeners.Count);
+
+            var loadedData = (EmailTraceListenerData)roSettings.TraceListeners.Get(name);
+
+            Assert.IsNotNull(loadedData);
+            Assert.AreEqual(TraceOptions.Callstack, loadedData.TraceOutputOptions);
+            Assert.AreEqual(SourceLevels.Critical, loadedData.Filter);
+            Assert.AreSame(typeof(EmailTraceListenerData), loadedData.GetType());
+            Assert.AreSame(typeof(EmailTraceListenerData), loadedData.ListenerDataType);
+            Assert.AreSame(typeof(EmailTraceListener), loadedData.Type);
+            Assert.AreEqual(formatter, loadedData.Formatter);
+            Assert.AreEqual(fromAddress, loadedData.FromAddress);
+            Assert.AreEqual(port, loadedData.SmtpPort);
+            Assert.AreEqual(server, loadedData.SmtpServer);
+            Assert.AreEqual(subjectEnder, loadedData.SubjectLineEnder);
+            Assert.AreEqual(subjectStarter, loadedData.SubjectLineStarter);
+            Assert.AreEqual(toAddress, loadedData.ToAddress);
+            Assert.AreEqual(EmailAuthenticationMode.UserNameAndPassword, loadedData.AuthenticationMode);
+            Assert.AreEqual(user, loadedData.UserName);
+            Assert.AreEqual(password, loadedData.Password);
+            Assert.IsTrue(loadedData.UseSSL);
+            Assert.AreEqual(true, loadedData.Asynchronous);
+            Assert.AreEqual(300, loadedData.AsynchronousBufferSize);
+            Assert.AreEqual(TimeSpan.FromSeconds(100), loadedData.AsynchronousDisposeTimeout);
+            Assert.AreEqual(200, loadedData.AsynchronousMaxDegreeOfParallelism);
         }
 
         [TestMethod]
@@ -203,34 +281,34 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
             helper.loggingSettings.TraceListeners.Add(listenerData);
-            helper.loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
+            helper.loggingSettings.Formatters.Add(new TextFormatterData("formatter", "some template"));
 
-            TraceListener listener = GetListener("listener\u200cimplementation", helper.configurationSource);
+            TraceListener listener = GetListener("listener", helper.configurationSource);
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual("listener\u200cimplementation", listener.Name);
+            Assert.AreEqual("listener", listener.Name);
             Assert.AreEqual(listener.GetType(), typeof(EmailTraceListener));
             Assert.IsNotNull(((EmailTraceListener)listener).Formatter);
             Assert.AreEqual(((EmailTraceListener)listener).Formatter.GetType(), typeof(TextFormatter));
-            Assert.AreEqual("foobar template", ((TextFormatter)((EmailTraceListener)listener).Formatter).Template);
+            Assert.AreEqual("some template", ((TextFormatter)((EmailTraceListener)listener).Formatter).Template);
         }
 
         [TestMethod]
         public void CanCreateInstanceFromConfigurationFile()
         {
             LoggingSettings loggingSettings = new LoggingSettings();
-            loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
+            loggingSettings.Formatters.Add(new TextFormatterData("formatter", "some template"));
             loggingSettings.TraceListeners.Add(
                 new EmailTraceListenerData("listener", "obviously.bad.email.address@127.0.0.1", "logging@entlib.com", "EntLib-Logging:",
                                            "has occurred", "smtphost", 25, "formatter"));
 
-            TraceListener listener = GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(EmailTraceListener));
             Assert.IsNotNull(((EmailTraceListener)listener).Formatter);
             Assert.AreEqual(((EmailTraceListener)listener).Formatter.GetType(), typeof(TextFormatter));
-            Assert.AreEqual("foobar template", ((TextFormatter)((EmailTraceListener)listener).Formatter).Template);
+            Assert.AreEqual("some template", ((TextFormatter)((EmailTraceListener)listener).Formatter).Template);
         }
 
         [TestMethod]
@@ -241,7 +319,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
                 new EmailTraceListenerData("listener", "obviously.bad.email.address@127.0.0.1", "logging@entlib.com", "EntLib-Logging:",
                                            "has occurred", "smtphost", 25, null));
 
-            TraceListener listener = GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(EmailTraceListener));

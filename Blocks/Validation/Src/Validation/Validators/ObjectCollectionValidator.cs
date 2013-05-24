@@ -11,6 +11,8 @@
 
 using System;
 using System.Collections;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
@@ -20,9 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
     /// to its members.
     /// </summary>
     /// <seealso cref="ValidationFactory"/>
-#if !SILVERLIGHT
-    [Common.Configuration.ConfigurationElementType(typeof(Configuration.ObjectCollectionValidatorData))]
-#endif
+    [ConfigurationElementType(typeof(ObjectCollectionValidatorData))]
     public class ObjectCollectionValidator : Validator
     {
         private readonly Type targetType;
@@ -142,7 +142,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <remarks>
         /// If <paramref name="objectToValidate"/> is <see langword="null"/> validation is ignored.
         /// <para/>
-        /// A reference to a non collection object causes a validation failure and the validation rules
+        /// A referece to a non collection object causes a validation failure and the validation rules
         /// for the configured target type will not be applied.
         /// <para/>
         /// Elements in the collection of a type not compatible with the configured target type causes a validation failure but

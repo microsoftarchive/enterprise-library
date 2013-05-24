@@ -10,6 +10,8 @@
 //===============================================================================
 
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 {
@@ -19,9 +21,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
     /// <remarks>
     /// Validation fails if any of the composed validators fails.
     /// </remarks>
-#if !SILVERLIGHT
-    [Common.Configuration.ConfigurationElementType(typeof(Configuration.AndCompositeValidatorData))]
-#endif
+    [ConfigurationElementType(typeof(AndCompositeValidatorData))]
     public class AndCompositeValidator : Validator
     {
         private IEnumerable<Validator> validators;
@@ -69,7 +69,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// Gets the validators composed by this instance.
+        /// The children of this validator that are run with tthe results anded together.
         /// </summary>
         public IEnumerable<Validator> Validators
         {

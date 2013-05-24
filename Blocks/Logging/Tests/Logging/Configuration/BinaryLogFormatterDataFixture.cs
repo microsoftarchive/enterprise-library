@@ -9,50 +9,29 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
 {
     [TestClass]
     public class GivenBinaryLogFormatterTypeRegistrationEntry
     {
-        private TypeRegistration registration;
+        private BinaryLogFormatterData formatterData;
 
         [TestInitialize]
         public void Given()
         {
-            var formatterData = new BinaryLogFormatterData("formatterName");
-            registration = formatterData.GetRegistrations().First();
+            this.formatterData = new BinaryLogFormatterData("formatterName");
         }
 
         [TestMethod]
-        public void ThenRegistryMatchesServiceTypeNameAndImplementationType()
+        public void when_creating_formatter_then_creates_binary_formatter()
         {
-            registration
-                .AssertForServiceType(typeof(ILogFormatter))
-                .ForName("formatterName")
-                .ForImplementationType(typeof(BinaryLogFormatter));
-        }
+            var formatter = (BinaryLogFormatter)this.formatterData.BuildFormatter();
 
-        [TestMethod]
-        public void ThenNoConstructorParametersSupplied()
-        {
-            registration.AssertConstructor().VerifyConstructorParameters();
-        }
-
-        [TestMethod]
-        public void ThenRegistrationIsTransient()
-        {
-            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+            Assert.IsNotNull(formatter);
         }
     }
-
 }

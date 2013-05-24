@@ -48,7 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             }
             catch (SecurityException)
             {
-                throw new InvalidOperationException(Resources_Desktop.ExceptionReadEnvironmentVariablesDenied);
+                throw new InvalidOperationException(Resources.ExceptionReadEnvironmentVariablesDenied);
             }
         }
     }

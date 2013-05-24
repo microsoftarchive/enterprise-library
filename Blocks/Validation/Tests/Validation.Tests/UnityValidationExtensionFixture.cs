@@ -11,17 +11,17 @@
 
 using System;
 using System.Configuration;
+using System.Text;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
 using Microsoft.Practices.Unity;
-#if !SILVERLIGHT
 using Microsoft.Practices.Unity.Configuration;
-#endif
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 {
@@ -29,6 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
     /// Summary description for UnityValidationExtensionFixture
     /// </summary>
     [TestClass]
+    [Ignore]    // TODO move extension to other project, assumes validator classes are registered explicitly
     public class UnityValidationExtensionFixture
     {
         private IUnityContainer container;
@@ -38,11 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             container = new UnityContainer();
             var configurationSource =
-#if !SILVERLIGHT
                 new SystemConfigurationSource();
-#else
-                DictionaryConfigurationSource.FromXaml(new Uri("/Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight.Tests;component/Configuration.xaml", UriKind.Relative));
-#endif
             EnterpriseLibraryContainer.ConfigureContainer(new UnityContainerConfigurator(container), configurationSource);
         }
 
@@ -186,7 +183,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.AreEqual(1, container.Registrations.Count());        // account for the container registering itself
         }
 
-#if !SILVERLIGHT
         [TestMethod]
         public void CanConfigureValidationSourceFromUnityConfigurationToReadOnlyAttributes()
         {
@@ -232,7 +228,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             var section = (UnityConfigurationSection)ConfigurationManager.GetSection("unity");
             container.LoadConfiguration(section, containerConfigName);
         }
-#endif
+
         private void AssertValidatorIsBasedOnAttributesOnly(Validator<TestObjectWithFailingAttributesOnProperties> v)
         {
             ValidationResults validationResults = v.Validate(new TestObjectWithFailingAttributesOnProperties());

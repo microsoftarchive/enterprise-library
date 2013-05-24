@@ -11,15 +11,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Linq;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Data.Common;
-using System.Data;
-using System.Data.SqlClient;
-using Moq;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 {
@@ -32,7 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 
         protected override void Arrange()
         {
-            ConnectionString = @"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true; Async=True";
+            ConnectionString = @"server=(localdb)\v11.0;database=Northwind;Integrated Security=true; Async=True";
             Database = new TestableSqlDatabase(ConnectionString, this);
         }
 
@@ -409,7 +406,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             Database.ExecuteNonQuery(CommandType.Text, cleanupQuery);
             Database.ExecuteNonQuery(CommandType.Text, insertQuery);
 
-            accessor = Database.CreateSqlStringAccessor("Select ProductName,SupplierID from Products WHERE ProductName='Test'", 
+            accessor = Database.CreateSqlStringAccessor("Select ProductName,SupplierID from Products WHERE ProductName='Test'",
                 MapBuilder<ProductSupplier>.BuildAllProperties());
         }
 

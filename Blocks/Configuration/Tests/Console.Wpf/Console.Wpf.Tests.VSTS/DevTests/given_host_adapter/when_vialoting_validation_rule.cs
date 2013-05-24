@@ -9,16 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Hosting;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Console.Wpf.Tests.VSTS.TestSupport;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_host_adapter
@@ -38,10 +31,10 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_host_adapter
 
         protected override void Act()
         {
-            var cacheManager = CachingViewModel.GetDescendentsOfType<CacheManagerData>().Single();
+            var cacheManager = LoggingViewModel.GetDescendentsOfType<TraceListenerData>().Single();
             try
             {
-                cacheManager.Property("ExpirationPollFrequencyInSeconds").BindableProperty.BindableValue = "abc";
+                cacheManager.Property("TraceOutputOptions").BindableProperty.BindableValue = "abc";
             }
             catch { }
         }

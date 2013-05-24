@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms.Tests.TestClasses;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -21,9 +22,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms.
     public class ValidatedControlItemFixture
     {
         [TestInitialize]
-        public void SetUp()
+        public void TestInitialize()
         {
             MockValidator<object>.ResetCaches();
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
         }
 
         [TestMethod]

@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Tests;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -46,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests
         }
 
         [TestCleanup]
-        public void TearDown() { }
+        public void TearDown() {}
 
         [TestMethod]
         public void CategoryAllowFilterWithCategoryInAllowList()

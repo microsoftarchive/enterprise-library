@@ -13,13 +13,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation
 {
     ///<summary>
-    /// An instance factory for creating validators based on other validator factories.
+    /// An instance factory for creating validators based on other validtor factories.
     ///</summary>
     public class CompositeValidatorFactory : ValidatorFactory
     {
@@ -28,10 +27,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         ///<summary>
         /// Initializes a composite validator factory from an array of <see cref="ValidatorFactory"/> instances.
         ///</summary>
-        ///<param name="instrumentationProvider">The <see cref="IValidationInstrumentationProvider"/> to use when instrumenting validators.</param>
         ///<param name="validatorFactories">One or more validator factories to compose from.</param>
-        public CompositeValidatorFactory(IValidationInstrumentationProvider instrumentationProvider, IEnumerable<ValidatorFactory> validatorFactories)
-            : base(instrumentationProvider)
+        public CompositeValidatorFactory(IEnumerable<ValidatorFactory> validatorFactories)
         {
             this.validatorFactories = validatorFactories;
         }
@@ -39,32 +36,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         ///<summary>
         /// Initializes a composite validator factory from attribute and configuration validator factories
         ///</summary>
-        ///<param name="instrumentationProvider">The <see cref="IValidationInstrumentationProvider"/> to use when instrumenting validators.</param>
         ///<param name="attributeValidatorFactory">The <see cref="AttributeValidatorFactory"/> to composite.</param>
         ///<param name="configurationValidatorFactory">The <see cref="ConfigurationValidatorFactory"/> to composite.</param>
         public CompositeValidatorFactory(
-            IValidationInstrumentationProvider instrumentationProvider,
             AttributeValidatorFactory attributeValidatorFactory,
             ConfigurationValidatorFactory configurationValidatorFactory)
-            : this(instrumentationProvider, new ValidatorFactory[] { attributeValidatorFactory, configurationValidatorFactory })
+            : this(new ValidatorFactory[] { attributeValidatorFactory, configurationValidatorFactory })
         {
         }
 
         ///<summary>
         /// Initializes a composite validator factory from attribute and configuration validator factories
         ///</summary>
-        ///<param name="instrumentationProvider">The <see cref="IValidationInstrumentationProvider"/> to use when instrumenting validators.</param>
         ///<param name="attributeValidatorFactory">The <see cref="AttributeValidatorFactory"/> to composite.</param>
         ///<param name="configurationValidatorFactory">The <see cref="ConfigurationValidatorFactory"/> to composite.</param>
         ///<param name="validationAttributeValidatorFactory">The <see cref="ValidationAttributeValidatorFactory"/> to composite.</param>
         public CompositeValidatorFactory(
-            IValidationInstrumentationProvider instrumentationProvider,
             AttributeValidatorFactory attributeValidatorFactory,
             ConfigurationValidatorFactory configurationValidatorFactory,
             ValidationAttributeValidatorFactory validationAttributeValidatorFactory)
-            : this(
-                instrumentationProvider,
-                new ValidatorFactory[] { attributeValidatorFactory, configurationValidatorFactory, validationAttributeValidatorFactory })
+            : this(new ValidatorFactory[] { attributeValidatorFactory, configurationValidatorFactory, validationAttributeValidatorFactory })
         {
         }
 

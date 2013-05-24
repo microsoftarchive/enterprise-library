@@ -10,14 +10,11 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ServiceModel.Dispatcher;
-using System.ServiceModel.Channels;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using System.ServiceModel;
-using System.Web.Services.Protocols;
 using System.Globalization;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
+using System.ServiceModel.Dispatcher;
+using System.Web.Services.Protocols;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF
 {
@@ -87,6 +84,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF
         /// <param name="error">The error.</param>
         /// <param name="version">The version.</param>
         /// <param name="fault">The fault.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "As designed. Core feature of the block.")]
         public void ProvideFault(Exception error, MessageVersion version, ref Message fault)
         {
             // Will create a default Message in case is null
@@ -98,8 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF
                 ExceptionPolicy.HandleException(error, exceptionPolicyName);
                 // If we get to this line, then this exception is not
                 // defined in the specified policy so treat it as unhandled if not in the default policy
-                if (!exceptionPolicyName.Equals(ExceptionShielding.DefaultExceptionPolicy,
-                    StringComparison.InvariantCultureIgnoreCase))
+                if (!exceptionPolicyName.Equals(ExceptionShielding.DefaultExceptionPolicy, StringComparison.OrdinalIgnoreCase))
                 {
                     // run first the default exception policy
                     ExceptionPolicy.HandleException(error, ExceptionShielding.DefaultExceptionPolicy);
@@ -160,6 +157,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF
             return typeof(FaultException).IsInstanceOfType(exception);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "As designed. Core feature of the block.")]
         private void HandleFault(FaultContractWrapperException faultContractWrapper, ref Message fault)
         {
             try
@@ -197,11 +195,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF
             }
 
             Type faultContractType = faultContractWrapper.FaultContract.GetType();
-            foreach(DispatchOperation operation in OperationContext.Current.EndpointDispatcher.DispatchRuntime.Operations)
+            foreach (DispatchOperation operation in OperationContext.Current.EndpointDispatcher.DispatchRuntime.Operations)
             {
-                if (operation.Action.Equals(operationAction, StringComparison.InvariantCultureIgnoreCase))
+                if (operation.Action.Equals(operationAction, StringComparison.OrdinalIgnoreCase))
                 {
-                    foreach(FaultContractInfo fault in operation.FaultContractInfos)
+                    foreach (FaultContractInfo fault in operation.FaultContractInfos)
                     {
                         if (fault.Detail == faultContractType)
                         {

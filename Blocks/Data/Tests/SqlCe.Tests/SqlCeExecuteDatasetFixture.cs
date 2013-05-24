@@ -63,9 +63,9 @@ namespace Data.SqlCe.Tests.VSTS
             using (DbConnection connection = db.CreateConnection())
             {
                 connection.Open();
-                using (DbTransaction trans = connection.BeginTransaction())
+                using (DbTransaction transaction = connection.BeginTransaction())
                 {
-                    DataSet dataSet = db.ExecuteDataSet(trans, CommandType.Text, queryString);
+                    DataSet dataSet = db.ExecuteDataSet(transaction, CommandType.Text, queryString);
                     Assert.AreEqual(1, dataSet.Tables.Count);
                 }
             }
@@ -78,9 +78,9 @@ namespace Data.SqlCe.Tests.VSTS
             using (DbConnection connection = db.CreateConnection())
             {
                 connection.Open();
-                using (DbTransaction trans = connection.BeginTransaction())
+                using (DbTransaction transaction = connection.BeginTransaction())
                 {
-                    DataSet dataSet = db.ExecuteDataSet(trans, storedProc);
+                    DataSet dataSet = db.ExecuteDataSet(transaction, storedProc);
                     Assert.AreEqual(1, dataSet.Tables.Count);
                 }
             }

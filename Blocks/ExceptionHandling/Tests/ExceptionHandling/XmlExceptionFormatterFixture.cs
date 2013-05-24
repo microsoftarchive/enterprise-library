@@ -10,14 +10,10 @@
 //===============================================================================
 
 using System;
-using System.Collections;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Xml;
-using System.Xml.Linq;
-using System.Xml.XPath;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
@@ -29,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         public void CreateXmlWriterTest()
         {
             StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(new StringWriter(sb));
+            XmlTextWriter writer = new XmlTextWriter(new StringWriter(sb));
             Exception ex = new MockException();
             XmlExceptionFormatter formatter = new XmlExceptionFormatter(writer, ex, Guid.Empty);
 
@@ -56,7 +52,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         public void CreateWithNullExceptionThrows()
         {
             StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(new StringWriter(sb));
+            XmlTextWriter writer = new XmlTextWriter(new StringWriter(sb));
             new XmlExceptionFormatter(writer, null, Guid.Empty);
         }
 
@@ -65,15 +61,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         {
             StringBuilder sb = new StringBuilder();
             StringWriter writer = new StringWriter(sb);
-            Exception exception = new MockException("Foo Bar", new MockException());
+            Exception exception = new MockException("exception message", new MockException());
 
             XmlExceptionFormatter formatter = new XmlExceptionFormatter(writer, exception, Guid.Empty);
             Assert.IsTrue(sb.Length == 0);
             formatter.Format();
 
-            var doc = XDocument.Load(new StringReader(sb.ToString()));
-            var element = doc.XPathSelectElement("//InnerException");
-
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(sb.ToString());
+            XmlNode element = doc.DocumentElement.SelectSingleNode("//InnerException");
             Assert.IsNotNull(element);
         }
 
@@ -93,7 +89,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         public void SimpleXmlWriterFormatterTest()
         {
             StringBuilder sb = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(new StringWriter(sb));
+            XmlTextWriter writer = new XmlTextWriter(new StringWriter(sb));
             Exception ex = new MockException();
             XmlExceptionFormatter formatter = new XmlExceptionFormatter(writer, ex, Guid.Empty);
 
@@ -128,7 +124,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             XmlExceptionFormatter formatter = new XmlExceptionFormatter(writer, ex, Guid.Empty);
             formatter.Format();
 
-            XDocument.Load(new StringReader(sb.ToString()));
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(sb.ToString());
         }
 
         [TestMethod]
@@ -136,17 +133,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         {
             StringBuilder sb = new StringBuilder();
             StringWriter writer = new StringWriter(sb);
-            Exception exception = new MockException("Foo Bar", new MockException());
+            Exception exception = new MockException("exception message", new MockException());
             Guid testGuid = Guid.NewGuid();
 
             XmlExceptionFormatter formatter = new XmlExceptionFormatter(writer, exception, testGuid);
             Assert.IsTrue(sb.Length == 0);
             formatter.Format();
 
-            var doc = XDocument.Load(new StringReader(sb.ToString()));
-            var element = ((IEnumerable)doc.XPathEvaluate("/Exception/@handlingInstanceId")).OfType<XAttribute>().FirstOrDefault();
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(sb.ToString());
+            XmlNode element = doc.DocumentElement.SelectSingleNode("/Exception/@handlingInstanceId");
             Assert.IsNotNull(element);
-            Assert.AreEqual(testGuid.ToString("D", CultureInfo.InvariantCulture), element.Value);
+            Assert.AreEqual(testGuid.ToString("D", CultureInfo.InvariantCulture), element.InnerText);
         }
 
         [TestMethod]
@@ -154,14 +152,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         {
             StringBuilder sb = new StringBuilder();
             StringWriter writer = new StringWriter(sb);
-            Exception exception = new MockException("Foo Bar", new MockException());
+            Exception exception = new MockException("exception message", new MockException());
 
             XmlExceptionFormatter formatter = new XmlExceptionFormatter(writer, exception, Guid.Empty);
             Assert.IsTrue(sb.Length == 0);
             formatter.Format();
 
-            var doc = XDocument.Load(new StringReader(sb.ToString()));
-            var element = ((IEnumerable)doc.XPathEvaluate("/Exception/@handlingInstanceId")).OfType<XAttribute>().FirstOrDefault();
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(sb.ToString());
+            XmlNode element = doc.DocumentElement.SelectSingleNode("/Exception/@handlingInstanceId");
             Assert.IsNull(element);
         }
     }

@@ -11,21 +11,22 @@
 
 using System.Diagnostics;
 using System.IO;
+using System.Xml;
 using System.Xml.XPath;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
     /// <summary>
-    /// A <see cref="TraceListener"/> that writes an XML.
+    /// Represents a trace listener that writes entries as XML-encoded data to a file.
     /// </summary>
     [ConfigurationElementType(typeof(XmlTraceListenerData))]
     public class XmlTraceListener : XmlWriterTraceListener
     {
         /// <summary>
-        /// Initializes a new instance of <see cref="XmlTraceListener"/>.
+        /// Initializes a new instance of the <see cref="XmlTraceListener"/> class.
         /// </summary>
         public XmlTraceListener(string filename)
             : base(filename)
@@ -37,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="eventCache">The context information provided by <see cref="System.Diagnostics"/>.</param>
         /// <param name="source">The name of the trace source that delivered the trace data.</param>
         /// <param name="eventType">The type of event.</param>
-        /// <param name="id">The id of the event.</param>
+        /// <param name="id">The ID of the event.</param>
         /// <param name="data">The data to trace.</param>
         public override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id, object data)
         {
@@ -65,7 +66,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 
         internal virtual XPathNavigator GetXml(LogEntry logEntry)
         {
-            return new XPathDocument(new StringReader(new XmlLogFormatter().Format(logEntry))).CreateNavigator();
+            using (var reader = XmlReader.Create(new StringReader(new XmlLogFormatter().Format(logEntry)), new XmlReaderSettings { CloseInput = true }))
+            {
+                return new XPathDocument(reader).CreateNavigator();
+            }
         }
     }
 }

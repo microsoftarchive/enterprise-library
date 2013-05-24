@@ -41,6 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         {
             // Reset distribution strategy to in process
             //CommonUtil.SetDistributionStrategy("InProc");
+            Logger.Reset();
         }
 
         [TestMethod]

@@ -34,10 +34,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
         protected override void OnStartup(StartupEventArgs e)
         {
             this.DispatcherUnhandledException += UnhandledException;
-            if (e.Args.Length > 0)
-            {
-                StartingFileName = e.Args[0];
-            }
+
+            CommandLineParameters = new CommandLineParameters(e.Args);
         }
 
         private void UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
@@ -50,6 +48,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
             this.Shutdown(ExitWithFailureCode);
         }
 
-        public static string StartingFileName { get; private set; }
+        public static string StartingFileName
+        {
+            get
+            {
+                return CommandLineParameters.StartingConfigurationFileName;
+            }
+        }
+
+        internal static CommandLineParameters CommandLineParameters { get; private set; }
     }
 }

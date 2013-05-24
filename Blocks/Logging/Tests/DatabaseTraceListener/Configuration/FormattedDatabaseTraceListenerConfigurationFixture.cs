@@ -15,13 +15,12 @@ using System.Configuration;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
+using Microsoft.Practices.EnterpriseLibrary.Data;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configuration
 {
@@ -32,12 +31,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configura
         public void SetUp()
         {
             AppDomain.CurrentDomain.SetData("APPBASE", Environment.CurrentDirectory);
-            File.WriteAllText("test.exe.config", @"<?xml version=""1.0"" encoding=""utf-8"" ?>
-<configuration>
-  <connectionStrings>
-    <add name=""LoggingDb"" providerName=""System.Data.SqlClient"" connectionString=""server=(local)\SQLEXPRESS;database=Logging;Integrated Security=true"" />
-  </connectionStrings>
-</configuration>");
+            ConfigurationTestHelper.ConfigurationFileName = "test-database.exe.config";
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            DatabaseFactory.ClearDatabaseProviderFactory();
         }
 
         [TestMethod]
@@ -124,35 +124,45 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configura
         public void CanCreateInstanceFromGivenName()
         {
             FormattedDatabaseTraceListenerData listenerData =
-                new FormattedDatabaseTraceListenerData("listener", "WriteLog", "AddCategory", "LoggingDb", "formatter");
+                new FormattedDatabaseTraceListenerData("listener", "WriteLog", "AddCategory", "LoggingDb", "formatter")
+                {
+                    TraceOutputOptions = TraceOptions.Callstack | TraceOptions.DateTime,
+                    Filter = SourceLevels.Information
+                };
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            helper.loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
+            helper.loggingSettings.Formatters.Add(new TextFormatterData("formatter", "some template"));
             helper.loggingSettings.TraceListeners.Add(listenerData);
 
-            TraceListener listener = GetListener("listener\u200cimplementation", helper.configurationSource);
+            var listener = (FormattedDatabaseTraceListener)GetListener("listener", helper.configurationSource);
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual(listener.GetType(), typeof(FormattedDatabaseTraceListener));
-            Assert.IsNotNull(((FormattedDatabaseTraceListener)listener).Formatter);
-            Assert.AreEqual(((FormattedDatabaseTraceListener)listener).Formatter.GetType(), typeof(TextFormatter));
-            Assert.AreEqual("foobar template", ((TextFormatter)((FormattedDatabaseTraceListener)listener).Formatter).Template);
+            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual(TraceOptions.Callstack | TraceOptions.DateTime, listener.TraceOutputOptions);
+            Assert.IsNotNull(listener.Filter);
+            Assert.AreEqual(SourceLevels.Information, ((EventTypeFilter)listener.Filter).EventType);
+            Assert.AreEqual("WriteLog", listener.WriteLogStoredProcName);
+            Assert.AreEqual("AddCategory", listener.AddCategoryStoredProcName);
+            Assert.AreEqual(@"server=(localdb)\v11.0;database=Logging;Integrated Security=true", listener.Database.ConnectionString);
+            Assert.IsNotNull(listener.Formatter);
+            Assert.AreEqual(listener.Formatter.GetType(), typeof(TextFormatter));
+            Assert.AreEqual("some template", ((TextFormatter)listener.Formatter).Template);
         }
 
         [TestMethod]
         public void CanCreateInstanceFromConfigurationFile()
         {
             LoggingSettings loggingSettings = new LoggingSettings();
-            loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
+            loggingSettings.Formatters.Add(new TextFormatterData("formatter", "some template"));
             loggingSettings.TraceListeners.Add(
                 new FormattedDatabaseTraceListenerData("listener", "WriteLog", "AddCategory", "LoggingDb", "formatter"));
 
-            TraceListener listener = GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(FormattedDatabaseTraceListener));
             Assert.IsNotNull(((FormattedDatabaseTraceListener)listener).Formatter);
             Assert.AreEqual(((FormattedDatabaseTraceListener)listener).Formatter.GetType(), typeof(TextFormatter));
-            Assert.AreEqual("foobar template", ((TextFormatter)((FormattedDatabaseTraceListener)listener).Formatter).Template);
+            Assert.AreEqual("some template", ((TextFormatter)((FormattedDatabaseTraceListener)listener).Formatter).Template);
         }
 
         [TestMethod]
@@ -162,7 +172,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configura
             loggingSettings.TraceListeners.Add(
                 new FormattedDatabaseTraceListenerData("listener", "WriteLog", "AddCategory", "LoggingDb", null));
 
-            TraceListener listener = GetListener("listener\u200cimplementation",
+            TraceListener listener = GetListener("listener",
                                                  CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(FormattedDatabaseTraceListener));
@@ -171,10 +181,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configura
 
         private static TraceListener GetListener(string name, IConfigurationSource configurationSource)
         {
-            var container = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
-            var listener = container.GetInstance<TraceListener>(name);
-            container.Dispose();
-            return listener;
+            DatabaseFactory.SetDatabaseProviderFactory(new DatabaseProviderFactory(configurationSource.GetSection), false);
+
+            var settings = LoggingSettings.GetLoggingSettings(configurationSource);
+            return settings.TraceListeners.Get(name).BuildTraceListener(settings);
         }
     }
 }

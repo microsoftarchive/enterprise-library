@@ -15,6 +15,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SWC = System.Windows.Controls;
 
@@ -23,6 +24,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
     [TestClass]
     public class ValidatorRuleAttachmentFixture
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
+        }
+
         [TestMethod]
         public void SettingTheAttachedPropertyToTheNameOfABoundPropertyOnAnInitializedElementAddsValidatorRuleToTheReferencedBinding()
         {

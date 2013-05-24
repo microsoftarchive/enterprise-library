@@ -1,0 +1,84 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransientFaultHandling.Configuration", "Source\TransientFaultHandling.Configuration\TransientFaultHandling.Configuration.csproj", "{F1FA20FB-5634-41B8-8196-14589DF98684}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransientFaultHandling.Tests", "Tests\TransientFaultHandling.Tests\TransientFaultHandling.Tests.csproj", "{851D1031-8E5C-40F7-9D4C-CEE71BCD82A8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{4D4E919E-811F-428B-A48C-20154FBF61F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransientFaultHandling.TestSupport", "Tests\TransientFaultHandling.TestSupport\TransientFaultHandling.TestSupport.csproj", "{BF660C02-400E-4230-B8F1-9AB48B164EFF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransientFaultHandling", "Source\TransientFaultHandling\TransientFaultHandling.csproj", "{E7A6F876-1FA6-45A8-898C-9EE3D33440CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransientFaultHandling.Core.Tests", "Tests\TransientFaultHandling.Core.Tests\TransientFaultHandling.Core.Tests.csproj", "{A954B853-8B69-401B-BE1E-F9984AF68BC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransientFaultHandling.ServiceBus", "Source\TransientFaultHandling.ServiceBus\TransientFaultHandling.ServiceBus.csproj", "{939E2D99-434C-49A7-96CA-372D78FA0D7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransientFaultHandling.WindowsAzure.Storage", "Source\TransientFaultHandling.WindowsAzure.Storage\TransientFaultHandling.WindowsAzure.Storage.csproj", "{3D1F8654-BA08-472E-9A5D-F2D1EEE59134}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransientFaultHandling.Caching", "Source\TransientFaultHandling.Caching\TransientFaultHandling.Caching.csproj", "{694F23B5-C150-4965-B3BB-9906B2245019}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransientFaultHandling.Data", "Source\TransientFaultHandling.Data\TransientFaultHandling.Data.csproj", "{373B9B52-66D1-406D-B2B3-43C370804AD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\Common\Src\Common.csproj", "{A09297C8-2C40-470B-8856-D856676DDFFA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Referenced Projects", "Referenced Projects", "{89706B6B-FAC8-4E9A-AFD3-65DA86C91B7B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F1FA20FB-5634-41B8-8196-14589DF98684}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1FA20FB-5634-41B8-8196-14589DF98684}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1FA20FB-5634-41B8-8196-14589DF98684}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1FA20FB-5634-41B8-8196-14589DF98684}.Release|Any CPU.Build.0 = Release|Any CPU
+		{851D1031-8E5C-40F7-9D4C-CEE71BCD82A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{851D1031-8E5C-40F7-9D4C-CEE71BCD82A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{851D1031-8E5C-40F7-9D4C-CEE71BCD82A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{851D1031-8E5C-40F7-9D4C-CEE71BCD82A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF660C02-400E-4230-B8F1-9AB48B164EFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF660C02-400E-4230-B8F1-9AB48B164EFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF660C02-400E-4230-B8F1-9AB48B164EFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF660C02-400E-4230-B8F1-9AB48B164EFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7A6F876-1FA6-45A8-898C-9EE3D33440CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7A6F876-1FA6-45A8-898C-9EE3D33440CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7A6F876-1FA6-45A8-898C-9EE3D33440CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7A6F876-1FA6-45A8-898C-9EE3D33440CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A954B853-8B69-401B-BE1E-F9984AF68BC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A954B853-8B69-401B-BE1E-F9984AF68BC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A954B853-8B69-401B-BE1E-F9984AF68BC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A954B853-8B69-401B-BE1E-F9984AF68BC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{939E2D99-434C-49A7-96CA-372D78FA0D7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{939E2D99-434C-49A7-96CA-372D78FA0D7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{939E2D99-434C-49A7-96CA-372D78FA0D7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{939E2D99-434C-49A7-96CA-372D78FA0D7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D1F8654-BA08-472E-9A5D-F2D1EEE59134}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D1F8654-BA08-472E-9A5D-F2D1EEE59134}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D1F8654-BA08-472E-9A5D-F2D1EEE59134}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D1F8654-BA08-472E-9A5D-F2D1EEE59134}.Release|Any CPU.Build.0 = Release|Any CPU
+		{694F23B5-C150-4965-B3BB-9906B2245019}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{694F23B5-C150-4965-B3BB-9906B2245019}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{694F23B5-C150-4965-B3BB-9906B2245019}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{694F23B5-C150-4965-B3BB-9906B2245019}.Release|Any CPU.Build.0 = Release|Any CPU
+		{373B9B52-66D1-406D-B2B3-43C370804AD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{373B9B52-66D1-406D-B2B3-43C370804AD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{373B9B52-66D1-406D-B2B3-43C370804AD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{373B9B52-66D1-406D-B2B3-43C370804AD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A09297C8-2C40-470B-8856-D856676DDFFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A09297C8-2C40-470B-8856-D856676DDFFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A09297C8-2C40-470B-8856-D856676DDFFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A09297C8-2C40-470B-8856-D856676DDFFA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{851D1031-8E5C-40F7-9D4C-CEE71BCD82A8} = {4D4E919E-811F-428B-A48C-20154FBF61F2}
+		{BF660C02-400E-4230-B8F1-9AB48B164EFF} = {4D4E919E-811F-428B-A48C-20154FBF61F2}
+		{A954B853-8B69-401B-BE1E-F9984AF68BC0} = {4D4E919E-811F-428B-A48C-20154FBF61F2}
+		{A09297C8-2C40-470B-8856-D856676DDFFA} = {89706B6B-FAC8-4E9A-AFD3-65DA86C91B7B}
+	EndGlobalSection
+EndGlobal

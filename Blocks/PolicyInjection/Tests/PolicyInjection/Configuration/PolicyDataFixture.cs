@@ -9,13 +9,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
+using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
@@ -27,43 +26,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         [TestInitialize]
         public void Setup()
         {
-            policyData = new PolicyData { Name = "policy" };
+            policyData = new PolicyData("policy");
         }
 
         [TestMethod]
-        public void WhenCreatesRegistrations_ThenReturnsSingleRegistration()
+        public void WhenConfiguredContainer_ThenCanResolvePolicy()
         {
-            var registrations = policyData.GetRegistrations();
+            using (var container = new UnityContainer())
+            {
+                this.policyData.ConfigureContainer(container);
 
-            Assert.AreEqual(1, registrations.Count());
-        }
+                var policy = container.Resolve<RuleDrivenPolicy>("policy");
 
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenRegistrationIsForRuleDrivenPolicy()
-        {
-            var registrations = policyData.GetRegistrations();
+                var method = new MethodImplementationInfo(StaticReflection.GetMethodInfo<object>(o => o.ToString()), StaticReflection.GetMethodInfo<object>(o => o.ToString()));
 
-            registrations.ElementAt(0)
-                .AssertForServiceType(typeof(InjectionPolicy))
-                .ForName("policy")
-                .ForImplementationType(typeof(InjectionFriendlyRuleDrivenPolicy));
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenRegistrationForInjectionPolicyInjectsNoMatchingRulesOrHandlers()
-        {
-            string[] handlerNames;
-
-            var registrations = policyData.GetRegistrations();
-
-            registrations.ElementAt(0)
-                .AssertConstructor()
-                .WithValueConstructorParameter("policy")
-                .WithContainerResolvedEnumerableConstructorParameter<IMatchingRule>(new string[0])
-                .WithValueConstructorParameter(out handlerNames)
-                .VerifyConstructorParameters();
-
-            CollectionAssert.AreEqual(new string[0], handlerNames);
+                Assert.AreEqual("policy", policy.Name);
+                Assert.IsFalse(policy.Matches(method));
+                Assert.AreEqual(0, policy.GetHandlersFor(method, container).Count());
+            }
         }
     }
 
@@ -75,104 +55,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         [TestInitialize]
         public void Setup()
         {
-            policyData = new PolicyData { Name = "policy" };
-            policyData.MatchingRules.Add(new TypeMatchingRuleData
-                {
-                    Name = "type",
-                    Matches = { new MatchData { Match = typeof(object).AssemblyQualifiedName }
-                }
-            });
+            policyData = new PolicyData("policy");
+            policyData.MatchingRules.Add(new TypeMatchingRuleData("type", typeof(object).FullName));
         }
 
         [TestMethod]
-        public void WhenCreatesRegistrations_ThenReturnsTwoRegistrations()
+        public void WhenConfiguredContainer_ThenCanResolvePolicy()
         {
-            var registrations = policyData.GetRegistrations();
+            using (var container = new UnityContainer())
+            {
+                this.policyData.ConfigureContainer(container);
 
-            Assert.AreEqual(2, registrations.Count());
-        }
+                var policy = container.Resolve<RuleDrivenPolicy>("policy");
 
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenReturnsOneRegistrationForInjectionPolicy()
-        {
-            var registrations = policyData.GetRegistrations();
+                var method = new MethodImplementationInfo(StaticReflection.GetMethodInfo<object>(o => o.ToString()), StaticReflection.GetMethodInfo<object>(o => o.ToString()));
 
-            Assert.AreEqual(1, registrations.Where(tr => tr.ServiceType == typeof(InjectionPolicy)).Count());
-        }
+                Assert.AreEqual("policy", policy.Name);
+                Assert.IsTrue(policy.Matches(method));
+                Assert.AreEqual(0, policy.GetHandlersFor(method, container).Count());
 
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenReturnsOneRegistrationForMatchingRule()
-        {
-            var registrations = policyData.GetRegistrations();
+                Assert.AreNotSame(policy, container.Resolve<RuleDrivenPolicy>("policy"));
 
-            Assert.AreEqual(1, registrations.Where(tr => tr.ServiceType == typeof(IMatchingRule)).Count());
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenRegistrationIsForRuleDrivenPolicy()
-        {
-            var registrations = policyData.GetRegistrations();
-
-            registrations.Where(tr => tr.ServiceType == typeof(InjectionPolicy)).ElementAt(0)
-                .AssertForServiceType(typeof(InjectionPolicy))
-                .ForName("policy")
-                .ForImplementationType(typeof(InjectionFriendlyRuleDrivenPolicy));
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenPolicyRegistrationConfiguresInjectsResolvedRule()
-        {
-            string[] matchingRuleNames;
-            string[] handlerNames;
-
-            var registrations = policyData.GetRegistrations();
-
-            registrations.Where(tr => tr.ServiceType == typeof(InjectionPolicy)).ElementAt(0)
-                .AssertConstructor()
-                .WithValueConstructorParameter("policy")
-                .WithContainerResolvedEnumerableConstructorParameter<IMatchingRule>(out matchingRuleNames)
-                .WithValueConstructorParameter(out handlerNames)
-                .VerifyConstructorParameters();
-
-            Assert.AreEqual(1, matchingRuleNames.Length);
-            Assert.IsTrue(matchingRuleNames[0].StartsWith("type-policy"));
-            CollectionAssert.AreEqual(new string[0], handlerNames);
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenMatchingRuleRegistrationIsForTypeMatchingRule()
-        {
-            var registrations = policyData.GetRegistrations();
-
-            registrations.Where(tr => tr.ServiceType == typeof(IMatchingRule)).ElementAt(0)
-                .AssertForServiceType(typeof(IMatchingRule))
-                .ForName("type-policy")
-                .ForImplementationType(typeof(TypeMatchingRule));
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenMatchingRuleRegistrationConfiguresInjectsMatches()
-        {
-            IEnumerable<MatchingInfo> matches;
-
-            var registrations = policyData.GetRegistrations();
-
-            registrations.Where(tr => tr.ServiceType == typeof(IMatchingRule)).ElementAt(0)
-                .AssertConstructor()
-                .WithValueConstructorParameter(out matches)
-                .VerifyConstructorParameters();
-
-            Assert.AreEqual(1, matches.Count());
-            Assert.AreEqual(typeof(object).AssemblyQualifiedName, matches.ElementAt(0).Match);
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenPolicyRegistrationHasTransientLifetime()
-        {
-            var registrations = policyData.GetRegistrations();
-            var registration = registrations.Where(tr => tr.ServiceType == typeof(InjectionPolicy)).First();
-
-            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+                Assert.IsTrue(container.Registrations.Any(r => r.Name == "type-policy" && r.RegisteredType == typeof(IMatchingRule) && r.MappedToType == typeof(TypeMatchingRule)));
+            }
         }
     }
 }

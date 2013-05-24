@@ -222,6 +222,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms
         /// <param name="value">The value from validation.</param>
         /// <param name="failureMessage">The failure message.</param>
         /// <returns>true if the value passed validation; otherwise, false.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification = "Type of value is unknown")]
         public bool GetValue(out object value,
                              out string failureMessage)
         {

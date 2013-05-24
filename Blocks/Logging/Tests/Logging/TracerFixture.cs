@@ -11,21 +11,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners;
-using Microsoft.Practices.ServiceLocation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
@@ -44,6 +40,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         const string nestedOperation = "nested operation";
         const string badOperation = "bad operation";
         const string category = "category";
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            Logger.SetLogWriter(new LogWriterFactory().Create(), false);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            Logger.Reset();
+        }
 
         [TestMethod] //misterious build fail on commandline runner
         public void UsingTracerWritesEntryAndExitMessages()
@@ -94,47 +102,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             Assert.IsTrue(MockTraceListener.Entries[0].Message.Contains(MyTypeAndMethodName));
         }
 
-        static IServiceLocator GetContainerWithTracingFlag(bool tracingEnabled)
+        static void SetTracingFlag(bool tracingEnabled)
         {
             var config = new FileConfigurationSource(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile, false);
             var loggingSettings = ((LoggingSettings)config.GetSection(LoggingSettings.SectionName));
             loggingSettings.TracingEnabled = tracingEnabled;
-            Logger.Reset();
 
-            return EnterpriseLibraryContainer.CreateDefaultContainer(config);
-        }
-
-        static void SetTracingFlag(bool tracingEnabled)
-        {
-            Logger.Reset();
-
-            System.Configuration.Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            LoggingSettings loggingSettings = config.GetSection(LoggingSettings.SectionName) as LoggingSettings;
-            loggingSettings.TracingEnabled = tracingEnabled;
-            config.Save();
-
-            ConfigurationManager.RefreshSection(LoggingSettings.SectionName);
-
-            Thread.Sleep(200);
+            Logger.SetLogWriter(new LogWriterFactory(config.GetSection).Create(), false);
         }
 
         [TestMethod]
         public void UsingTracerDoesNotWriteWhenDisabled()
         {
-            using (new ContainerSwitcher(GetContainerWithTracingFlag(false), true))
+            SetTracingFlag(false);
+
+            MockTraceListener.Reset();
+            Guid currentActivityId = Guid.Empty;
+
+            using (new Tracer(operation))
             {
-                MockTraceListener.Reset();
-                Guid currentActivityId = Guid.Empty;
-
-                using (new Tracer(operation))
-                {
-                    currentActivityId = Trace.CorrelationManager.ActivityId;
-                    Assert.AreEqual(0, MockTraceListener.Entries.Count);
-                }
-
+                currentActivityId = Trace.CorrelationManager.ActivityId;
                 Assert.AreEqual(0, MockTraceListener.Entries.Count);
             }
-            Logger.Reset();
+
+            Assert.AreEqual(0, MockTraceListener.Entries.Count);
         }
 
         [TestMethod]
@@ -265,13 +256,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         {
             MockTraceListener.Reset();
 
-            LogSource source = new LogSource("tracesource", SourceLevels.All);
-            source.Listeners.Add(new MockTraceListener());
+            LogSource source = new LogSource("tracesource", new[] { new MockTraceListener() }, SourceLevels.All);
 
             List<LogSource> traceSources = new List<LogSource>(new LogSource[] { source });
-            LogWriter logWriter = new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", true, false);
+            LogWriter logWriter = new LogWriter(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", true, false);
 
-            using (Tracer tracer = new Tracer("testoperation", logWriter, (IConfigurationSource)null))
+            using (Tracer tracer = new Tracer("testoperation", logWriter))
             {
                 Assert.AreEqual(1, MockTraceListener.Entries.Count);
             }
@@ -284,13 +274,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         {
             MockTraceListener.Reset();
 
-            LogSource source = new LogSource("tracesource", SourceLevels.All);
-            source.Listeners.Add(new MockTraceListener());
+            LogSource source = new LogSource("tracesource", new[] { new MockTraceListener() }, SourceLevels.All);
 
             List<LogSource> traceSources = new List<LogSource>(new LogSource[] { source });
-            LogWriter logWriter = new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
+            LogWriter logWriter = new LogWriter(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
 
-            using (Tracer tracer = new Tracer("testoperation", logWriter, (IConfigurationSource)null))
+            using (Tracer tracer = new Tracer("testoperation", logWriter))
             {
                 Assert.AreEqual(0, MockTraceListener.Entries.Count);
             }
@@ -298,60 +287,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             Assert.AreEqual(0, MockTraceListener.Entries.Count);
         }
 
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void CreatingTracerWithNullIServiceLocatorForInstrumentationThrows()
-        {
-            LogSource source = new LogSource("tracesource", SourceLevels.All);
-            LogWriter logWriter = new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
-            new Tracer("testoperation", logWriter, (IServiceLocator)null).Dispose();
-        }
-
-
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void CreatingTracerWithActivityIDAndNullIServiceLocatorForInstrumentationThrows()
-        {
-            LogSource source = new LogSource("tracesource", SourceLevels.All);
-            LogWriter logWriter = new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
-            new Tracer("testoperation", Guid.NewGuid(), logWriter, (IServiceLocator)null).Dispose();
-        }
-
-        [TestMethod]
-        public void PassingServiceLocatorForInstrumentationProviderRequestsInstrumentationProviderInstance()
-        {
-            MockServiceLocator serviceLocator = new MockServiceLocator();
-
-            LogSource source = new LogSource("tracesource", SourceLevels.All);
-            LogWriter logWriter = new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
-            new Tracer("testoperation", logWriter, serviceLocator).Dispose();
-
-            Assert.AreEqual(1, serviceLocator.ServicesRequested.Count);
-            Assert.AreEqual(typeof(ITracerInstrumentationProvider), serviceLocator.ServicesRequested[0]);
-        }
-
-
-        [TestMethod]
-        public void PassingServiceLocatorForInstrumentationAndActivityIDProviderRequestsInstrumentationProviderInstance()
-        {
-            MockServiceLocator serviceLocator = new MockServiceLocator();
-
-            LogSource source = new LogSource("tracesource", SourceLevels.All);
-            LogWriter logWriter = new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
-            new Tracer("testoperation", Guid.NewGuid(), logWriter, serviceLocator).Dispose();
-
-            Assert.AreEqual(1, serviceLocator.ServicesRequested.Count);
-            Assert.AreEqual(typeof(ITracerInstrumentationProvider), serviceLocator.ServicesRequested[0]);
-        }
-
-
         [TestMethod]
         public void LoggedMessagesDuringTracerAddsCategoryIds()
         {
             MockTraceListener.Reset();
-            Logger.Reset();
 
             using (new Tracer(operation))
             {
@@ -367,6 +306,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
                 Assert.IsTrue(MockTraceListener.LastEntry.Categories.Contains(category));
                 MockTraceListener.Reset();
             }
+
             Assert.AreEqual(1, MockTraceListener.Entries.Count);
             Assert.AreEqual(1, MockTraceListener.LastEntry.Categories.Count);
             Assert.IsTrue(MockTraceListener.LastEntry.Categories.Contains(operation));
@@ -430,23 +370,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         {
             Guid currentActivityId = Guid.Empty;
 
-            using (new ContainerSwitcher(GetContainerWithTracingFlag(false), true))
+            SetTracingFlag(false);
+            MockTraceListener.Reset();
+
+            using (new Tracer(operation))
             {
-                MockTraceListener.Reset();
-
-                using (new Tracer(operation))
-                {
-                    currentActivityId = Trace.CorrelationManager.ActivityId;
-                    Assert.AreEqual(0, MockTraceListener.Entries.Count);
-                }
-
+                currentActivityId = Trace.CorrelationManager.ActivityId;
                 Assert.AreEqual(0, MockTraceListener.Entries.Count);
-
             }
 
-            // TODO: Take this line out once the change notification stuff is working again
-            Logger.Reset();
+            Assert.AreEqual(0, MockTraceListener.Entries.Count);
 
+            SetTracingFlag(true);
             MockTraceListener.Reset();
             currentActivityId = Guid.Empty;
 
@@ -494,102 +429,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 
             Assert.AreEqual(0, Trace.CorrelationManager.LogicalOperationStack.Count);
             Assert.IsFalse(testActivityId1 == Trace.CorrelationManager.ActivityId);
-        }
-
-        [TestMethod]
-        public void AverageTraceDurationCounterIsUpdatedAfterTracing()
-        {
-            using (Tracer tracer = new Tracer(operation))
-            {
-                int i = new Random().Next();
-            }
-            int valueAfterTracing = GetCounterValue(performanceCounterAvgTraceDuration, operation);
-
-            Assert.IsFalse(valueAfterTracing == 0);
-        }
-
-        [TestMethod]
-        public void NumberOfTracePerSecondIsUpdatedAfterTracing()
-        {
-            int initialValue = GetCounterValue(performanceCounterTracesPerSecondName, operation);
-
-            using (Tracer tracer = new Tracer(operation))
-            {
-                int i = new Random().Next();
-            }
-            int valueAfterTracing = GetCounterValue(performanceCounterTracesPerSecondName, operation);
-
-            Assert.IsTrue(valueAfterTracing == 1 + initialValue);
-        }
-
-        [TestMethod]
-        public void NumberOfTracePerSecondIsNotUpdatedForOtherInstances()
-        {
-            string otherOperationName = "otherOperation";
-            int initialValue = GetCounterValue(performanceCounterTracesPerSecondName, operation);
-
-            using (Tracer tracer = new Tracer(operation))
-            {
-                int i = new Random().Next();
-            }
-            int valueAfterTracing = GetCounterValue(performanceCounterTracesPerSecondName, operation);
-
-            Assert.IsTrue(valueAfterTracing == 1 + initialValue);
-
-            using (Tracer tracer = new Tracer(otherOperationName))
-            {
-                int i = new Random().Next();
-            }
-            valueAfterTracing = GetCounterValue(performanceCounterTracesPerSecondName, operation);
-
-            Assert.IsTrue(valueAfterTracing == 1 + initialValue);
-        }
-
-        [TestMethod]
-        public void InstrumentationIsTurnedOffWhenPassingNoConfigurationSource()
-        {
-            int initialValue = GetCounterValue(performanceCounterTracesPerSecondName, operation);
-
-            LogWriter logWriter = EnterpriseLibraryContainer.Current.GetInstance<LogWriter>();
-
-            using (Tracer tracer = new Tracer(operation, logWriter, (IConfigurationSource)null))
-            {
-                int i = new Random().Next();
-            }
-            int valueAfterTracing = GetCounterValue(performanceCounterTracesPerSecondName, operation);
-
-            Assert.IsTrue(valueAfterTracing == initialValue);
-        }
-
-        [TestMethod]
-        public void PerformanceCountersAreNotIncrementedWhenTracingIsTurnedOff()
-        {
-            int initialValue = GetCounterValue(performanceCounterTracesPerSecondName, operation);
-
-            using (new ContainerSwitcher(GetContainerWithTracingFlag(false), true))
-            {
-                Logger.Reset();
-                using (new Tracer(operation))
-                {
-                    int i = new Random().Next();
-                }
-
-            }
-            Logger.Reset();
-
-            int valueAfterTracing = GetCounterValue(performanceCounterTracesPerSecondName, operation);
-
-            Assert.IsTrue(valueAfterTracing == initialValue);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void PassingNullWriterToTracerThrows()
-        {
-            using (new Tracer(operation, null, ConfigurationSourceFactory.Create()))
-            {
-                int i = new Random().Next();
-            }
         }
 
         [TestMethod]
@@ -718,55 +557,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             pattern = Regex.Replace(pattern, @"\{[0-9]\}", "(.*?)");
             return pattern;
         }
-
-        private class MockServiceLocator : IServiceLocator
-        {
-            public List<Type> ServicesRequested = new List<Type>();
-            #region IServiceLocator Members
-
-            public IEnumerable<TService> GetAllInstances<TService>()
-            {
-                throw new NotImplementedException();
-            }
-
-            public IEnumerable<object> GetAllInstances(Type serviceType)
-            {
-                throw new NotImplementedException();
-            }
-
-            public TService GetInstance<TService>(string key)
-            {
-                throw new NotImplementedException();
-            }
-
-            public TService GetInstance<TService>()
-            {
-                ServicesRequested.Add(typeof(TService));
-                return default(TService);
-            }
-
-            public object GetInstance(Type serviceType, string key)
-            {
-                throw new NotImplementedException();
-            }
-
-            public object GetInstance(Type serviceType)
-            {
-                throw new NotImplementedException();
-            }
-
-            #endregion
-
-            #region IServiceProvider Members
-
-            public object GetService(Type serviceType)
-            {
-                throw new NotImplementedException();
-            }
-
-            #endregion
-        }
     }
-
-
 }

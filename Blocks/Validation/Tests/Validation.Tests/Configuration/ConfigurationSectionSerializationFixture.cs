@@ -29,7 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -49,7 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -73,7 +73,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -96,7 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -120,7 +120,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -148,7 +148,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -184,7 +184,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -228,7 +228,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -275,7 +275,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -322,7 +322,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 

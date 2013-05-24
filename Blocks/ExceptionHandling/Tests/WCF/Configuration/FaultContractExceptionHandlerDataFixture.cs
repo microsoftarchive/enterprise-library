@@ -10,124 +10,94 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests.Properties;
-using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
-using System.Collections.Specialized;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests.Configuration
 {
     [TestClass]
-    public class GivenContractExceptionHandlerRegistrations : ArrangeActAssert
+    public class GivenContractExceptionHandlerData : ArrangeActAssert
     {
-        private IEnumerable<TypeRegistration> registrations;
         private FaultContractExceptionHandlerData configuration;
 
         protected override void Arrange()
         {
-            configuration = new FaultContractExceptionHandlerData();
-        }
-
-        protected override void Act()
-        {
-            registrations = configuration.GetRegistrations("");
+            this.configuration = new FaultContractExceptionHandlerData("wcf", typeof(MockFaultContract).AssemblyQualifiedName);
         }
 
         [TestMethod]
-        public void ThenLoggingExceptionHandlerHasTransientLifetime()
+        public void WhenCreatingHandler_ThenHasNoSettings()
         {
-            TypeRegistration faultContractExceptionHandlerRegistration = registrations.Where(x => x.ServiceType == typeof(IExceptionHandler)).First();
-            Assert.AreEqual(TypeRegistrationLifetime.Transient, faultContractExceptionHandlerRegistration.Lifetime);
+            var handler = (FaultContractExceptionHandler)this.configuration.BuildExceptionHandler();
+
+            var exception = new Exception();
+            var handledException = handler.HandleException(exception, Guid.NewGuid());
+            Assert.IsInstanceOfType(handledException, typeof(FaultContractWrapperException));
+            Assert.AreEqual(exception.Message, handledException.Message);
         }
     }
 
     [TestClass]
     public class GivenFaultContractExceptionHandlerResourceName : ArrangeActAssert
     {
-        private TypeRegistration typeRegistration;
         private FaultContractExceptionHandlerData configuration;
 
         protected override void Arrange()
         {
-            configuration = new FaultContractExceptionHandlerData("wcf")
+            configuration = new FaultContractExceptionHandlerData("wcf", typeof(MockFaultContract).AssemblyQualifiedName)
             {
                 ExceptionMessageResourceName = "WcfMessageResource",
                 ExceptionMessageResourceType = typeof(Resources).AssemblyQualifiedName
             };
         }
 
-        protected override void Act()
-        {
-            typeRegistration = configuration.GetRegistrations("prefix").First();
-        }
-
         [TestMethod]
-        public void WhenGettingRegistrationMessageIsBroughtFromResource()
+        public void WhenCreatingHandler_ThenUsesResolverMessage()
         {
-            IStringResolver resolver;
-            typeRegistration
-                .AssertForServiceType(typeof(IExceptionHandler))
-                .ForName("prefix.wcf")
-                .ForImplementationType(typeof(FaultContractExceptionHandler));
+            var handler = (FaultContractExceptionHandler)this.configuration.BuildExceptionHandler();
 
-            typeRegistration.AssertConstructor()
-                .WithValueConstructorParameter(out resolver);
-
-            Assert.AreEqual(Resources.WcfMessageResource, resolver.GetString());
+            var exception = new Exception();
+            var handledException = handler.HandleException(exception, Guid.NewGuid());
+            Assert.IsInstanceOfType(handledException, typeof(FaultContractWrapperException));
+            Assert.AreEqual(Resources.WcfMessageResource, handledException.Message);
         }
     }
 
     [TestClass]
     public class GivenFaultContractExceptionHandlerWithExceptionMessage : ArrangeActAssert
     {
-        private TypeRegistration typeRegistration;
         private FaultContractExceptionHandlerData configuration;
         private const string ErrorMessage = "Exception message";
         protected override void Arrange()
         {
-            configuration = new FaultContractExceptionHandlerData("wcf")
+            configuration = new FaultContractExceptionHandlerData("wcf", typeof(MockFaultContract).AssemblyQualifiedName)
             {
                 ExceptionMessage = ErrorMessage
             };
         }
 
-        protected override void Act()
-        {
-            typeRegistration = configuration.GetRegistrations("prefix").First();
-        }
-
         [TestMethod]
-        public void WhenGettingRegistrationMessageIsShowCorrectly()
+        public void WhenCreatingHandler_ThenUsesMessage()
         {
-            IStringResolver resolver;
-            typeRegistration
-                .AssertForServiceType(typeof(IExceptionHandler))
-                .ForName("prefix.wcf")
-                .ForImplementationType(typeof(FaultContractExceptionHandler));
+            var handler = (FaultContractExceptionHandler)this.configuration.BuildExceptionHandler();
 
-            typeRegistration.AssertConstructor()
-                .WithValueConstructorParameter(out resolver);
-
-            Assert.AreEqual(ErrorMessage, resolver.GetString());
+            var exception = new Exception();
+            var handledException = handler.HandleException(exception, Guid.NewGuid());
+            Assert.IsInstanceOfType(handledException, typeof(FaultContractWrapperException));
+            Assert.AreEqual(ErrorMessage, handledException.Message);
         }
     }
 
     [TestClass]
     public class GivenFaultContractExceptionHandlerWithOverridenMessage : ArrangeActAssert
     {
-        private TypeRegistration typeRegistration;
         private FaultContractExceptionHandlerData configuration;
         private const string ErrorMessage = "Exception message";
         protected override void Arrange()
         {
-            configuration = new FaultContractExceptionHandlerData("wcf")
+            configuration = new FaultContractExceptionHandlerData("wcf", typeof(MockFaultContract).AssemblyQualifiedName)
             {
                 ExceptionMessage = ErrorMessage,
                 ExceptionMessageResourceName = "WcfMessageResource",
@@ -135,24 +105,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests.Conf
             };
         }
 
-        protected override void Act()
-        {
-            typeRegistration = configuration.GetRegistrations("prefix").First();
-        }
-
         [TestMethod]
-        public void WhenGettingRegistrationMessageIsOverriden()
+        public void WhenCreatingHandler_ThenUsesMessage()
         {
-            IStringResolver resolver;
-            typeRegistration
-                .AssertForServiceType(typeof(IExceptionHandler))
-                .ForName("prefix.wcf")
-                .ForImplementationType(typeof(FaultContractExceptionHandler));
+            var handler = (FaultContractExceptionHandler)this.configuration.BuildExceptionHandler();
 
-            typeRegistration.AssertConstructor()
-                .WithValueConstructorParameter(out resolver);
-
-            Assert.AreEqual(Resources.WcfMessageResource, resolver.GetString());
+            var exception = new Exception();
+            var handledException = handler.HandleException(exception, Guid.NewGuid());
+            Assert.IsInstanceOfType(handledException, typeof(FaultContractWrapperException));
+            Assert.AreEqual(Resources.WcfMessageResource, handledException.Message);
         }
     }
 }

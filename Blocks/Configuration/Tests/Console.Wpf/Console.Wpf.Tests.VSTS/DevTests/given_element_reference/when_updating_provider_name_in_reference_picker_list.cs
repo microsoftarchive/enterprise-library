@@ -9,43 +9,42 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Console.Wpf.Tests.VSTS.BlockSpecific.Caching.given_caching_configuraton;
 using Console.Wpf.Tests.VSTS.Contexts;
-using Console.Wpf.Tests.VSTS.DevTests.Contexts;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Console.Wpf.Tests.VSTS.TestSupport;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
 {
     [TestClass]
-    public class when_updating_provider_name_in_reference_picker_list : CachingConfigurationContext
+    public class when_updating_provider_name_in_reference_picker_list : LoggingConfigurationContext
     {
-        ElementReferenceProperty defaultCacheManagerProperty;
-        ElementViewModel cacheManager;
+        ElementReferenceProperty defaultCategoryProperty;
+        ElementViewModel traceSource;
         PropertyChangedListener defaultCacheManagerPropertyChangedListener;
+        private SectionViewModel LoggingViewModel;
 
         protected override void Arrange()
         {
             base.Arrange();
-            defaultCacheManagerProperty = (ElementReferenceProperty)CachingViewModel.Property("DefaultCacheManager");
-            defaultCacheManagerProperty.Initialize(null);
 
-            cacheManager = CachingViewModel.GetDescendentsOfType<CacheManagerData>().First();
+            var sourceModel = Container.Resolve<ConfigurationSourceModel>();
+            LoggingViewModel = sourceModel.AddSection(LoggingSettings.SectionName, LoggingSection);
 
-            defaultCacheManagerPropertyChangedListener = new PropertyChangedListener(defaultCacheManagerProperty);
+            defaultCategoryProperty = (ElementReferenceProperty)LoggingViewModel.Property("DefaultCategory");
+            defaultCategoryProperty.Initialize(null);
+
+            traceSource = LoggingViewModel.GetDescendentsOfType<TraceSourceData>().First();
+
+            defaultCacheManagerPropertyChangedListener = new PropertyChangedListener(defaultCategoryProperty);
         }
-
 
         protected override void Act()
         {
-            cacheManager.Property("Name").Value = "new name";
+            traceSource.Property("Name").Value = "new name";
         }
 
         [TestMethod]
@@ -53,6 +52,5 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
         {
             Assert.IsTrue(defaultCacheManagerPropertyChangedListener.ChangedProperties.Contains("SuggestedValues"));
         }
-
     }
 }

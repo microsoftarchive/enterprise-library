@@ -61,13 +61,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         }
 
         /// <summary>
-        /// Returns a lambda expression that represents the creation of the trace listener described by this
-        /// configuration object.
+        /// Builds the <see cref="TraceListener" /> object represented by this configuration object.
         /// </summary>
-        /// <returns>A lambda expression to create a trace listener.</returns>
-        protected override Expression<Func<TraceListener>> GetCreationExpression()
+        /// <param name="settings">The logging configuration settings.</param>
+        /// <returns>
+        /// An <see cref="XmlTraceListener"/>.
+        /// </returns>
+        protected override TraceListener CoreBuildTraceListener(LoggingSettings settings)
         {
-            return () => new XmlTraceListener(this.FileName);
+            return new XmlTraceListener(this.FileName);
         }
     }
 }

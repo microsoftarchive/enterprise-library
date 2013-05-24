@@ -11,19 +11,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Configuration;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Configuration;
-using System.ComponentModel;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Extensions;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Extensions;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.Unity;
-using System.Diagnostics;
-using System.Collections.ObjectModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
@@ -39,14 +39,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         private Type[] polymorphicCollectionElementTypes;
         private Type customPolyporpicCollectionElementType;
-        
-        DiscoverDerivedConfigurationTypesService configurationTypesService;
+
+        /// <summary>
+        /// The current DiscoverDerivedConfigurationTypesService.
+        /// </summary>
+        protected DiscoverDerivedConfigurationTypesService ConfigurationTypesService { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of <see cref="ElementCollectionViewModel"/>
         /// </summary>
         /// <param name="parentElementModel">The parent <see cref="ElementViewModel"/>.</param>
         /// <param name="declaringProperty">The <see cref="PropertyDescriptor"/> of the <see cref="ConfigurationElement"/> property containing this collection.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "As designed")]
         public ElementCollectionViewModel(ElementViewModel parentElementModel, PropertyDescriptor declaringProperty)
             : base(parentElementModel, declaringProperty)
         {
@@ -74,7 +78,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         [InjectionMethod]
         public void ElementCollectionViewModelServiceDependencies(DiscoverDerivedConfigurationTypesService configurationTypesService)
         {
-            this.configurationTypesService = configurationTypesService;
+            this.ConfigurationTypesService = configurationTypesService;
         }
 
         /// <summary>
@@ -86,7 +90,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             var baseCommands = base.CreateCustomCommands()
                                     .Union(GetPromotedCommands());
 
-            return baseCommands.Union(new CommandModel[]{ContainingSection.CreateElementCollectionAddCommands(Attributes, this)});
+            return baseCommands.Union(new CommandModel[] { ContainingSection.CreateElementCollectionAddCommands(Attributes, this) });
         }
 
         /// <summary>
@@ -109,7 +113,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         /// </value>
         public bool IsPolymorphicCollection
         {
-            get; 
+            get;
             protected set;
         }
 
@@ -123,13 +127,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             {
                 if (polymorphicCollectionElementTypes == null)
                 {
-                    var availablePolymorphicTypes = configurationTypesService.FindAvailableConfigurationElementTypes(CollectionElementType);
+                    var availablePolymorphicTypes = ConfigurationTypesService.FindAvailableConfigurationElementTypes(CollectionElementType);
+
                     if (customPolyporpicCollectionElementType != null) availablePolymorphicTypes = availablePolymorphicTypes.Union(new[] { customPolyporpicCollectionElementType });
 
+                    // Apply type filters
+                    availablePolymorphicTypes = availablePolymorphicTypes.Where(t => ConfigurationTypesService.CheckType(t)).ToArray();
+
                     polymorphicCollectionElementTypes = availablePolymorphicTypes
-                        .FilterSelectSafe( x=> new { ElementType = x, Browsable = TypeDescriptor.GetAttributes(x).OfType<BrowsableAttribute>().FirstOrDefault() })
-                        .Where( x=>x.Browsable == null || x.Browsable.Browsable)
-                        .Select( x=>x.ElementType)
+                        .FilterSelectSafe(x => new { ElementType = x, Browsable = TypeDescriptor.GetAttributes(x).OfType<BrowsableAttribute>().FirstOrDefault() })
+                        .Where(x => x.Browsable == null || x.Browsable.Browsable)
+                        .Select(x => x.ElementType)
                         .ToArray();
                 }
                 return polymorphicCollectionElementTypes;
@@ -210,7 +218,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
             return leaf.Union(contained);
         }
-        
+
         /// <summary>
         /// Adds a new item of type <paramref name="elementType"/> to the collection.
         /// </summary>
@@ -223,7 +231,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             var element = mergeableConfigurationCollection.CreateNewElement(elementType);
             var childElementModel = ContainingSection.CreateCollectionElement(this, element);
 
-            
+
 
             if (childElementModel.NameProperty != null)
             {
@@ -233,7 +241,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             // add the new element to the configuration.
             mergeableConfigurationCollection.ResetCollection(
                 thisElementCollection.OfType<ConfigurationElement>()
-                    .Concat(new [] { element })
+                    .Concat(new[] { element })
                     .ToArray());
 
 
@@ -271,7 +279,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         private static void InitializeElementProperties(ElementViewModel childElementModel)
         {
             var properties = childElementModel.Properties;
-            foreach(var propInitializer in properties)
+            foreach (var propInitializer in properties)
             {
                 propInitializer.Initialize(new InitializeContext());
             }
@@ -298,7 +306,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
 
         #region calculate name methods
-        
+
         private string CalculateNameFromType(Type elementType)
         {
             var displayNameAttribute =
@@ -322,7 +330,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         public string FindUniqueNewName(string baseName)
         {
             int number = 1;
-            while(true)
+            while (true)
             {
                 string proposedName = string.Format(CultureInfo.CurrentCulture,
                                                     Resources.NewCollectionElementNameFormat,
@@ -364,13 +372,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         /// <param name="elementViewModel">The <see cref="CollectionElementViewModel"/> in this collection to move.</param>
         public void MoveDown(CollectionElementViewModel elementViewModel)
         {
-            MoveElement(elementViewModel, 1);         
+            MoveElement(elementViewModel, 1);
         }
 
         private void MoveElement(CollectionElementViewModel element, int moveDistance)
         {
             var list = thisElementCollection.OfType<ConfigurationElement>().ToArray();
-            
+
             //move the element in the configuration collection.
             MoveConfigurationItem(list, element.ConfigurationElement, moveDistance);
             mergeableConfigurationCollection.ResetCollection(list);
@@ -397,7 +405,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         private static void MoveConfigurationItem<T>(IList<T> elements, T element, int relativeMoveIndex) where T : class
         {
-            for(int i = 0; i < elements.Count(); i++)
+            for (int i = 0; i < elements.Count(); i++)
             {
                 if (elements[i] != element) continue;
                 var newIndex = i + relativeMoveIndex;
@@ -410,7 +418,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                 }
             }
         }
-        
+
         #endregion
     }
 }

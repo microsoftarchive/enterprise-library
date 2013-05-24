@@ -10,10 +10,7 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport
 {
@@ -38,7 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport
                 CopyStream(resourceStream, outputStream);
             }
             return configurationFilePath;
-            
+
         }
 
         private static Stream GetResourceStream(string resourceName)

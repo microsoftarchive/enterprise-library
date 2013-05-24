@@ -9,32 +9,32 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Console.Wpf.Tests.VSTS.Contexts;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using Console.Wpf.Tests.VSTS.TestSupport;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
 {
     [TestClass]
-    public class when_assiging_value_to_reference : CachingConfigurationContext
+    public class when_assiging_value_to_reference : LoggingConfigurationContext
     {
         ElementReferenceProperty defaultCacheManagerProperty;
         bool elementReferencesChanged;
+        private SectionViewModel LoggingViewModel;
 
         protected override void Arrange()
         {
             base.Arrange();
 
-            elementReferencesChanged = false;
-            CachingViewModel.ElementReferencesChanged += (sender, args) => elementReferencesChanged = true;
+            var sourceModel = Container.Resolve<ConfigurationSourceModel>();
+            LoggingViewModel = sourceModel.AddSection(LoggingSettings.SectionName, LoggingSection);
 
-            defaultCacheManagerProperty = (ElementReferenceProperty)CachingViewModel.Property("DefaultCacheManager");
+            elementReferencesChanged = false;
+            LoggingViewModel.ElementReferencesChanged += (sender, args) => elementReferencesChanged = true;
+
+            defaultCacheManagerProperty = (ElementReferenceProperty)LoggingViewModel.Property("DefaultCategory");
             defaultCacheManagerProperty.Initialize(null);
         }
 

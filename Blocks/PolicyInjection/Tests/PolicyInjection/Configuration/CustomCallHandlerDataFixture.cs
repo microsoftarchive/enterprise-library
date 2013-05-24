@@ -9,11 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Collections.Specialized;
-using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.ObjectsUnderTest;
+using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -31,55 +29,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
                 new CustomCallHandlerData("custom", typeof(GlobalCountCallHandler))
                 {
                     Order = 100,
-                    Attributes = { { "foo", "bar" }, { "bar", "baz" } }
+                    Attributes = { { "callhandler", "bar" }, { "bar", "baz" } }
                 };
         }
 
         [TestMethod]
-        public void WhenCreatesTypeRegistration_ThenCreatesSingleRegistration()
+        public void WhenConfiguredContainer_ThenCanResolveCallHandler()
         {
-            var registrations = callHandlerData.GetRegistrations("-suffix");
+            using (var container = new UnityContainer())
+            {
+                this.callHandlerData.ConfigureContainer(container, "-suffix");
 
-            Assert.AreEqual(1, registrations.Count());
-        }
+                var handler = (GlobalCountCallHandler)container.Resolve<ICallHandler>("custom-suffix");
 
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenRegistrationMapsICallHandlerToCustomHandlerForName()
-        {
-            var registration = callHandlerData.GetRegistrations("-suffix");
+                Assert.AreEqual("bar", handler.callHandlerName);
+                Assert.AreEqual(100, handler.Order);
 
-            registration.ElementAt(0)
-                .AssertForServiceType(typeof(ICallHandler))
-                .ForName("custom-suffix")
-                .ForImplementationType(typeof(GlobalCountCallHandler));
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenRegistrationInjectsAttributesThroughConstructor()
-        {
-            NameValueCollection attributes;
-
-            var registration = callHandlerData.GetRegistrations("-suffix");
-
-            registration.ElementAt(0)
-                .AssertConstructor()
-                .WithValueConstructorParameter(out attributes)
-                .VerifyConstructorParameters();
-
-            Assert.AreEqual(2, attributes.Count);
-            Assert.AreEqual("bar", attributes["foo"]);
-            Assert.AreEqual("baz", attributes["bar"]);
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenRegistrationInjectsOrderProperty()
-        {
-            var registration = callHandlerData.GetRegistrations("-suffix");
-
-            registration.ElementAt(0)
-                .AssertProperties()
-                .WithValueProperty("Order", 100)
-                .VerifyProperties();
+                Assert.AreSame(handler, container.Resolve<ICallHandler>("custom-suffix"));
+            }
         }
     }
 }

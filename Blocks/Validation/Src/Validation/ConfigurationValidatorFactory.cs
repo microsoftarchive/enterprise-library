@@ -12,7 +12,6 @@
 using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation
 {
@@ -29,22 +28,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         ///<returns>A new ConfigurationValidatorFactory</returns>
         public static ConfigurationValidatorFactory FromConfigurationSource(IConfigurationSource configurationSource)
         {
-            var instrumentationProvider =
-#if !SILVERLIGHT
-                ValidationInstrumentationProvider.FromConfigurationSource(configurationSource);
-#else
-                new NullValidationInstrumentationProvider();
-#endif
-            return new ConfigurationValidatorFactory(configurationSource, instrumentationProvider);
+            return new ConfigurationValidatorFactory(configurationSource);
         }
 
         ///<summary>
         /// Initializes a <see cref="ConfigurationValidatorFactory"/>.
         ///</summary>
         ///<param name="configurationSource">The configuration source containing the validation rules to create validators from.</param>
-        ///<param name="instrumentationProvider">The <see cref="IValidationInstrumentationProvider"/> provider to use for instrumentation purposes.</param>
-        public ConfigurationValidatorFactory(IConfigurationSource configurationSource, IValidationInstrumentationProvider instrumentationProvider)
-            : base(instrumentationProvider)
+        public ConfigurationValidatorFactory(IConfigurationSource configurationSource)
         {
             ConfigurationSource = configurationSource;
         }
@@ -65,8 +56,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         {
             ConfigurationValidatorBuilder builder =
                 new ConfigurationValidatorBuilder(
-                    ValidationSettings.TryGet(ConfigurationSource, InstrumentationProvider),
-                    InstrumentationProvider,
+                    ValidationSettings.TryGet(ConfigurationSource),
                     MemberAccessValidatorBuilderFactory.Default,
                     mainValidatorFactory);
 

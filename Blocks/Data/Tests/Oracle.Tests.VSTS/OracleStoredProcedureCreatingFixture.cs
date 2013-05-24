@@ -26,7 +26,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Tests
         [TestInitialize]
         public void SetUp()
         {
-            DatabaseProviderFactory factory = new DatabaseProviderFactory(OracleTestConfigurationSource.CreateConfigurationSource());
+            EnvironmentHelper.AssertOracleClientIsInstalled();
+            var factory = new DatabaseProviderFactory(OracleTestConfigurationSource.CreateConfigurationSource());
             db = factory.Create("OracleTest");
             CompleteSetup(db);
         }

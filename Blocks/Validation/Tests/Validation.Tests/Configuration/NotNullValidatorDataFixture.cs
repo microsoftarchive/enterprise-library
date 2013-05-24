@@ -12,6 +12,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Configuration;
@@ -23,7 +24,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
     [TestClass]
     public class NotNotNullValidatorDataFixture
     {
-#if !SILVERLIGHT
         [TestMethod]
         public void CanDeserializeSerializedInstance()
         {
@@ -34,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -59,12 +59,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             Assert.AreEqual(Resources.NonNullNonNegatedValidatorDefaultMessageTemplate, ((NotNullValidator)validator).MessageTemplate);
             Assert.AreEqual(false, ((NotNullValidator)validator).Negated);
         }
-#endif
 
         [TestMethod]
         public void CanCreateNegatedValidatorFromConfigurationObject()
         {
-            NotNullValidatorData rwValidatorData = new NotNullValidatorData { Name = "validator1" };
+            NotNullValidatorData rwValidatorData = new NotNullValidatorData("validator1");
             rwValidatorData.Negated = true;
 
             Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
@@ -78,7 +77,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObjectWithMessageTemplateOverride()
         {
-            NotNullValidatorData rwValidatorData = new NotNullValidatorData { Name = "validator1" };
+            NotNullValidatorData rwValidatorData = new NotNullValidatorData("validator1");
             rwValidatorData.MessageTemplate = "message template override";
 
             Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);

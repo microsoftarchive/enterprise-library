@@ -12,11 +12,9 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data.Common;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration;
-using Microsoft.Practices.ServiceLocation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Tests
@@ -27,7 +25,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Tests
     [TestClass]
     public class OracleDatabaseDataExtraInformationFixture
     {
-
         [TestInitialize]
         public void SetUp()
         {

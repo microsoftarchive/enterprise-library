@@ -12,6 +12,7 @@
 using System;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -25,12 +26,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
         public void SetUp()
         {
             AppDomain.CurrentDomain.SetData("APPBASE", Environment.CurrentDirectory);
+            ConfigurationTestHelper.ConfigurationFileName = "test.exe.config";
         }
 
         private static TraceListener GetListener(string name, IConfigurationSource configurationSource)
         {
-            var container = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
-            return container.GetInstance<TraceListener>(name);
+            var settings = LoggingSettings.GetLoggingSettings(configurationSource);
+            return settings.TraceListeners.Get(name).BuildTraceListener(settings);
         }
 
         [TestMethod]
@@ -43,11 +45,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
             helper.loggingSettings.TraceListeners.Add(listenerData);
 
-            TraceListener listener = GetListener("listener\u200cimplementation", helper.configurationSource);
+            TraceListener listener = GetListener("listener", helper.configurationSource);
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(TextWriterTraceListener));
-            Assert.AreEqual("listener\u200cimplementation", listener.Name);
+            Assert.AreEqual("listener", listener.Name);
             Assert.AreEqual(TraceOptions.Callstack, listener.TraceOutputOptions);
         }
 
@@ -62,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             loggingSettings.TraceListeners.Add(listenerData);
 
             TraceListener listener
-                = GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+                = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(TextWriterTraceListener));

@@ -25,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
 		/// </summary>
 		/// <param name="ex">The exception raised during filter evaluation.</param>
 		/// <param name="logEntry">The log entry being evaluated.</param>
-		/// <param name="filter">The filter that raised the exception.</param>
+		/// <param name="filter">The fiter that raised the exception.</param>
 		/// <returns>True if processing should continue, ignoring the failed filter, or 
 		/// false if the filter evaluation should be considered as failed.</returns>
 		bool FilterCheckingFailed(Exception ex, LogEntry logEntry, ILogFilter filter);

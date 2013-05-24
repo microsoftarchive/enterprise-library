@@ -10,9 +10,10 @@
 //===============================================================================
 
 using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
@@ -32,24 +33,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// Default to use when no machine name is provided.
         /// </summary>
         public const string DefaultMachineName = ".";
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FormattedEventLogTraceListener"/> with a default <see cref="EventLogTraceListener"/>.
-        /// </summary>
-        public FormattedEventLogTraceListener()
-            : base(new EventLogTraceListener())
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FormattedEventLogTraceListener"/> with an 
-        /// <see cref="ILogFormatter"/> and a default <see cref="EventLogTraceListener"/>.
-        /// </summary>
-        /// <param name="formater">The formatter for the wrapper.</param>
-        public FormattedEventLogTraceListener(ILogFormatter formater)
-            : base(new EventLogTraceListener(), formater)
-        {
-        }
 
         /// <summary>
         /// Initializes a new instance of <see cref="FormattedEventLogTraceListener"/> with a 
@@ -81,6 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         public FormattedEventLogTraceListener(string source)
             : base(new EventLogTraceListener(source))
         {
+            Guard.ArgumentNotNullOrEmpty(source, "source");
         }
 
         /// <summary>
@@ -93,6 +77,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         public FormattedEventLogTraceListener(string source, ILogFormatter formatter)
             : base(new EventLogTraceListener(source), formatter)
         {
+            Guard.ArgumentNotNullOrEmpty(source, "source");
         }
 
         /// <summary>
@@ -106,6 +91,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         public FormattedEventLogTraceListener(string source, string log, ILogFormatter formatter)
             : base(new EventLogTraceListener(new EventLog(log, DefaultMachineName, source)), formatter)
         {
+            Guard.ArgumentNotNullOrEmpty(source, "source");
         }
 
         /// <summary>
@@ -119,6 +105,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         public FormattedEventLogTraceListener(string source, string log, string machineName, ILogFormatter formatter)
             : base(new EventLogTraceListener(new EventLog(log, NormalizeMachineName(machineName), source)), formatter)
         {
+            Guard.ArgumentNotNullOrEmpty(source, "source");
         }
 
         private static string NormalizeMachineName(string machineName)

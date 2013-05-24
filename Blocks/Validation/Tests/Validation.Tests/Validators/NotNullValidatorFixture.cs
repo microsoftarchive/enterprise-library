@@ -24,6 +24,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
     [TestClass]
     public class NotNullValidatorFixture
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
+        }
+
         [TestMethod]
         public void NonNegatedValidatorReturnsSuccessForNonNullReference()
         {
@@ -210,7 +222,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.IsFalse(match.Groups["param2"].Success);
         }
 
-        public class TargetAddress
+        class TargetAddress
         {
             [NotNullValidator] public string City;
 
@@ -263,10 +275,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 
             fieldRef.Validators.Add(validatorData);
 
-            var rulesetData = new ValidationRulesetData { Name = "default" };
+            var rulesetData = new ValidationRulesetData("default");
             rulesetData.Fields.Add(fieldRef);
 
-            var typeData = ValidatedTypeReference.Create(typeof (TargetAddress));
+            var typeData = new ValidatedTypeReference(typeof (TargetAddress));
             typeData.Rulesets.Add(rulesetData);
             typeData.DefaultRuleset = rulesetData.Name;
 

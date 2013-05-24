@@ -11,13 +11,13 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Messaging;
 using System.Runtime.Serialization;
 using System.Security.Principal;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Properties;
-using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 {
@@ -29,7 +29,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
         private bool isCompleted = true;
         private bool stopReceiving = false;
 
-        private LogWriter logWriter;
         private string msmqPath;
 
         private DistributorEventLogger eventLogger;
@@ -37,9 +36,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
         /// <summary>
         /// Setup the queue and the formatter of the messages.
         /// </summary>
-        public MsmqLogDistributor(LogWriter logWriter, string msmqPath, DistributorEventLogger eventLogger)
+        public MsmqLogDistributor(string msmqPath, DistributorEventLogger eventLogger)
         {
-            this.logWriter = logWriter;
             this.msmqPath = msmqPath;
             this.eventLogger = eventLogger;
         }
@@ -207,7 +205,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 
                     if (logEntry != null)
                     {
-                        logWriter.Write(logEntry);
+                        Logger.Write(logEntry);
                     }
 
                     message = msmq.Receive();

@@ -10,11 +10,10 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_host_adapter
@@ -22,25 +21,25 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_host_adapter
     [TestClass]
     public class when_editing_property : given_host_adapter_and_type_descriptor
     {
-        Property expirationPollFrequency;
-        PropertyDescriptor componentModelExpirationPollFrequency;
+        Property traceOutputOptions;
+        PropertyDescriptor componentModelTraceOutputOptions;
         bool expirationPollFrequencyChanged;
 
         protected override void Arrange()
         {
             base.Arrange();
 
-            expirationPollFrequency = CacheManager.Property("ExpirationPollFrequencyInSeconds");
-            componentModelExpirationPollFrequency = CacheManagerTypeDescriptor.GetProperties().OfType<PropertyDescriptor>().Where(x => x.Name == "ExpirationPollFrequencyInSeconds").First();
+            traceOutputOptions = TraceListener.Property("TraceOutputOptions");
+            componentModelTraceOutputOptions = TraceListenerTypeDescriptor.GetProperties().OfType<PropertyDescriptor>().Where(x => x.Name == "TraceOutputOptions").First();
 
             expirationPollFrequencyChanged = false;
 
-            componentModelExpirationPollFrequency.AddValueChanged(CacheManagerTypeDescriptor, new EventHandler((sender, args) => expirationPollFrequencyChanged = true));
+            componentModelTraceOutputOptions.AddValueChanged(TraceListenerTypeDescriptor, new EventHandler((sender, args) => expirationPollFrequencyChanged = true));
         }
 
         protected override void Act()
         {
-            expirationPollFrequency.BindableProperty.BindableValue = "123";
+            traceOutputOptions.BindableProperty.BindableValue = "Callstack";
         }
 
         [TestMethod]
@@ -53,14 +52,14 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_host_adapter
         [ExpectedException(typeof(ArgumentException))]
         public void then_property_descriptor_throws_exception_on_validation_error()
         {
-            componentModelExpirationPollFrequency.SetValue(null, "invalidvalue");
+            componentModelTraceOutputOptions.SetValue(null, "invalidvalue");
         }
 
         [TestMethod]
         public void then_propery_descriptor_type_is_property_type()
         {
-            Assert.AreEqual(typeof(int), componentModelExpirationPollFrequency.PropertyType);
-            Assert.IsInstanceOfType(componentModelExpirationPollFrequency.GetValue(null), typeof(int));
+            Assert.AreEqual(typeof(TraceOptions), componentModelTraceOutputOptions.PropertyType);
+            Assert.IsInstanceOfType(componentModelTraceOutputOptions.GetValue(null), typeof(TraceOptions));
         }
     }
 }

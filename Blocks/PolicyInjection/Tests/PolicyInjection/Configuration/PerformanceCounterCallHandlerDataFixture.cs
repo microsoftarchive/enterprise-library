@@ -9,20 +9,17 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport;
+using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
     [TestClass]
-    [DeploymentItem("test.exe.config")]
     public class PerformanceCounterCallHandlerDataFixture : CallHandlerDataFixtureBase
     {
         [TestMethod]
@@ -96,59 +93,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         }
 
         [TestMethod]
-        public void WhenCreatesTypeRegistration_ThenCreatesSingleRegistration()
+        public void WhenConfiguredContainer_ThenCanResolveCallHandler()
         {
-            var registrations = callHandlerData.GetRegistrations("-suffix");
+            using (var container = new UnityContainer())
+            {
+                this.callHandlerData.ConfigureContainer(container, "-suffix");
 
-            Assert.AreEqual(1, registrations.Count());
-        }
+                var handler = (PerformanceCounterCallHandler)container.Resolve<ICallHandler>("perf counter-suffix");
 
-        [TestMethod]
-        public void WhenCreatesTypeRegistration_ThenRegistrationHasTransientLifetime()
-        {
-            var registrations = callHandlerData.GetRegistrations("-suffix").First();
+                Assert.AreEqual(300, handler.Order);
+                Assert.AreEqual("category", handler.Category);
+                Assert.AreEqual("instance", handler.InstanceName);
+                Assert.AreEqual(true, handler.UseTotalCounter);
+                Assert.AreEqual(false, handler.IncrementNumberOfCalls);
+                Assert.AreEqual(true, handler.IncrementCallsPerSecond);
+                Assert.AreEqual(false, handler.IncrementAverageCallDuration);
+                Assert.AreEqual(true, handler.IncrementTotalExceptions);
+                Assert.AreEqual(false, handler.IncrementExceptionsPerSecond);
 
-            Assert.AreEqual(TypeRegistrationLifetime.Transient, registrations.Lifetime);
-        }
-
-        [TestMethod]
-        public void WhenCreatesTypeRegistration_ThenRegistrationIsForICallHandlerWithNameAndImplementationType()
-        {
-            var registrations = callHandlerData.GetRegistrations("-suffix");
-
-            registrations.ElementAt(0)
-                .AssertForServiceType(typeof(ICallHandler))
-                .ForName("perf counter-suffix")
-                .ForImplementationType(typeof(PerformanceCounterCallHandler));
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenMatchingRuleRegistrationInjectsConstructorParameters()
-        {
-            var registrations = callHandlerData.GetRegistrations("-suffix");
-
-            registrations.ElementAt(0)
-                .AssertConstructor()
-                .WithValueConstructorParameter("category")
-                .WithValueConstructorParameter("instance")
-                .WithValueConstructorParameter(true)
-                .WithValueConstructorParameter(false)
-                .WithValueConstructorParameter(true)
-                .WithValueConstructorParameter(false)
-                .WithValueConstructorParameter(true)
-                .WithValueConstructorParameter(false)
-                .VerifyConstructorParameters();
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenMatchingRuleRegistrationInjectsOrderProperty()
-        {
-            var registrations = callHandlerData.GetRegistrations("-suffix");
-
-            registrations.ElementAt(0)
-                .AssertProperties()
-                .WithValueProperty("Order", 300)
-                .VerifyProperties();
+                Assert.AreNotSame(handler, container.Resolve<ICallHandler>("perf counter-suffix"));
+            }
         }
     }
 }

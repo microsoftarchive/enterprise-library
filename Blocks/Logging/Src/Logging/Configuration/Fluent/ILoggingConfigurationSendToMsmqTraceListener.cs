@@ -10,16 +10,12 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using System.Diagnostics;
 using System.Messaging;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using System.Collections.Specialized;
+using System.Security;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
 {
@@ -27,6 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
     /// Fluent interface used to specify settings on a <see cref="MsmqTraceListenerData"/>.
     /// </summary>
     /// <seealso cref="MsmqTraceListenerData"/>
+    [SecurityCritical]
     public interface ILoggingConfigurationSendToMsmqTraceListener : ILoggingConfigurationContd, ILoggingConfigurationCategoryContd, IFluentInterface
     {
         /// <summary>

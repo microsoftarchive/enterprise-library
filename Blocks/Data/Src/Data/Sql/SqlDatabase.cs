@@ -13,11 +13,9 @@ using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
-using System.Security.Permissions;
 using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
-using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql.Configuration;
 
@@ -31,7 +29,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
     /// Internally uses SQL Server .NET Managed Provider from Microsoft (System.Data.SqlClient) to connect to the database.
     /// </para>  
     /// </remarks>
-    [SqlClientPermission(SecurityAction.Demand)]
     [ConfigurationElementType(typeof(SqlDatabaseData))]
     public class SqlDatabase : Database
     {
@@ -42,18 +39,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         public SqlDatabase(string connectionString)
             : base(connectionString, SqlClientFactory.Instance)
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SqlDatabase"/> class with a
-        /// connection string and instrumentation provider.
-        /// </summary>
-        /// <param name="connectionString">The connection string.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider.</param>
-        public SqlDatabase(string connectionString, IDataInstrumentationProvider instrumentationProvider)
-            : base(connectionString, SqlClientFactory.Instance, instrumentationProvider)
-        {
-
         }
 
         /// <summary>
@@ -206,9 +191,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             try
             {
                 XmlReader reader = command.EndExecuteXmlReader(daabAsyncResult.InnerAsyncResult);
-                instrumentationProvider.FireCommandExecutedEvent(daabAsyncResult.StartTime);
 
-                if(command.Transaction == null)
+                if (command.Transaction == null)
                 {
                     using (var wrapper = new DatabaseConnectionWrapper(command.Connection))
                     {
@@ -217,9 +201,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
                 }
                 return reader;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
                 if (command.Transaction == null)
                 {
                     // for a reader, the standard cleanup will not close the connection, so it needs to be closed
@@ -236,18 +219,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
 
         private IAsyncResult DoBeginExecuteXmlReader(SqlCommand command, AsyncCallback callback, object state)
         {
-            try
-            {
-                return WrappedAsyncOperation.BeginAsyncOperation(
-                    callback,
-                    cb => command.BeginExecuteXmlReader(cb, state),
-                    ar => new DaabAsyncResult(ar, command, false, false, DateTime.Now));
-            }
-            catch (Exception e)
-            {
-                instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
-                throw;
-            }
+            return WrappedAsyncOperation.BeginAsyncOperation(
+                callback,
+                cb => command.BeginExecuteXmlReader(cb, state),
+                ar => new DaabAsyncResult(ar, command, false, false, DateTime.Now));
         }
 
         /// <devdoc>
@@ -255,18 +230,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         /// </devdoc>        
         private XmlReader DoExecuteXmlReader(SqlCommand sqlCommand)
         {
-            try
-            {
-                DateTime startTime = DateTime.Now;
-                XmlReader reader = sqlCommand.ExecuteXmlReader();
-                instrumentationProvider.FireCommandExecutedEvent(startTime);
-                return reader;
-            }
-            catch (Exception e)
-            {
-                instrumentationProvider.FireCommandFailedEvent(sqlCommand.CommandText, ConnectionStringNoCredentials, e);
-                throw;
-            }
+            XmlReader reader = sqlCommand.ExecuteXmlReader();
+            return reader;
         }
 
         private static SqlCommand CheckIfSqlCommand(DbCommand command)
@@ -491,6 +456,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             param.SourceVersion = sourceVersion;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "The purpose of the block is to execute arbitrary SQL on behalf of the user. It is known that the users must review the use of the Database for security vulnerabilities.")]
         private static SqlCommand CreateSqlCommandByCommandType(CommandType commandType, string commandText)
         {
             return new SqlCommand(commandText)
@@ -503,18 +469,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         {
             bool closeConnection = command.Transaction == null;
 
-            try
-            {
-                return WrappedAsyncOperation.BeginAsyncOperation(
-                    callback,
-                    cb => command.BeginExecuteNonQuery(cb, state),
-                    ar => new DaabAsyncResult(ar, command, disposeCommand, closeConnection, DateTime.Now));
-            }
-            catch (Exception e)
-            {
-                instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
-                throw;
-            }
+            return WrappedAsyncOperation.BeginAsyncOperation(
+                callback,
+                cb => command.BeginExecuteNonQuery(cb, state),
+                ar => new DaabAsyncResult(ar, command, disposeCommand, closeConnection, DateTime.Now));
         }
 
         /// <summary>
@@ -731,14 +689,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             try
             {
                 int affected = command.EndExecuteNonQuery(daabAsyncResult.InnerAsyncResult);
-                instrumentationProvider.FireCommandExecutedEvent(daabAsyncResult.StartTime);
 
                 return affected;
-            }
-            catch (Exception e)
-            {
-                instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
-                throw;
             }
             finally
             {
@@ -751,18 +703,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             CommandBehavior commandBehavior =
                 command.Transaction == null ? CommandBehavior.CloseConnection : CommandBehavior.Default;
 
-            try
-            {
-                return WrappedAsyncOperation.BeginAsyncOperation(
-                    callback,
-                    cb => command.BeginExecuteReader(cb, state, commandBehavior),
-                    ar => new DaabAsyncResult(ar, command, disposeCommand, false, DateTime.Now));
-            }
-            catch (Exception e)
-            {
-                instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
-                throw;
-            }
+            return WrappedAsyncOperation.BeginAsyncOperation(
+                callback,
+                cb => command.BeginExecuteReader(cb, state, commandBehavior),
+                ar => new DaabAsyncResult(ar, command, disposeCommand, false, DateTime.Now));
         }
 
         /// <summary>
@@ -981,13 +925,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             try
             {
                 IDataReader reader = command.EndExecuteReader(daabAsyncResult.InnerAsyncResult);
-                instrumentationProvider.FireCommandExecutedEvent(daabAsyncResult.StartTime);
 
                 return reader;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
                 if (command.Transaction == null)
                 {
                     // for a reader, the standard cleanup will not close the connection, so it needs to be closed

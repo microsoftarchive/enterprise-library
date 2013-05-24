@@ -9,9 +9,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -21,44 +18,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
     [TestClass]
     public class GivenTextFormatterDataSection
     {
-        private TypeRegistration registration;
-        private TextFormatterData formatter;
-
+        private TextFormatterData formatterData;
 
         [TestInitialize]
         public void Given()
         {
-            formatter = new TextFormatterData { Name = "formatterName", Template = "someTemplate" };
-
-            registration = formatter.GetRegistrations().First();
+            this.formatterData = new TextFormatterData("formatterName", "someTemplate");
         }
 
         [TestMethod]
-        public void ThenShouldProvideProperRegistrationEntry()
+        public void when_creating_formatter_then_creates_text_formatter()
         {
-            registration.AssertForServiceType(typeof(ILogFormatter))
-                .ForName(formatter.Name)
-                .ForImplementationType(typeof(TextFormatter));
-        }
+            var formatter = (TextFormatter)this.formatterData.BuildFormatter();
 
-        [TestMethod]
-        public void ThenShouldProviderProperConstructorParameters()
-        {
-            registration.AssertConstructor()
-                .WithValueConstructorParameter<string>(formatter.Template)
-                .VerifyConstructorParameters();
-        }
-
-        [TestMethod]
-        public void ThenShouldHaveATransientLifetime()
-        {
-            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
-        }
-
-        [TestMethod]
-        public void ThenDefaultPropertyValuesShouldBeSettedInDefaultCtor()
-        {
-            Assert.AreEqual(TextFormatterData.DefaultTemplate, new TextFormatterData().Template);
+            Assert.AreEqual("someTemplate", formatter.Template);
         }
     }
 }

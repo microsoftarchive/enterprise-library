@@ -27,28 +27,11 @@
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
+    </UpgradeBackupLocation><OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\..\bin\Debug\</OutputPath>
@@ -71,10 +54,9 @@
     <WarningLevel>4</WarningLevel>
     <FxCopRules>-Microsoft.Design#CA2210</FxCopRules>
     <RunFxCop>false</RunFxCop>
-    <CodeAnalysisRules>
-    </CodeAnalysisRules>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet>..\..\..\EnterpriseLibrary.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\..\..\bin\Release\</OutputPath>
@@ -96,19 +78,9 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
     <DebugType>full</DebugType>
-    <CodeAnalysisRules>
-    </CodeAnalysisRules>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -138,9 +110,6 @@
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <None Include="..\..\..\GlobalAssemblyInfo.2010.cs">
-      <Link>GlobalAssemblyInfo.2010.cs</Link>
-    </None>
     <Compile Include="CachingMechanism.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -174,21 +143,10 @@
     <Compile Include="Configuration\Fluent\SqlCeDatabaseConfigurationExtension.cs" />
     <Compile Include="Configuration\Fluent\SqlDatabaseConfigurationExtension.cs" />
     <Compile Include="Configuration\GenericDatabaseData.cs" />
-    <Compile Include="Configuration\Manageability\ConnectionStringsManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\DatabaseSettingsManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\OracleConnectionSettingsManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\Properties\AssemblyInfo.cs" />
-    <Compile Include="Configuration\Manageability\Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="DatabaseConnectionWrapper.cs" />
     <Compile Include="DatabaseExtensions.cs" />
     <Compile Include="DataReaderWrapper.cs" />
-    <Compile Include="Instrumentation\IDataInstrumentationProvider.cs" />
-    <Compile Include="Instrumentation\NewDataInstrumentationProvider.cs" />
-    <Compile Include="Instrumentation\NullDataInstrumentationProvider.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IParameterMapper.cs" />
     <Compile Include="IResultSetMapper.cs" />
     <Compile Include="IRowMapper.cs" />
@@ -204,11 +162,9 @@
     <Compile Include="SprocAccessor.cs" />
     <Compile Include="Sql\Configuration\SqlDatabaseData.cs" />
     <Compile Include="Oracle\Configuration\OracleDatabaseData.cs" />
-    <Compile Include="Configuration\Unity\DataAccessBlockExtension.cs" />
     <Compile Include="DatabaseProviderFactory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Instrumentation\DefaultDataEventLogger.cs" />
     <Compile Include="Oracle\Configuration\OracleConnectionData.cs" />
     <Compile Include="Oracle\Configuration\OracleConnectionSettings.cs" />
     <Compile Include="Oracle\Configuration\OraclePackageData.cs">
@@ -224,12 +180,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GenericDatabase.cs" />
-    <Compile Include="Instrumentation\DataInstrumentationInstaller.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Instrumentation\DataInstrumentationInstaller.Designer.cs">
-      <DependentUpon>DataInstrumentationInstaller.cs</DependentUpon>
-    </Compile>
     <Compile Include="Oracle\IOraclePackage.cs" />
     <Compile Include="Oracle\OracleDatabase.cs">
       <SubType>Code</SubType>
@@ -258,11 +208,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Configuration\Manageability\Properties\Resources.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="Oracle\Configuration\DesignResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
@@ -272,28 +217,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <None Include="Migrated rules for Data %282%29.ruleset" />
-    <None Include="Migrated rules for Data.ruleset" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
@@ -302,4 +228,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\..\..\.nuget\nuget.targets" />
+  <!-- Cannot remove the following because NuGet will re-add it, and will break relative paths -->
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" Condition="False" />
 </Project>

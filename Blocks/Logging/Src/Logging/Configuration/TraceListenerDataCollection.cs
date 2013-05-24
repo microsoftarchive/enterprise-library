@@ -51,7 +51,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 							throw new ConfigurationErrorsException(
 								string.Format(
                                     CultureInfo.CurrentCulture,
-                                    Resources_Desktop.ExceptionTraceListenerConfigurationElementTypeNotFound,
+									Resources.ExceptionTraceListenerConfigurationElementTypeNotFound,
 									reader.ReadOuterXml()));
 						}
 
@@ -64,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 					throw new ConfigurationErrorsException(
 						string.Format(
                             CultureInfo.CurrentCulture,
-                            Resources_Desktop.ExceptionTraceListenerConfigurationElementMissingTypeAttribute,
+							Resources.ExceptionTraceListenerConfigurationElementMissingTypeAttribute,
 							reader.ReadOuterXml()));
 				}
 

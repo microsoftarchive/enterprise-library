@@ -12,6 +12,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
@@ -22,7 +23,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
     [TestClass]
     public class PropertyComparisonValidatorDataFixture
     {
-#if !SILVERLIGHT
         [TestMethod]
         public void CanDeserializeSerializedInstanceWithNameOnly()
         {
@@ -33,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -62,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -77,13 +77,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 Assert.AreEqual(true, ((PropertyComparisonValidatorData)roSettings.Validators.Get(0)).Negated);
             }
         }
-#endif
 
         [TestMethod]
         [ExpectedException(typeof(ConfigurationErrorsException))]
         public void CreateValidatorWithNoPropertyThrows()
         {
-            PropertyComparisonValidatorData rwValidatorData = new PropertyComparisonValidatorData { Name = "validator1" };
+            PropertyComparisonValidatorData rwValidatorData = new PropertyComparisonValidatorData("validator1");
 
             ((IValidatorDescriptor)rwValidatorData).CreateValidator(typeof(string),
                                                                     typeof(PropertyComparisonValidatorDataFixtureTestClass),
@@ -95,7 +94,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [ExpectedException(typeof(ConfigurationErrorsException))]
         public void CreateValidatorWithInvalidPropertyThrows()
         {
-            PropertyComparisonValidatorData rwValidatorData = new PropertyComparisonValidatorData { Name = "validator1" };
+            PropertyComparisonValidatorData rwValidatorData = new PropertyComparisonValidatorData("validator1");
             rwValidatorData.PropertyToCompare = "Property";
 
             PropertyComparisonValidator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(typeof(string),
@@ -112,7 +111,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateValidator()
         {
-            PropertyComparisonValidatorData rwValidatorData = new PropertyComparisonValidatorData { Name = "validator1" };
+            PropertyComparisonValidatorData rwValidatorData = new PropertyComparisonValidatorData("validator1");
             rwValidatorData.PropertyToCompare = "PublicProperty";
             rwValidatorData.Negated = true;
             rwValidatorData.ComparisonOperator = ComparisonOperator.NotEqual;
@@ -126,15 +125,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             Assert.AreEqual("PublicProperty", ((PropertyValueAccess)validator.ValueAccess).PropertyInfo.Name);
             Assert.AreEqual(ComparisonOperator.NotEqual, validator.ComparisonOperator);
             Assert.AreEqual(true, validator.Negated);
-        }
-
-
-        [TestMethod]
-        public void HasDefaultValuesForProperties()
-        {
-            var validatorData = new PropertyComparisonValidatorData();
-
-            Assert.AreEqual("", validatorData.PropertyToCompare);
         }
 
         public class PropertyComparisonValidatorDataFixtureTestClass

@@ -14,10 +14,8 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlServerCe;
 using Data.SqlCe.Tests.VSTS;
-using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Data.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
 {
@@ -66,13 +64,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
             using (DbCommand command = db.GetSqlStringCommand(queryString))
             {
                 string accumulator = "";
-                using(SqlCeResultSet reader = db.ExecuteResultSet(command))
+                using (SqlCeResultSet reader = db.ExecuteResultSet(command))
                 {
                     while (reader.Read())
                     {
                         accumulator += ((string)reader["RegionDescription"]).Trim();
                     }
-                    
+
                 }
                 Assert.AreEqual("EasternWesternNorthernSouthern", accumulator);
             }
@@ -81,12 +79,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
         [TestMethod]
         public void ExecuteResultSetWithBadCommandThrowsAndClosesConnection()
         {
-            DbCommand badCommand = db.GetSqlStringCommand("select * from foobar");
+            DbCommand badCommand = db.GetSqlStringCommand("select * from invalid");
             try
             {
                 db.ExecuteResultSet(badCommand);
             }
-            catch(SqlCeException)
+            catch (SqlCeException)
             {
             }
 
@@ -113,7 +111,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
             finally
             {
                 string deleteString = "Delete from Region where RegionId = 99";
-                using(DbCommand cleanupCommand = db.GetSqlStringCommand(deleteString))
+                using (DbCommand cleanupCommand = db.GetSqlStringCommand(deleteString))
                 {
                     db.ExecuteNonQuery(cleanupCommand);
                 }
@@ -194,7 +192,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
         {
             using (DbCommand myCommand = db.GetSqlStringCommand(null))
             {
-                using(db.ExecuteResultSet(myCommand))
+                using (db.ExecuteResultSet(myCommand))
                 {
                 }
             }
@@ -206,71 +204,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
         {
             using (DbCommand myCommand = db.GetSqlStringCommand(String.Empty))
             {
-                using(db.ExecuteResultSet(myCommand))
+                using (db.ExecuteResultSet(myCommand))
                 {
                 }
             }
-        }
-
-        [TestMethod]
-        public void ExecuteResultSetCallsInstrumentationFireCommandExecutedEvent()
-        {
-            int executeCount = 0;
-            int failedCount = 0;
-
-            var mockProvider = new Mock<IDataInstrumentationProvider>();
-            mockProvider.Setup(p => p.FireCommandExecutedEvent(It.IsAny<DateTime>()))
-                .Callback<DateTime>(dt => ++executeCount);
-            mockProvider.Setup(
-                p => p.FireCommandFailedEvent(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Exception>()))
-                .Callback<string, string, Exception>((c, cs, ex) => ++failedCount);
-
-            var ceDb = GetDatabase(mockProvider.Object);
-
-            using (DbCommand command = ceDb.GetSqlStringCommand(queryString))
-            {
-                SqlCeResultSet reader = ceDb.ExecuteResultSet(command);
-                reader.Close();
-            }
-            Assert.AreEqual(1, executeCount);
-            Assert.AreEqual(0, failedCount);
-        }
-
-        [TestMethod]
-        public void ExecuteResultSetWithBadCommandCallsInstrumentationFireCommandFailedEvent()
-        {
-            int executeCount = 0;
-            int failedCount = 0;
-
-            var mockProvider = new Mock<IDataInstrumentationProvider>();
-            mockProvider.Setup(p => p.FireCommandExecutedEvent(It.IsAny<DateTime>()))
-                .Callback<DateTime>(dt => ++executeCount);
-            mockProvider.Setup(
-                p => p.FireCommandFailedEvent(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Exception>()))
-                .Callback<string, string, Exception>((c, cs, ex) => ++failedCount);
-
-            SqlCeDatabase ceDb = GetDatabase(mockProvider.Object);
-
-            try
-            {
-                using (DbCommand command = ceDb.GetSqlStringCommand("select * from junk"))
-                {
-                    SqlCeResultSet reader = ceDb.ExecuteResultSet(command);
-                    reader.Close();
-                }
-            }
-            catch { }
-
-            Assert.AreEqual(0, executeCount);
-            Assert.AreEqual(1, failedCount);
-        }
-
-        private static SqlCeDatabase GetDatabase(IDataInstrumentationProvider instrumentationProvider)
-        {
-            var testConnection = new TestConnectionString();
-            testConnection.CopyFile();
-
-            return new SqlCeDatabase(testConnection.ConnectionString, instrumentationProvider);
         }
     }
 }

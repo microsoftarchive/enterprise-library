@@ -54,13 +54,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Flue
             Assert.IsTrue(GetLoggingConfiguration().LogFilters.OfType<CategoryFilterData>().Any());
         }
 
-#if !SILVERLIGHT
+
         [TestMethod]
         public void ThenCategoryFilterHasCorrectType()
         {
             Assert.AreEqual(typeof(CategoryFilter), GetCategoryFilterData().Type);
         }
-#endif
     }
 
     [TestClass]

@@ -11,19 +11,30 @@
 
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {
-    partial class ExceptionHandlingSettings
+    /// <summary>
+    /// Represents the Exception Handling Application Block configuration section in a configuration file.
+    /// </summary>
+    [ViewModel(ExceptionHandlingDesignTime.ViewModelTypeNames.ExceptionHandlingSectionViewModel)]
+    [ResourceDescription(typeof(DesignResources), "ExceptionHandlingSettingsDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "ExceptionHandlingSettingsDisplayName")]
+    public class ExceptionHandlingSettings : SerializableConfigurationSection
     {
         /// <summary>
         /// Gets the configuration section name for the library.
         /// </summary>
         public const string SectionName = "exceptionHandling";
+
+
+        private const string policiesProperty = "exceptionPolicies";
 
         /// <summary>
         /// Gets the <see cref="ExceptionHandlingSettings"/> section in the configuration source.
@@ -37,58 +48,59 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         }
 
         /// <summary>
-        /// Creates the <see cref="TypeRegistration"/> entries to use when configuring a container for Exception Handling
+        /// Initializes a new instance of an <see cref="ExceptionHandlingSettings"/> class.
         /// </summary>
-        /// <returns></returns>
-        public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
+        public ExceptionHandlingSettings()
         {
-            var registrations = new List<TypeRegistration>();
-
-            registrations.AddRange(GetDefaultInstrumentationRegistrations(configurationSource));
-
-            foreach (ExceptionPolicyData policyData in ExceptionPolicies)
-            {
-                registrations.AddRange(policyData.GetRegistration(configurationSource));
-
-                foreach (var policyTypeData in policyData.ExceptionTypes)
-                {
-                    TypeRegistration policyTypeRegistration =
-                        policyTypeData.GetRegistration(policyData.Name);
-                    registrations.Add(policyTypeRegistration);
-
-                    registrations.AddRange(
-                        policyTypeData.ExceptionHandlers.SelectMany(ehd => ehd.GetRegistrations(policyTypeRegistration.Name)));
-                }
-            }
-
-            TypeRegistration managerRegistration =
-                GetManagerRegistration(ExceptionPolicies.Select(p => p.Name).ToArray());
-            managerRegistration.IsPublicName = true;
-
-            registrations.Add(managerRegistration);
-
-            return registrations;
+            this[policiesProperty] = new NamedElementCollection<ExceptionPolicyData>();
         }
 
         /// <summary>
-        /// Return the <see cref="TypeRegistration"/> objects needed to reconfigure
-        /// the container after a configuration source has changed.
+        /// Gets a collection of <see cref="ExceptionPolicyData"/> objects.
         /// </summary>
-        /// <remarks>If there are no reregistrations, return an empty sequence.</remarks>
-        /// <param name="configurationSource">The <see cref="IConfigurationSource"/> containing
-        /// the configuration information.</param>
-        /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
-        public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
+        /// <value>
+        /// A collection of <see cref="ExceptionPolicyData"/> objects.
+        /// </value>
+        [ConfigurationProperty(policiesProperty)]
+        [ResourceDescription(typeof(DesignResources), "ExceptionHandlingSettingsExceptionPoliciesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ExceptionHandlingSettingsExceptionPoliciesDisplayName")]
+        [ConfigurationCollection(typeof(ExceptionPolicyData))]
+        [Command(ExceptionHandlingDesignTime.CommandTypeNames.AddExceptionPolicyCommand, CommandPlacement = CommandPlacement.ContextAdd, Replace = CommandReplacement.DefaultAddCommandReplacement)]
+        public NamedElementCollection<ExceptionPolicyData> ExceptionPolicies
         {
-            return GetRegistrations(configurationSource);
+            get { return (NamedElementCollection<ExceptionPolicyData>)this[policiesProperty]; }
         }
 
-        private static TypeRegistration GetManagerRegistration(string[] policyNames)
+        /// <summary>
+        /// Builds a <see cref="ExceptionManager"/> based on the configuration.
+        /// </summary>
+        /// <returns>An <see cref="ExceptionManager"/>.</returns>
+        public ExceptionManager BuildExceptionManager()
         {
-            return new TypeRegistration<ExceptionManager>(
-                () => new ExceptionManagerImpl(Container.ResolvedEnumerable<ExceptionPolicyImpl>(policyNames),
-                    Container.Resolved<IDefaultExceptionHandlingInstrumentationProvider>())
-                ) { IsDefault = true };
+            var policies = this.ExceptionPolicies.Select(p => p.BuildExceptionPolicy());
+
+            return new ExceptionManager(policies);
+        }
+
+        /// <summary>
+        /// Builds an <see cref="ExceptionPolicyDefinition"/> based on the configuration.
+        /// </summary>
+        /// <param name="policyName">The policy name.</param>
+        /// <returns>The policy instance.</returns>
+        public ExceptionPolicyDefinition BuildExceptionPolicy(string policyName)
+        {
+            var policyData = this.ExceptionPolicies.Get(policyName);
+
+            if (policyData == null)
+            {
+                throw new InvalidOperationException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.ExceptionPolicyNotFoundInConfigurationException,
+                        policyName));
+            }
+
+            return policyData.BuildExceptionPolicy();
         }
     }
 }

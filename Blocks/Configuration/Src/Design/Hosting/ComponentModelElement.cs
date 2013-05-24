@@ -109,9 +109,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Hosting
             return typeDescriptorProxy.GetProperties();
         }
 
-        object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor pd)
+        object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor propertyDescriptor)
         {
-            return typeDescriptorProxy.GetPropertyOwner(pd);
+            return typeDescriptorProxy.GetPropertyOwner(propertyDescriptor);
         }
 
         #endregion

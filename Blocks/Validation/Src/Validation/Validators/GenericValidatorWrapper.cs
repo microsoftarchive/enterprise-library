@@ -9,9 +9,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
-
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 {
     /// <summary>
@@ -20,18 +17,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
     /// <typeparam name="T"></typeparam>
     public sealed class GenericValidatorWrapper<T> : Validator<T>
     {
-        private readonly IValidationInstrumentationProvider instrumentationProvider;
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="wrappedValidator"></param>
-        /// <param name="instrumentationProvider"></param>
-        public GenericValidatorWrapper(Validator wrappedValidator, IValidationInstrumentationProvider instrumentationProvider)
+        public GenericValidatorWrapper(Validator wrappedValidator)
             : base(null, null)
         {
             this.WrappedValidator = wrappedValidator;
-            this.instrumentationProvider = instrumentationProvider;
         }
 
         /// <summary>
@@ -43,35 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <param name="validationResults"></param>
         protected override void DoValidate(T objectToValidate, object currentTarget, string key, ValidationResults validationResults)
         {
-            Type typeBeingValidated = typeof(T);
-
-            instrumentationProvider.NotifyConfigurationCalled(typeBeingValidated);
-
-            try
-            {
-                this.WrappedValidator.DoValidate(objectToValidate, currentTarget, key, validationResults);
-
-                if (validationResults.IsValid)
-                {
-                    instrumentationProvider.NotifyValidationSucceeded(typeBeingValidated);
-                }
-                else
-                {
-                    instrumentationProvider.NotifyValidationFailed(typeBeingValidated, validationResults);
-                }
-            }
-#if !SILVERLIGHT
-            catch (System.Configuration.ConfigurationErrorsException configurationErrors)
-            {
-                instrumentationProvider.NotifyConfigurationFailure(configurationErrors);
-                throw;
-            }
-#endif
-            catch (Exception ex)
-            {
-                instrumentationProvider.NotifyValidationException(typeBeingValidated, ex.Message, ex);
-                throw;
-            }
+            this.WrappedValidator.DoValidate(objectToValidate, currentTarget, key, validationResults);
         }
 
         /// <summary>
@@ -86,7 +51,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// Returns the validator wrapped by <see cref="GenericValidatorWrapper{T}"/>
         ///</summary>
         public Validator WrappedValidator { get; private set; }
-
-      
     }
 }

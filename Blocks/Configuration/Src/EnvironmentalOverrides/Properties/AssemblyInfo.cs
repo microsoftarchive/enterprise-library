@@ -16,11 +16,8 @@ using System.Security.Permissions;
 
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides;
 
-[assembly : ReflectionPermission(SecurityAction.RequestMinimum)]
-[assembly : SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly : ComVisible(false)]
 [assembly : AssemblyTitle("Enterprise Library Configuration Application Block Environmental Overrides Extension")]
 [assembly : AssemblyDescription("Enterprise Library Configuration Application Block Environmental Overrides Extension")]
-[assembly : AssemblyVersion("5.0.505.0")]
-[assembly : AllowPartiallyTrustedCallers]
-[assembly : SecurityTransparent]
+[assembly: AssemblyVersion("6.0.0.0")]
+[assembly: AssemblyFileVersion("6.0.1304.0")]

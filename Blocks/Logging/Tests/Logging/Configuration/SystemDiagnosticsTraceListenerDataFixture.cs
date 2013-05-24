@@ -9,13 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Collections.Specialized;
+using System;
 using System.Diagnostics;
-using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
@@ -28,11 +24,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestInitialize]
         public void Given()
         {
-            listenerData = new SystemDiagnosticsTraceListenerData(
-                "systemDiagnosticsTraceListener",
-                typeof(System.Diagnostics.TextWriterTraceListener),
-                string.Empty
-                );
+            listenerData =
+                new SystemDiagnosticsTraceListenerData(
+                    "systemDiagnosticsTraceListener",
+                    typeof(MockSystemDiagsTraceListener),
+                    "");
         }
 
         [TestMethod]
@@ -43,65 +39,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         }
 
         [TestMethod]
-        public void ThenCreatesTwoTypeRegistrations()
+        public void WhenCreatingListener_ThenCreatesListenerWithNoArgsConstructor()
         {
-            Assert.AreEqual(2, listenerData.GetRegistrations().Count());
-        }
+            var settings = new LoggingSettings { };
 
-        [TestMethod]
-        public void ThenCreatesATypeRegistrationForTheWrapperWithTheOriginalName()
-        {
-            listenerData.GetRegistrations().Where(tr => tr.Name == "systemDiagnosticsTraceListener").First()
-                .AssertForServiceType(typeof(TraceListener))
-                .ForName("systemDiagnosticsTraceListener")
-                .ForImplementationType(typeof(ReconfigurableTraceListenerWrapper));
-        }
+            var listener = (MockSystemDiagsTraceListener)listenerData.BuildTraceListener(settings);
 
-        [TestMethod]
-        public void ThenWrapperRegistrationIsSingleton()
-        {
-            Assert.AreEqual(
-                TypeRegistrationLifetime.Singleton,
-                listenerData.GetRegistrations().Where(tr => tr.Name == "systemDiagnosticsTraceListener").First().Lifetime);
-        }
-
-        [TestMethod]
-        public void ThenWrapperRegistrationIsInjectedWithTheWrappedTraceListenerAndTheLoggingUpdateCoordinator()
-        {
-            listenerData.GetRegistrations().Where(tr => tr.Name == "systemDiagnosticsTraceListener").First()
-                .AssertConstructor()
-                .WithContainerResolvedParameter<TraceListener>("systemDiagnosticsTraceListener\u200Cimplementation")
-                .WithContainerResolvedParameter<ILoggingUpdateCoordinator>(null)
-                .VerifyConstructorParameters();
-        }
-
-        [TestMethod]
-        public void ThenRegistryEntryReturnsNamedServiceEntry()
-        {
-            TypeRegistration registry =
-                listenerData.GetRegistrations().Where(tr => tr.Name == "systemDiagnosticsTraceListener\u200Cimplementation").First();
-
-            registry.AssertForServiceType(typeof(TraceListener))
-                .ForName("systemDiagnosticsTraceListener\u200Cimplementation")
-                .ForImplementationType(typeof(System.Diagnostics.TextWriterTraceListener));
-        }
-
-        [TestMethod]
-        public void ThenRegistryEntryReturnsEmptyConstructor()
-        {
-            TypeRegistration registry =
-                listenerData.GetRegistrations().Where(tr => tr.Name == "systemDiagnosticsTraceListener\u200Cimplementation").First();
-
-            registry.AssertConstructor()
-                .VerifyConstructorParameters();
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenRegistryIsTransient()
-        {
-            Assert.AreEqual(
-                TypeRegistrationLifetime.Transient,
-                listenerData.GetRegistrations().Where(tr => tr.Name == "systemDiagnosticsTraceListener\u200Cimplementation").First().Lifetime);
+            Assert.IsNotNull(listener);
+            Assert.AreEqual("systemDiagnosticsTraceListener", listener.Name);
+            Assert.AreSame(MockSystemDiagsTraceListener.NoValue, listener.Value);
+            Assert.AreEqual(TraceOptions.None, listener.TraceOutputOptions);
+            Assert.IsNull(listener.Filter);
+            Assert.AreEqual(0, listener.Attributes.Count);
         }
     }
 
@@ -115,95 +64,58 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         {
             listenerData = new SystemDiagnosticsTraceListenerData(
                  "systemDiagnosticsTraceListener",
-                 typeof(System.Diagnostics.TextWriterTraceListener),
+                 typeof(MockSystemDiagsTraceListener),
                  "someInitData"
              );
         }
 
         [TestMethod]
-        public void ThenCreatesTwoTypeRegistrations()
+        public void WhenCreatingListener_ThenCreatesListenerWithSingleArgConstructor()
         {
-            Assert.AreEqual(2, listenerData.GetRegistrations().Count());
-        }
+            var settings = new LoggingSettings { };
 
-        [TestMethod]
-        public void ThenRegistrationIsForCorrectServiceAndType()
-        {
-            TypeRegistration registry
-                = listenerData.GetRegistrations().Where(tr => tr.Name == "systemDiagnosticsTraceListener\u200Cimplementation").First();
+            var listener = (MockSystemDiagsTraceListener)listenerData.BuildTraceListener(settings);
 
-            registry.AssertForServiceType(typeof(TraceListener))
-                .ForName("systemDiagnosticsTraceListener\u200Cimplementation")
-                .ForImplementationType(typeof(System.Diagnostics.TextWriterTraceListener));
-        }
-
-        [TestMethod]
-        public void ThenRegistrationTargetsConstructorWithInitialData()
-        {
-            TypeRegistration registry
-                = listenerData.GetRegistrations().Where(tr => tr.Name == "systemDiagnosticsTraceListener\u200Cimplementation").First();
-
-            registry.AssertConstructor()
-                .WithValueConstructorParameter<string>("someInitData")
-                .VerifyConstructorParameters();
-        }
-
-        [TestMethod]
-        public void ThenRegistryEntryIncludesPropertyForTraceOptions()
-        {
-            TypeRegistration registry
-                = listenerData.GetRegistrations().Where(tr => tr.Name == "systemDiagnosticsTraceListener\u200Cimplementation").First();
-
-            registry.AssertProperties()
-                .WithValueProperty("TraceOutputOptions", TraceOptions.None)
-                .WithValueProperty("Name", "systemDiagnosticsTraceListener\u200Cimplementation")
-                .VerifyProperties();
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenRegistryIsTransient()
-        {
-            Assert.AreEqual(
-                TypeRegistrationLifetime.Transient,
-                listenerData.GetRegistrations().Where(tr => tr.Name == "systemDiagnosticsTraceListener\u200Cimplementation").First().Lifetime);
+            Assert.IsNotNull(listener);
+            Assert.AreEqual("systemDiagnosticsTraceListener", listener.Name);
+            Assert.AreSame("someInitData", listener.Value);
+            Assert.AreEqual(TraceOptions.None, listener.TraceOutputOptions);
+            Assert.IsNull(listener.Filter);
+            Assert.AreEqual(0, listener.Attributes.Count);
         }
     }
 
     [TestClass]
     public class GivenSystemTraceListenerDataTraceOptionsAndFilterSpecified
     {
-        private TypeRegistration registryEntry;
-        private TypeRegistration wrapperRegistryEntry;
+        private SystemDiagnosticsTraceListenerData listenerData;
 
         [TestInitialize]
         public void Given()
         {
-            var listenerData = new SystemDiagnosticsTraceListenerData(
+            this.listenerData = new SystemDiagnosticsTraceListenerData(
                 "systemDiagnosticsTraceListener",
-                typeof(System.Diagnostics.TextWriterTraceListener),
+                typeof(MockSystemDiagsTraceListener),
                 "initData",
                 TraceOptions.ProcessId | TraceOptions.Callstack
                 );
-
             listenerData.Filter = SourceLevels.Critical;
-            registryEntry = 
-                listenerData.GetRegistrations().Where(tr => tr.Name == "systemDiagnosticsTraceListener\u200Cimplementation").First();
-            wrapperRegistryEntry =
-                listenerData.GetRegistrations().Where(tr => tr.Name == "systemDiagnosticsTraceListener").First();
         }
 
         [TestMethod]
-        public void ThenRegistryEntryIncludesPropertyForTraceOptionsAndFilter()
+        public void WhenCreatingListener_ThenCreatesListenerWithSingleArgConstructor()
         {
-            TraceFilter filter;
+            var settings = new LoggingSettings { };
 
-            registryEntry.AssertProperties()
-                .WithValueProperty("TraceOutputOptions", TraceOptions.ProcessId | TraceOptions.Callstack)
-                .WithValueProperty("Filter", out filter)
-                .WithValueProperty("Name", "systemDiagnosticsTraceListener\u200Cimplementation")
-                .VerifyProperties();
+            var listener = (MockSystemDiagsTraceListener)listenerData.BuildTraceListener(settings);
 
-            Assert.AreEqual(SourceLevels.Critical, ((EventTypeFilter)filter).EventType);
+            Assert.IsNotNull(listener);
+            Assert.AreEqual("systemDiagnosticsTraceListener", listener.Name);
+            Assert.AreEqual("initData", listener.Value);
+            Assert.AreEqual(TraceOptions.ProcessId | TraceOptions.Callstack, listener.TraceOutputOptions);
+            Assert.IsNotNull(listener.Filter);
+            Assert.AreEqual(SourceLevels.Critical, ((EventTypeFilter)listener.Filter).EventType);
+            Assert.AreEqual(0, listener.Attributes.Count);
         }
     }
 
@@ -217,57 +129,95 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         {
             listenerData = new SystemDiagnosticsTraceListenerData(
                 "systemDiagnosticsTraceListener",
-                typeof(System.Diagnostics.TextWriterTraceListener),
+                typeof(MockSystemDiagsTraceListener),
                 "initData");
             listenerData.Attributes.Add("checkone", "one");
             listenerData.Attributes.Add("checktwo", "two");
         }
 
         [TestMethod]
-        public void ThenThreeRegistryEntriesAreProvided()
+        public void WhenCreatingListener_ThenCreatesListenerWithSingleArgConstructorAndSetsAttributes()
         {
-            Assert.AreEqual(3, listenerData.GetRegistrations().Count());
+            var settings = new LoggingSettings { };
+
+            var listener = (MockSystemDiagsTraceListener)listenerData.BuildTraceListener(settings);
+
+            Assert.IsNotNull(listener);
+            Assert.AreEqual("systemDiagnosticsTraceListener", listener.Name);
+            Assert.AreEqual("initData", listener.Value);
+            Assert.AreEqual(TraceOptions.None, listener.TraceOutputOptions);
+            Assert.IsNull(listener.Filter);
+            Assert.AreEqual(2, listener.Attributes.Count);
+            Assert.AreEqual("one", listener.Attributes["checkone"]);
+            Assert.AreEqual("two", listener.Attributes["checktwo"]);
+        }
+    }
+
+    [TestClass]
+    public class MiscSystemTraceListenerDataScenarios
+    {
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenCreatingListerWithNullType_ThenThrows()
+        {
+            var settings = new LoggingSettings { };
+            new SystemDiagnosticsTraceListenerData { TypeName = null }.BuildTraceListener(settings);
         }
 
         [TestMethod]
-        public void ThenWrappedRegistrationIsImplementationName()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenCreatingListerWithEmptyType_ThenThrows()
         {
-            var registration = listenerData.GetRegistrations().First(r => r.Name == "systemDiagnosticsTraceListener\u200Cimplementation");
-            registration.AssertForServiceType(typeof(TraceListener))
-                .ForName("systemDiagnosticsTraceListener\u200Cimplementation")
-                .ForImplementationType(typeof(AttributeSettingTraceListenerWrapper));
+            var settings = new LoggingSettings { };
+            new SystemDiagnosticsTraceListenerData { TypeName = "" }.BuildTraceListener(settings);
         }
 
         [TestMethod]
-        public void ThenWrappedRegistrationResolvesInnerRegistrationBySynthesizedName()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenCreatingListerWithInvalidType_ThenThrows()
         {
-            var registrations = listenerData.GetRegistrations();
-            var wrappingRegistration = registrations.First(r => r.Name == "systemDiagnosticsTraceListener\u200Cimplementation");
-            var resolvedParameter = (ContainerResolvedParameter)wrappingRegistration.ConstructorParameters.ElementAt(0);
-
-            Assert.AreSame(typeof(TraceListener), resolvedParameter.Type);
-
-            var resolveTargetRegistration = registrations.First(r => r.Name == resolvedParameter.Name);
-            resolveTargetRegistration.AssertForServiceType(typeof(TraceListener))
-                .ForImplementationType(typeof(TextWriterTraceListener));
+            var settings = new LoggingSettings { };
+            new SystemDiagnosticsTraceListenerData { TypeName = "clearly not a \t type name" }.BuildTraceListener(settings);
         }
 
         [TestMethod]
-        public void ThenWrappedRegistrationProvidesAttributesToConstructors()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenCreatingListerWithNonListenerdType_ThenThrows()
         {
-            var registration = listenerData.GetRegistrations().First(r => r.Name == "systemDiagnosticsTraceListener\u200Cimplementation");
+            var settings = new LoggingSettings { };
+            new SystemDiagnosticsTraceListenerData { TypeName = typeof(string).AssemblyQualifiedName }.BuildTraceListener(settings);
+        }
+    }
 
-            var parameterValue = (ConstantParameterValue)registration.ConstructorParameters.ElementAt(1);
-            CollectionAssert.AreEquivalent(listenerData.Attributes, ((NameValueCollection)parameterValue.Value));
+    public class MockSystemDiagsTraceListener : TraceListener
+    {
+        public static readonly object NoValue = new object();
+
+        private object value;
+
+        public MockSystemDiagsTraceListener()
+        {
+            this.value = NoValue;
         }
 
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenCreatedRegistrationsExceptTheOneForTheOriginalNameAreTransient()
+        public MockSystemDiagsTraceListener(string initData)
         {
-            Assert.AreEqual(
-                0,
-                listenerData.GetRegistrations()
-                    .Where(tr => tr.Lifetime != TypeRegistrationLifetime.Transient && tr.Name != "systemDiagnosticsTraceListener").Count());
+            this.value = initData;
+        }
+
+        public object Value
+        {
+            get { return this.value; }
+        }
+
+        public override void Write(string message)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void WriteLine(string message)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

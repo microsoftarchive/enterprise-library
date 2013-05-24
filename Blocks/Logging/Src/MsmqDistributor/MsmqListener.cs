@@ -54,7 +54,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 			this.QueueTimerInterval = timerInterval;
 			this.eventLogger = distributorService.EventLogger;
 
-			this.logDistributor = new MsmqLogDistributor(EnterpriseLibraryContainer.Current.GetInstance<LogWriter>(), msmqPath, this.eventLogger);
+			this.logDistributor = new MsmqLogDistributor(msmqPath, this.eventLogger);
 		}
 
 		/// <summary>

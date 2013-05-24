@@ -11,29 +11,25 @@
 
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
     [TestClass]
-    [DeploymentItem("test.exe.config")]
     public class TypeMatchingRuleDataFixture : MatchingRuleDataFixtureBase
     {
-#if !SILVERLIGHT
         [TestMethod]
         public void CanSerializeTypeMatchingRule()
         {
-            TypeMatchingRuleData typeMatchingRule = new TypeMatchingRuleData
-                {
-                    Name = "RuleName",
-                    Matches =
-                        {
-                            new MatchData { Match = "System.String" },
-                            new MatchData { Match = "mydataobject", IgnoreCase = true },
-                            new MatchData { Match = "Foo" },
-                        }
-                };
+            TypeMatchingRuleData typeMatchingRule = new TypeMatchingRuleData("RuleName",
+                                                                             new MatchData[]
+                                                                                 {
+                                                                                     new MatchData("System.String"),
+                                                                                     new MatchData("mydataobject", true),
+                                                                                     new MatchData("Foo")
+                                                                                 });
 
             TypeMatchingRuleData deserializedRule = SerializeAndDeserializeMatchingRule(typeMatchingRule) as TypeMatchingRuleData;
 
@@ -47,22 +43,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
                                      "The match at index {0} is incorrect", i);
             }
         }
-#endif
 
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {
-            TypeMatchingRuleData ruleData = new TypeMatchingRuleData
-            {
-                Name = "RuleName",
-                Matches =
-                    {
-                        new MatchData { Match ="System.Int32" }
-                    }
-            };
-            TypeRegistration registration = ruleData.GetRegistrations("").First();
+            TypeMatchingRuleData ruleData = new TypeMatchingRuleData("RuleName", "System.Int32");
 
-            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+            using (var container = new UnityContainer())
+            {
+                ruleData.ConfigureContainer(container, "-test");
+                var registration = container.Registrations.Single(r => r.Name == "RuleName-test");
+                Assert.AreSame(typeof(IMatchingRule), registration.RegisteredType);
+                Assert.AreSame(typeof(TypeMatchingRule), registration.MappedToType);
+                Assert.AreSame(typeof(TransientLifetimeManager), registration.LifetimeManagerType);
+            }
         }
     }
 }

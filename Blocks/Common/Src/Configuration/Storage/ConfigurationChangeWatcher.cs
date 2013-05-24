@@ -16,6 +16,7 @@ using System.Timers;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 
+
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage
 {
     /// <summary>
@@ -112,7 +113,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage
         /// </summary>
         ~ConfigurationChangeWatcher()
         {
-            Disposing(false);
+            this.Dispose(false);
         }
 
         /// <summary>
@@ -174,7 +175,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage
         /// </summary>
         public void Dispose()
         {
-            Disposing(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 
@@ -185,6 +186,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage
         /// <para><see langword="true"/> to release both managed and unmanaged resources; <see langword="false"/> to release only unmanaged resources.</para>
         /// </param>
         protected virtual void Disposing(bool isDisposing)
+        {
+            this.Dispose(isDisposing);
+        }
+
+        /// <summary>
+        /// <para>Releases the unmanaged resources used by the <see cref="Common.Configuration.Storage.ConfigurationChangeFileWatcher"/> and optionally releases the managed resources.</para>
+        /// </summary>
+        /// <param name="isDisposing">
+        /// <para><see langword="true"/> to release both managed and unmanaged resources; <see langword="false"/> to release only unmanaged resources.</para>
+        /// </param>
+        protected virtual void Dispose(bool isDisposing)
         {
             if (isDisposing)
             {
@@ -230,7 +242,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage
         {
             try
             {
-                EventLog.WriteEntry(GetEventSourceName(), Resources_Desktop.ExceptionEventRaisingFailed + GetType().FullName + " :" + e.Message, EventLogEntryType.Error);
             }
             catch
             {

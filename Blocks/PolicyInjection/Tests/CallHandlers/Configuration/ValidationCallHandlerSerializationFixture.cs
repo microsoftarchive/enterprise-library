@@ -9,23 +9,17 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Linq;
 using System.Reflection;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport;
-using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using ValidationCallHandler=Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection.ValidationCallHandler;
+using ValidationCallHandler = Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection.ValidationCallHandler;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests.Configuration
 {
     [TestClass]
-    [DeploymentItem("test.exe.config")]
     public class ValidationCallHandlerSerializationFixture : CallHandlerDataFixtureBase
     {
         [TestMethod]

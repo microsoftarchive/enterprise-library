@@ -10,22 +10,18 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_merge_configuration
 {
-
     public abstract class given_configuration_merge : ArrangeActAssert
     {
         protected EnvironmentalOverridesSection MergeSection;
@@ -52,8 +48,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_merge_configuration
     }
 
     [TestClass]
-    [DeploymentItem("merge_environment.dconfig")]
-    [DeploymentItem("merge_main.config")]
     public class when_merging_configuration : given_configuration_merge
     {
         protected override void Act()
@@ -69,34 +63,31 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_merge_configuration
             Assert.IsTrue(File.Exists(TargetFile));
         }
 
-        
+
         [TestMethod]
         public void then_file_has_overridden_values()
         {
             FileConfigurationSource source = new FileConfigurationSource(TargetFile);
-            CacheManagerSettings settings = (CacheManagerSettings)source.GetSection(CacheManagerSettings.SectionName);
-            CacheManagerData cacheManager = (CacheManagerData)settings.CacheManagers.Get("Cache Manager");
+            LoggingSettings settings = (LoggingSettings)source.GetSection(LoggingSettings.SectionName);
+            FormattedEventLogTraceListenerData traceListener = (FormattedEventLogTraceListenerData)settings.TraceListeners.Get("Event Log Listener");
 
-            Assert.AreEqual(1, cacheManager.MaximumElementsInCacheBeforeScavenging);
-            Assert.AreEqual(1, cacheManager.NumberToRemoveWhenScavenging);
-            Assert.AreEqual(1, cacheManager.ExpirationPollFrequencyInSeconds);
+            Assert.AreEqual(TraceOptions.ProcessId, traceListener.TraceOutputOptions);
+            Assert.AreEqual("overridden source", traceListener.Source);
+            Assert.AreEqual("overridden machine", traceListener.MachineName);
         }
 
         [TestMethod]
         public void then_attributes_with_omitted_values_are_overridden()
         {
             FileConfigurationSource source = new FileConfigurationSource(TargetFile);
-            InstrumentationConfigurationSection instrumentationSettings = (InstrumentationConfigurationSection)source.GetSection(InstrumentationConfigurationSection.SectionName);
+            LoggingSettings settings = (LoggingSettings)source.GetSection(LoggingSettings.SectionName);
 
-            Assert.AreEqual("Overriden Application", instrumentationSettings.ApplicationInstanceName);
-            Assert.IsTrue(instrumentationSettings.EventLoggingEnabled);
-            Assert.IsTrue(instrumentationSettings.PerformanceCountersEnabled);
+            Assert.IsFalse(settings.RevertImpersonation);
+            Assert.IsFalse(settings.LogWarningWhenNoCategoriesMatch);
         }
     }
 
     [TestClass]
-    [DeploymentItem("merge_environment.dconfig")]
-    [DeploymentItem("merge_main.config")]
     public class when_merging_configuration_and_target_file_exists : given_configuration_merge
     {
         DateTime lastWriteTime;
@@ -104,14 +95,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_merge_configuration
         protected override void Act()
         {
             lastWriteTime = DateTime.Today.Subtract(TimeSpan.FromMinutes(5));
-            
+
             File.Create(TargetFile).Dispose();
             File.SetLastWriteTime(TargetFile, lastWriteTime);
 
             ConfigurationMerger configurationMerger = new ConfigurationMerger(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "merge_main.config"), MergeSection);
             configurationMerger.MergeConfiguration(TargetFile);
         }
-
 
         [TestMethod]
         public void then_file_was_written_to()
@@ -122,8 +112,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_merge_configuration
 
 
     [TestClass]
-    [DeploymentItem("merge_environment.dconfig")]
-    [DeploymentItem("merge_main.config")]
     public class when_merging_configuration_and_source_file_is_readonly : given_configuration_merge
     {
         string sourceFile;
@@ -150,8 +138,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_merge_configuration
     }
 
     [TestClass]
-    [DeploymentItem("merge_environment.dconfig")]
-    [DeploymentItem("merge_main.config")]
     public class when_merging_configuration_and_exception_occurs : given_configuration_merge
     {
         DateTime lastWriteTime;

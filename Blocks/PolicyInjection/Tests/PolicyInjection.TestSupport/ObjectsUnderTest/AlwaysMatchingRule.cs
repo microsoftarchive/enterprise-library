@@ -24,12 +24,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.Obje
     [ConfigurationElementType(typeof(CustomMatchingRuleData))]
     public class AlwaysMatchingRule : IMatchingRule
     {
+        public readonly NameValueCollection configuration;
+
         public AlwaysMatchingRule()
         {
         }
 
         public AlwaysMatchingRule(NameValueCollection configuration)
         {
+            this.configuration = configuration;
         }
 
         public bool Matches(MethodBase member)

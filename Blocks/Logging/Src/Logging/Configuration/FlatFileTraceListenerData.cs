@@ -10,16 +10,11 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
-using System.Linq.Expressions;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -140,7 +135,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets and sets the header.
         /// </summary>
-        [ConfigurationProperty(headerProperty, IsRequired = false, DefaultValue="----------------------------------------")]
+        [ConfigurationProperty(headerProperty, IsRequired = false, DefaultValue = "----------------------------------------")]
         [ResourceDescription(typeof(DesignResources), "FlatFileTraceListenerDataHeaderDescription")]
         [ResourceDisplayName(typeof(DesignResources), "FlatFileTraceListenerDataHeaderDisplayName")]
         public string Header
@@ -167,7 +162,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationProperty(formatterNameProperty, IsRequired = false)]
         [Reference(typeof(NameTypeConfigurationElementCollection<FormatterData, CustomFormatterData>), typeof(FormatterData))]
         [ResourceDescription(typeof(DesignResources), "FlatFileTraceListenerDataFormatterDescription")]
-        [ResourceDisplayName(typeof(DesignResources), "FlatFileTraceListenerDataFormatterDisplayName")] 
+        [ResourceDisplayName(typeof(DesignResources), "FlatFileTraceListenerDataFormatterDisplayName")]
         public string Formatter
         {
             get { return (string)base[formatterNameProperty]; }
@@ -175,18 +170,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         }
 
         /// <summary>
-        /// Returns a lambda expression that represents the creation of the trace listener described by this
-        /// configuration object.
+        /// Builds the <see cref="TraceListener" /> object represented by this configuration object.
         /// </summary>
-        /// <returns>A lambda expression to create a trace listener.</returns>
-        protected override Expression<Func<TraceListener>> GetCreationExpression()
+        /// <param name="settings">The logging configuration settings.</param>
+        /// <returns>
+        /// A <see cref="FlatFileTraceListener"/>.
+        /// </returns>
+        protected override TraceListener CoreBuildTraceListener(LoggingSettings settings)
         {
-            return () =>
-                new FlatFileTraceListener(
+            var formatter = this.BuildFormatterSafe(settings, this.Formatter);
+
+            return new FlatFileTraceListener(
                     this.FileName,
                     this.Header,
                     this.Footer,
-                    Container.ResolvedIfNotNull<ILogFormatter>(this.Formatter));
+                    formatter);
         }
     }
 }

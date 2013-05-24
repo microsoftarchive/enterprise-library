@@ -18,7 +18,6 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
@@ -28,6 +27,7 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services.PlatformProfile;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.Win32;
@@ -42,17 +42,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
         private readonly IUnityContainer builder;
         private readonly ElementLookup lookup;
         private readonly MenuCommandService menuCommandService;
+        private readonly Profile profile;
         private readonly ConfigurationSourceModel sourceModel;
         private readonly IUIServiceWpf uiService;
         private string configurationFileName;
-      
+
 
         private ObservableCollection<EnvironmentSourceViewModel> environments =
             new ObservableCollection<EnvironmentSourceViewModel>();
 
         private bool isDirty;
         private ElementViewModel selectedElement;
-        
+
 
         /// <summary>
         /// Initializes a new instance of <see cref="ApplicationViewModel"/>.
@@ -63,17 +64,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
         /// <param name="builder">The <see cref="IUnityContainer"/> instance that should be used to create view model instances with.</param>
         /// <param name="menuCommandService">The <see cref="MenuCommandService"/> that should be used to look up top-level <see cref="CommandModel"/> instances.</param>
         /// <param name="validationModel">The <see cref="ValidationModel"/> that should be used to add validation errors and warnings to.</param>
+        /// <param name="profile">The <see cref="Profile"/> that should be used to filter UI elements based on the platform.</param>
         public ApplicationViewModel(IUIServiceWpf uiService, ConfigurationSourceModel sourceModel, ElementLookup lookup,
                                     IUnityContainer builder, MenuCommandService menuCommandService,
-                                    ValidationModel validationModel)
+                                    ValidationModel validationModel, Profile profile)
         {
             ValidationModel = validationModel;
             this.uiService = uiService;
             this.sourceModel = sourceModel;
-            
+
             this.lookup = lookup;
             this.builder = builder;
             this.menuCommandService = menuCommandService;
+            this.profile = profile;
 
             NewConfigurationCommand = new DelegateCommand(x => New());
             SaveConfigurationCommand = new DelegateCommand(x => Save());
@@ -81,8 +84,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
             OpenConfigurationCommand = new DelegateCommand(x => OpenConfigurationSource());
             ExitCommand = new DelegateCommand(x => Close());
 
-            OpenEnvironmentCommand = new OpenEnvironmentConfigurationDeltaCommand(uiService, this);
-            NewEnvironmentCommand = new DelegateCommand(x => NewEnvironment());
+            var environmentCommandsEnabled = this.profile == null ? true : profile.EnvironmentCommandsEnabled;
+            OpenEnvironmentCommand = new OpenEnvironmentConfigurationDeltaCommand(uiService, this, environmentCommandsEnabled);
+            NewEnvironmentCommand = new DelegateCommand(x => NewEnvironment(), _ => environmentCommandsEnabled);
         }
 
 
@@ -96,7 +100,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
         {
             get
             {
-                return string.Format(CultureInfo.CurrentCulture, Resources.ApplicationTitleFormat,
+                var applicationTitleFormat = this.profile != null && !string.IsNullOrEmpty(this.profile.ApplicationTitleFormat)
+                                                 ? this.profile.ApplicationTitleFormat
+                                                 : Resources.ApplicationTitleFormat;
+
+                return string.Format(CultureInfo.CurrentCulture, applicationTitleFormat,
                                      string.IsNullOrEmpty(ConfigurationFilePath)
                                          ? Resources.ApplicationNewConfiguration
                                          : ConfigurationFilePath,
@@ -175,7 +183,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
             var environmentSection =
                 (EnvironmentSourceViewModel)
                 SectionViewModel.CreateSection(builder, EnvironmentalOverridesSection.EnvironmentallyOverriddenProperties, environment);
-            
+
             environmentSection.EnvironmentDeltaFile = environmentDeltaFile;
             environmentSection.LastEnvironmentDeltaSavedFilePath = environmentDeltaFile;
 
@@ -207,7 +215,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
         {
             get { return environments; }
         }
-
 
         #endregion
 
@@ -242,7 +249,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
 
         private void ClearEnvironments()
         {
-            foreach(var environment in environments)
+            foreach (var environment in environments)
             {
                 environment.Dispose();
             }
@@ -278,7 +285,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
                 using (var textWriter = File.CreateText(configurationFile))
                 {
                     textWriter.WriteLine("<configuration />");
-                    textWriter.Close();
                 }
             }
             else
@@ -291,7 +297,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
                         source.GetSection("applicationSettings");
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     ConfigurationLogWriter.LogException(ex);
                     var warningResults = uiService.ShowMessageWpf(
@@ -418,7 +424,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
         {
             IsDirty = true;
         }
-        
+
         /// <summary>
         /// Loads a new <see cref="ConfigurationSourceModel"/> from <paramref name="configurationFilePath"/>.
         /// </summary>

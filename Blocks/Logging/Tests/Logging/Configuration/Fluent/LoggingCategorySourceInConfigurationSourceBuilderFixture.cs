@@ -10,10 +10,18 @@
 //===============================================================================
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using System.Diagnostics;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
+using System.Messaging;
+using System.Collections.Specialized;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
 {
@@ -98,4 +106,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             Assert.AreEqual("shared listener", GetTraceSourceData().TraceListeners.First().Name);
         }
     }
+
 }

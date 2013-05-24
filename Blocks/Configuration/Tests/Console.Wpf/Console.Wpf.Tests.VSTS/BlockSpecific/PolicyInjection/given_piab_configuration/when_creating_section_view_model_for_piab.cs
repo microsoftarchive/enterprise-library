@@ -13,19 +13,14 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.PolicyInjection;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using System.ComponentModel.Design;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Console.Wpf.Tests.VSTS.TestSupport;
-using Console.Wpf.Tests.VSTS.DevTests.Contexts;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 
 namespace Console.Wpf.Tests.VSTS.BlockSpecific.PolicyInjection.given_piab_configuration
 {
@@ -179,7 +174,7 @@ namespace Console.Wpf.Tests.VSTS.BlockSpecific.PolicyInjection.given_piab_config
 
         /// <summary>Asserts all properties have applied custom view model.</summary>
         private void AssertProperty<TConfigurationElement>(Func<Property, bool> propertyFilter)
-            where TConfigurationElement: ConfigurationElement
+            where TConfigurationElement : ConfigurationElement
         {
             var matchDataEntries = piabViewModel.DescendentConfigurationsOfType<TConfigurationElement>();
 
@@ -189,7 +184,7 @@ namespace Console.Wpf.Tests.VSTS.BlockSpecific.PolicyInjection.given_piab_config
 
             Assert.IsTrue(properties.Any(), "Could not find any properties to match filter");
 
-            Assert.IsTrue(properties.All(p => typeof(CollectionEditorContainedElementProperty).IsAssignableFrom(p.GetType()))); 
+            Assert.IsTrue(properties.All(p => typeof(CollectionEditorContainedElementProperty).IsAssignableFrom(p.GetType())));
         }
     }
 }

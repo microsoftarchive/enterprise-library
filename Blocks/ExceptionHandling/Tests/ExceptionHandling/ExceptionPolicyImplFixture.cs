@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -23,14 +24,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         {
             get
             {
-                ExceptionPolicyData data = new ExceptionPolicyData { Name = "Policy" };
-                data.ExceptionTypes.Add(
-                    new ExceptionTypeData
-                    {
-                        Name = "Exception",
-                        Type = typeof(Exception),
-                        PostHandlingAction = PostHandlingAction.ThrowNewException
-                    });
+                ExceptionPolicyData data = new ExceptionPolicyData("Policy");
+                data.ExceptionTypes.Add(new ExceptionTypeData("Exception", typeof(Exception), PostHandlingAction.ThrowNewException));
                 return data;
             }
         }
@@ -41,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         {
             ExceptionPolicyData policyData = PolicyData;
             Dictionary<Type, ExceptionPolicyEntry> entries = GetEntries(policyData);
-            ExceptionPolicyImpl policyIml = new ExceptionPolicyImpl(policyData.Name, entries);
+            ExceptionPolicyDefinition policyIml = new ExceptionPolicyDefinition(policyData.Name, entries);
             policyIml.HandleException(new ArgumentException());
         }
 
@@ -50,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         {
             ExceptionPolicyData policyData = PolicyData;
             Dictionary<Type, ExceptionPolicyEntry> entries = GetEntries(policyData);
-            ExceptionPolicyImpl policyIml = new ExceptionPolicyImpl(policyData.Name, entries);
+            ExceptionPolicyDefinition policyIml = new ExceptionPolicyDefinition(policyData.Name, entries);
             bool handled = policyIml.HandleException(new InvalidCastException());
             Assert.IsTrue(handled);
         }
@@ -61,7 +56,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         {
             ExceptionPolicyData policyData = PolicyData;
             Dictionary<Type, ExceptionPolicyEntry> entries = GetEntries(policyData);
-            ExceptionPolicyImpl policyIml = new ExceptionPolicyImpl(policyData.Name, entries);
+            ExceptionPolicyDefinition policyIml = new ExceptionPolicyDefinition(policyData.Name, entries);
             policyIml.HandleException(null);
         }
 
@@ -70,7 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         public void ConstructWithNullNameThrows()
         {
             ExceptionPolicyData policyData = PolicyData;
-            new ExceptionPolicyImpl(null, GetEntries(policyData));
+            new ExceptionPolicyDefinition(null, GetEntries(policyData));
         }
 
         [TestMethod]
@@ -78,7 +73,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         public void ConstructWithNullEntriesThrows()
         {
             ExceptionPolicyData policyData = PolicyData;
-            new ExceptionPolicyImpl(policyData.Name, (Dictionary<Type, ExceptionPolicyEntry>)null);
+            new ExceptionPolicyDefinition(policyData.Name, (Dictionary<Type, ExceptionPolicyEntry>)null);
         }
 
         static Dictionary<Type, ExceptionPolicyEntry> GetEntries(ExceptionPolicyData policyData)
@@ -86,10 +81,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             Dictionary<Type, ExceptionPolicyEntry> entries = new Dictionary<Type, ExceptionPolicyEntry>();
             List<IExceptionHandler> handlers = new List<IExceptionHandler>();
             handlers.Add(new MockThrowingExceptionHandler());
-            handlers.Add(new MockExceptionHandler());
+            handlers.Add(new MockExceptionHandler(new NameValueCollection()));
             foreach (ExceptionTypeData typeData in policyData.ExceptionTypes)
             {
-                entries.Add(typeof(ArgumentException), new ExceptionPolicyEntry(typeof(ArgumentException),
+                entries.Add(typeof(ArgumentException), new ExceptionPolicyEntry(typeof(ArgumentException), 
                                                                                 typeData.PostHandlingAction,
                                                                                 handlers));
             }
@@ -101,22 +96,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
     [TestClass]
     public class GivenTwoPolicyEntries
     {
-        private MockExceptionHandler handler1 = new MockExceptionHandler();
-        private MockExceptionHandler handler2 = new MockExceptionHandler();
+        private MockExceptionHandler handler1 = new MockExceptionHandler(new NameValueCollection());
+        private MockExceptionHandler handler2 = new MockExceptionHandler(new NameValueCollection());
         ExceptionPolicyEntry entry1;
         ExceptionPolicyEntry entry2;
         public GivenTwoPolicyEntries()
         {
-            entry1 = new ExceptionPolicyEntry(typeof(ArgumentNullException), PostHandlingAction.None, new List<IExceptionHandler>() { handler1 });
-            entry2 = new ExceptionPolicyEntry(typeof(Exception), PostHandlingAction.None, new List<IExceptionHandler>() { handler2 });
+            entry1 = new ExceptionPolicyEntry(typeof(ArgumentNullException), PostHandlingAction.None, new List<IExceptionHandler>(){handler1});
+            entry2 = new ExceptionPolicyEntry(typeof(Exception), PostHandlingAction.None, new List<IExceptionHandler>(){handler2});
         }
 
         [TestMethod]
         public void WhenRegisteredAgainstExceptionType_OnlyCorrectHandlerIsCalled()
         {
 
-            ExceptionPolicyImpl policyImpl = new ExceptionPolicyImpl("APolicyName",
-                                                                     new List<ExceptionPolicyEntry>() { entry1, entry2 });
+            ExceptionPolicyDefinition policyImpl = new ExceptionPolicyDefinition("APolicyName",
+                                                                     new List<ExceptionPolicyEntry>() {entry1, entry2});
 
             policyImpl.HandleException(new ArgumentNullException("TestException"));
             Assert.AreEqual(1, handler1.instanceHandledExceptionCount);

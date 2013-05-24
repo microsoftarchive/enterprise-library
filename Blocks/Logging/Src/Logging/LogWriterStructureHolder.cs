@@ -20,7 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// This type supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
     /// Holds the collaborators of a <see cref="LogWriter"/> to allow for an easy replacement should configuration change.
     /// </summary>
-    public class LogWriterStructureHolder : IDisposable
+    public class LogWriterStructureHolder
     {
         private IEnumerable<ILogFilter> filters;
         private IDictionary<string, LogSource> traceSources;
@@ -182,55 +182,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         public bool RevertImpersonation
         {
             get { return revertImpersonation; }
-        }
-
-        /// <summary>
-        /// This method supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-        /// Releases the resources used by the <see cref="LogWriterStructureHolder"/>.
-        /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        /// <param name="disposing"><see langword="true"/> if the method is being called from the <see cref="Dispose()"/> method. <see langword="false"/> if it is being called from within the object finalizer.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                foreach (LogSource source in traceSources.Values)
-                {
-                    source.Dispose();
-                }
-                DisposeSpecialLogSource(errorsTraceSource);
-                DisposeSpecialLogSource(notProcessedTraceSource);
-                DisposeSpecialLogSource(allEventsTraceSource);
-            }
-        }
-
-        /// <summary>
-        /// Releases resources for the <see cref="LogWriterStructureHolder"/> instance before garbage collection.
-        /// </summary>
-        ~LogWriterStructureHolder()
-        {
-            this.Dispose(false);
-        }
-
-        internal void SetTracingEnabled(bool enabled)
-        {
-            this.tracingEnabled = enabled;
-        }
-
-        private void DisposeSpecialLogSource(LogSource specialLogSource)
-        {
-            if (specialLogSource != null)
-            {
-                specialLogSource.Dispose();
-            }
         }
     }
 }

@@ -10,15 +10,12 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
-{            
-	/// <summary>
-	/// Defines those classes and structs that have some sort of resources that need to be installed.
-	/// </summary>
+{
+    /// <summary>
+    /// Defines those classes and structs that have some sort of resources that need to be installed.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false)]
     public sealed class HasInstallableResourcesAttribute : Attribute
     {

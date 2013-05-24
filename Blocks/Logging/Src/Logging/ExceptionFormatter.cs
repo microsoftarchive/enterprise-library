@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Reflection;
@@ -32,33 +31,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         public static string Header = Properties.Resources.ExceptionFormatterHeader;
 
         private const string LineSeparator = "======================================";
-        private IDictionary<string, string> additionalInfo;
+        private NameValueCollection additionalInfo;
         private string applicationName;
 
         /// <summary>
         /// <para>Initialize a new instance of the <see cref="ExceptionFormatter"/> class.</para>
         /// </summary>
         public ExceptionFormatter()
-            : this(new Dictionary<string, string>(), string.Empty)
+            : this(new NameValueCollection(), string.Empty)
         {
         }
 
-        /// <summary>
-        /// <para>Initialize a new instance of the <see cref="ExceptionFormatter"/> class with the additional information and the application name.</para>
-        /// </summary>
-        /// <param name="additionalInfo">
-        /// <para>The additional information to log.</para>
-        /// </param>
-        /// <param name="applicationName">
-        /// <para>The application name.</para>
-        /// </param>
-        public ExceptionFormatter(IDictionary<string, string> additionalInfo, string applicationName)
-        {
-            this.additionalInfo = additionalInfo;
-            this.applicationName = applicationName;
-        }
-
-#if !SILVERLIGHT
         /// <summary>
         /// <para>Initialize a new instance of the <see cref="ExceptionFormatter"/> class with the additional information and the application name.</para>
         /// </summary>
@@ -69,9 +52,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <para>The application name.</para>
         /// </param>
         public ExceptionFormatter(NameValueCollection additionalInfo, string applicationName)
-            : this(additionalInfo.ToDictionary(), applicationName)
-        { }
-#endif
+        {
+            this.additionalInfo = additionalInfo;
+            this.applicationName = applicationName;
+        }
 
         /// <summary>
         /// <para>Get the formatted message to be logged.</para>
@@ -84,18 +68,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             CollectAdditionalInfo();
 
             // Record the contents of the AdditionalInfo collection.
-            string header;
-            this.additionalInfo.TryGetValue(Header, out header);
-            eventInformation.AppendFormat("{0}\n\n", header);
+            eventInformation.AppendFormat("{0}\n\n", this.additionalInfo.Get(Header));
 
             eventInformation.AppendFormat("\n{0} {1}:\n{2}",
                                           Resources.ExceptionSummary, this.applicationName, LineSeparator);
 
-            foreach (string info in this.additionalInfo.Keys)
+            foreach (string info in this.additionalInfo)
             {
                 if (info != Header)
                 {
-                    eventInformation.AppendFormat("\n--> {0}", this.additionalInfo[info]);
+                    eventInformation.AppendFormat("\n--> {0}", this.additionalInfo.Get(info));
                 }
             }
 
@@ -164,7 +146,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
 
         private static void ProcessAdditionalInfo(PropertyInfo propinfo, object propValue, StringBuilder stringBuilder)
         {
-#if !SILVERLIGHT
             NameValueCollection currAdditionalInfo;
 
             // Loop through the collection of AdditionalInformation if the exception type is a BaseApplicationException.
@@ -178,21 +159,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                     // Check if the collection contains values.
                     if (currAdditionalInfo.Count > 0)
                     {
-                        stringBuilder.AppendFormat("\nAdditionalInformation:");
+                        stringBuilder.AppendFormat(CultureInfo.CurrentCulture, "\nAdditionalInformation:");
 
                         // Loop through the collection adding the information to the string builder.
                         for (int i = 0; i < currAdditionalInfo.Count; i++)
                         {
-                            stringBuilder.AppendFormat("\n{0}: {1}", currAdditionalInfo.GetKey(i), currAdditionalInfo[i]);
+                            stringBuilder.AppendFormat(CultureInfo.CurrentCulture, "\n{0}: {1}", currAdditionalInfo.GetKey(i), currAdditionalInfo[i]);
                         }
                     }
                 }
             }
             else
-#endif
             {
                 // Otherwise just write the ToString() value of the property.
-                stringBuilder.AppendFormat("\n{0}: {1}", propinfo.Name, propValue);
+                stringBuilder.AppendFormat(CultureInfo.CurrentCulture, "\n{0}: {1}", propinfo.Name, propValue);
             }
         }
 
@@ -201,23 +181,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// </devdoc>
         private void CollectAdditionalInfo()
         {
-            if (this.additionalInfo.ContainsKey("MachineName:"))
+            if (this.additionalInfo["MachineName:"] != null)
             {
                 return;
             }
 
-#if !SILVERLIGHT
             this.additionalInfo.Add("MachineName:", "MachineName: " + GetMachineName());
-#endif
             this.additionalInfo.Add("TimeStamp:", "TimeStamp: " + DateTime.UtcNow.ToString(CultureInfo.CurrentCulture));
             this.additionalInfo.Add("FullName:", "FullName: " + Assembly.GetExecutingAssembly().FullName);
             this.additionalInfo.Add("AppDomainName:", "AppDomainName: " + AppDomain.CurrentDomain.FriendlyName);
-#if !SILVERLIGHT
             this.additionalInfo.Add("WindowsIdentity:", "WindowsIdentity: " + GetWindowsIdentity());
-#endif
         }
 
-#if !SILVERLIGHT
         private static string GetWindowsIdentity()
         {
             try
@@ -241,6 +216,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                 return "Permission Denied";
             }
         }
-#endif
     }
 }

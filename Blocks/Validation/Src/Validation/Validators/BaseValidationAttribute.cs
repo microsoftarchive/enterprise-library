@@ -23,7 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
     /// <remarks>
     /// Holds shared information about validation.
     /// </remarks>
-    public abstract partial class BaseValidationAttribute : ValidationAttribute
+    public abstract class BaseValidationAttribute : ValidationAttribute
     {
         private string ruleset;
         private string messageTemplate;
@@ -165,6 +165,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         {
             get { return this.tag; }
             set { this.tag = value; }
+        }
+
+        /// <summary>
+        /// Determines whether the specified value of the object is valid.
+        /// </summary>
+        /// <param name="value">The value of the specified validation object on which the 
+        /// <see cref="System.ComponentModel.DataAnnotations.ValidationAttribute "/> is declared.</param>
+        /// <returns><see langword="true"/> if the specified value is valid; otherwise, <see langword="false"/>.</returns>
+        /// <exception cref="NotSupportedException">when invoked on an attribute with a non-null ruleset.</exception>
+        public override bool IsValid(object value)
+        {
+            if (!string.IsNullOrEmpty(this.Ruleset))
+            {
+                return true;
+            }
+
+            throw new NotSupportedException(
+                string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.ExceptionValidationAttributeNotSupported,
+                    this.GetType().Name));
         }
     }
 }

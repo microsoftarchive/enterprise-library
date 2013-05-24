@@ -10,18 +10,12 @@
     <RootNamespace>Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests</RootNamespace>
     <AssemblyName>Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests</AssemblyName>
     <WarningLevel>4</WarningLevel>
-    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <FileUpgradeFlags>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids><FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>4.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -34,8 +28,12 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+    <RestorePackages>true</RestorePackages>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,7 +43,7 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <NoWarn>
     </NoWarn>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>false</DebugSymbols>
@@ -54,22 +52,13 @@
     <DefineConstants>TRACE</DefineConstants>
     <NoWarn>
     </NoWarn>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=0.0.31208.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.Interception.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
@@ -79,31 +68,20 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
     <Reference Include="System.XML" />
-    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="APTCAFixture.2008.cs" />
-    <Compile Include="Configuration\CustomHandlerLoggingConfigurationBuilderExtensionsFixture.cs" />
-    <Compile Include="Properties\AssemblyInfo.2010.cs" />
     <Compile Include="Configuration\ConfigurationSerializationFixture.cs" />
     <Compile Include="Configuration\ConfigurationSourceBuilderExtensionsFixture.cs" />
-    <Compile Include="Configuration\ExceptionCallHandlerDataFixture.cs" />
-    <Compile Include="Configuration\ExceptionHandlingReconfigurableTypeRegistrationFixture.cs" />
-    <Compile Include="Configuration\ExceptionHandlingTypeRegistrationFixture.cs" />
-    <Compile Include="Configuration\Unity\ExceptionHandlingBlockExtensionFixture.cs" />
-    <None Include="ExceptionFormatterFixture.2008.cs" />
-    <Compile Include="DefaultExceptionHandlingInstrumentationProviderFixture.cs" />
+    <Compile Include="Configuration\ExceptionHandlingObjectCreationFixture.cs" />
+    <Compile Include="ExceptionFormatterFixture.2008.cs" />
     <Compile Include="ExceptionManagerFixture.cs" />
-    <Compile Include="PolicyInjection\ExceptionCallHandlerAttributeFixture.cs" />
+    <Compile Include="ExceptionPolicyFactoryFixture.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ExceptionHandlerInstrumentationProviderFixture.cs" />
     <Compile Include="ExceptionHandlingSettingsFixture.cs" />
-    <Compile Include="ExceptionPolicyEntryErrorLoggingFixture.cs" />
-    <Compile Include="ExceptionPolicyEntryInstrumentationFixture.cs" />
     <Compile Include="ExceptionPolicyImplFixture.cs" />
     <Compile Include="ReadWriteConfigurationChangingFixture.cs" />
     <Compile Include="ReplaceHandlerFixture.cs" />
@@ -141,7 +119,6 @@
     </None>
     <None Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.dll.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
     </None>
     <None Include="test.exe.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -176,11 +153,14 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
       <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
+      <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <Import Project="..\..\..\.nuget\nuget.targets" />
+  <!-- Cannot remove the following because NuGet will re-add it, and will break relative paths -->
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" Condition="False" />
 </Project>

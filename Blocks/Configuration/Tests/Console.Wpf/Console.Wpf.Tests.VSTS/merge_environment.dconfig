@@ -1,23 +1,22 @@
-<configuration><configSections>
-        <section name="environmentallyOverriddenProperties" type="Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration.EnvironmentalOverridesSection, Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null" />
-    </configSections>
+<configuration>
+  <configSections>
+    <section name="environmentallyOverriddenProperties" type="Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration.EnvironmentalOverridesSection, Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides" />
+  </configSections>
   <environmentallyOverriddenProperties environmentName="Environment">
     <designtimeLogicalPropertyGroups>
-            <override logicalParentElementPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']">
-                <overriddenProperties>
-                  <property containingConfigurationSectionName="cachingConfiguration" containingSectionXPath="/configuration/cachingConfiguration" containingElementXPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']" attribute="backingStoreName" overridenValue="NullBackingStore" />
-                  <property containingConfigurationSectionName="cachingConfiguration" containingSectionXPath="/configuration/cachingConfiguration" containingElementXPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']" attribute="expirationPollFrequencyInSeconds" overridenValue="1" />
-                  <property containingConfigurationSectionName="cachingConfiguration" containingSectionXPath="/configuration/cachingConfiguration" containingElementXPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']" attribute="maximumElementsInCacheBeforeScavenging" overridenValue="1" />
-                  <property containingConfigurationSectionName="cachingConfiguration" containingSectionXPath="/configuration/cachingConfiguration" containingElementXPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']" attribute="numberToRemoveWhenScavenging" overridenValue="1" />
-                </overriddenProperties>
-            </override>
-          <override logicalParentElementPath="/configuration/instrumentationConfiguration">
-            <overriddenProperties>
-              <property containingConfigurationSectionName="instrumentationConfiguration" containingSectionXPath="/configuration/instrumentationConfiguration" containingElementXPath="/configuration/instrumentationConfiguration" attribute="applicationInstanceName" overridenValue="Overriden Application" />
-              <property containingConfigurationSectionName="instrumentationConfiguration" containingSectionXPath="/configuration/instrumentationConfiguration" containingElementXPath="/configuration/instrumentationConfiguration" attribute="eventLoggingEnabled" overridenValue="True" />
-              <property containingConfigurationSectionName="instrumentationConfiguration" containingSectionXPath="/configuration/instrumentationConfiguration" containingElementXPath="/configuration/instrumentationConfiguration" attribute="performanceCountersEnabled" overridenValue="True" />
-            </overriddenProperties>
-          </override>
-        </designtimeLogicalPropertyGroups>
-    </environmentallyOverriddenProperties>
+      <override logicalParentElementPath="/configuration/loggingConfiguration/listeners/add[@name='Event Log Listener']">
+        <overriddenProperties>
+          <property containingConfigurationSectionName="loggingConfiguration" containingSectionXPath="/configuration/loggingConfiguration" containingElementXPath="/configuration/loggingConfiguration/listeners/add[@name='Event Log Listener']" attribute="traceOutputOptions" overridenValue="ProcessId" />
+          <property containingConfigurationSectionName="loggingConfiguration" containingSectionXPath="/configuration/loggingConfiguration" containingElementXPath="/configuration/loggingConfiguration/listeners/add[@name='Event Log Listener']" attribute="source" overridenValue="overridden source" />
+          <property containingConfigurationSectionName="loggingConfiguration" containingSectionXPath="/configuration/loggingConfiguration" containingElementXPath="/configuration/loggingConfiguration/listeners/add[@name='Event Log Listener']" attribute="machineName" overridenValue="overridden machine" />
+        </overriddenProperties>
+      </override>
+      <override logicalParentElementPath="/configuration/loggingConfiguration">
+        <overriddenProperties>
+          <property containingConfigurationSectionName="loggingConfiguration" containingSectionXPath="/configuration/loggingConfiguration" containingElementXPath="/configuration/loggingConfiguration" attribute="revertImpersonation" overridenValue="False" />
+          <property containingConfigurationSectionName="loggingConfiguration" containingSectionXPath="/configuration/loggingConfiguration" containingElementXPath="/configuration/loggingConfiguration" attribute="logWarningsWhenNoCategoriesMatch" overridenValue="False" />
+        </overriddenProperties>
+      </override>
+    </designtimeLogicalPropertyGroups>
+  </environmentallyOverriddenProperties>
 </configuration>

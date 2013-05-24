@@ -27,9 +27,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database
     [ConfigurationElementType(typeof(FormattedDatabaseTraceListenerData))]
     public class FormattedDatabaseTraceListener : FormattedTraceListenerBase
     {
-        string writeLogStoredProcName = String.Empty;
-        string addCategoryStoredProcName = String.Empty;
-        Data.Database database;
+        private readonly string writeLogStoredProcName = string.Empty;
+        private readonly string addCategoryStoredProcName = string.Empty;
+        private readonly Data.Database database;
 
         /// <summary>
         /// Initializes a new instance of <see cref="FormattedDatabaseTraceListener"/>.
@@ -100,7 +100,40 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database
         }
 
         /// <summary>
-        /// Declare the supported attributes for <see cref="FormattedDatabaseTraceListener"/>
+        /// Gets the name of the write log stored procedure.
+        /// </summary>
+        /// <value>
+        /// The name of the write log stored procedure.
+        /// </value>
+        public string WriteLogStoredProcName
+        {
+            get { return this.writeLogStoredProcName; }
+        }
+
+        /// <summary>
+        /// Gets the name of the add category stored procedure.
+        /// </summary>
+        /// <value>
+        /// The name of the add category stored procedure.
+        /// </value>
+        public string AddCategoryStoredProcName
+        {
+            get { return this.addCategoryStoredProcName; }
+        }
+
+        /// <summary>
+        /// Gets the database.
+        /// </summary>
+        /// <value>
+        /// The database.
+        /// </value>
+        public Data.Database Database
+        {
+            get { return this.database; }
+        }
+
+        /// <summary>
+        /// Declares the supported attributes for <see cref="FormattedDatabaseTraceListener"/>.
         /// </summary>
         protected override string[] GetSupportedAttributes()
         {
@@ -140,27 +173,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database
             using (DbConnection connection = database.CreateConnection())
             {
                 connection.Open();
-                try
-                {
-                    using (DbTransaction transaction = connection.BeginTransaction())
-                    {
-                        try
-                        {
-                            int logID = Convert.ToInt32(ExecuteWriteLogStoredProcedure(logEntry, database, transaction));
-                            ExecuteAddCategoryStoredProcedure(logEntry, logID, database, transaction);
-                            transaction.Commit();
-                        }
-                        catch
-                        {
-                            transaction.Rollback();
-                            throw;
-                        }
 
-                    }
-                }
-                finally
+                using (DbTransaction transaction = connection.BeginTransaction())
                 {
-                    connection.Close();
+                    try
+                    {
+                        int logID = Convert.ToInt32(ExecuteWriteLogStoredProcedure(logEntry, database, transaction));
+                        ExecuteAddCategoryStoredProcedure(logEntry, logID, database, transaction);
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+
                 }
             }
         }

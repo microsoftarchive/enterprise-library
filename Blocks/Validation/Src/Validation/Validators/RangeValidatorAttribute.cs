@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using System.ComponentModel;
 using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 
@@ -181,14 +182,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                 }
                 catch (FormatException e)
                 {
-                    throw new ArgumentException(Resources.ExceptionInvalidDate, e);
+                    throw new ArgumentException(Resources.ExceptionInvalidDate, boundParameter, e);
                 }
             }
             else
             {
                 try
                 {
-                    return (IComparable)Convert.ChangeType(bound, boundType, CultureInfo.InvariantCulture);
+                    return (IComparable)TypeDescriptor.GetConverter(boundType).ConvertFrom(null, CultureInfo.InvariantCulture, bound);
                 }
                 catch (Exception e)
                 {
@@ -201,7 +202,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// Creates the <see cref="RangeValidator"/> described by the attribute object.
         /// </summary>
         /// <param name="targetType">The type of object that will be validated by the validator.</param>
-        /// <remarks>This operation must be overridden by subclasses.</remarks>
+        /// <remarks>This operation must be overriden by subclasses.</remarks>
         /// <returns>The created <see cref="RangeValidator"/>.</returns>
         protected override Validator DoCreateValidator(Type targetType)
         {
@@ -246,7 +247,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             get { return boundType; }
         }
 
-#if !SILVERLIGHT
         private readonly Guid typeId = Guid.NewGuid();
 
         /// <summary>
@@ -259,6 +259,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                 return this.typeId;
             }
         }
-#endif
     }
 }

@@ -48,7 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         protected ReflectionRowMapper<T> defaultMapper;
         protected IEnumerable<PropertyMapping> propertyMappings;
         protected string CommandText = "SELECT 'ALKI' as CustomerID, 'Violet street 23' as ShipAddress, 12.6 as freight, null SqlNull";
-        protected string ConnectionString = @"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true";
+        protected string ConnectionString = @"server=(localdb)\v11.0;database=Northwind;Integrated Security=true";
         protected IDataReader reader;
 
         protected override void Arrange()

@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddCachingBlockCommandDefaultCacheManagerName" xml:space="preserve">
     <value>Cache Manager</value>
@@ -547,5 +547,11 @@ Message: {1}</value>
     <value>Error loading assembly {0}
     
 This error is commonly caused by either a mismatch in the version of the .NET Framework between the configuration tool and the assembly being loaded or when trying to load a 32-bit only assembly in a 64-bit process. If this is your case, please try running the version of the Enterprise Library Configuration tool that matches the assembly you wish to load.</value>
+  </data>
+  <data name="ConvertInvalidPrimitive" xml:space="preserve">
+    <value>{0} is not a valid value for {1}</value>
+  </data>
+  <data name="MaxBackoffMustBeGreaterThanMinBackoff" xml:space="preserve">
+    <value>The Max Backoff must be greater than the Min Backoff.</value>
   </data>
 </root>

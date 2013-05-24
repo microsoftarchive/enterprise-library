@@ -9,15 +9,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Console.Wpf.Tests.VSTS.TestSupport;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_host_adapter
 {
@@ -31,12 +28,12 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_host_adapter
         {
             base.Arrange();
 
-            elementViewModel = CachingViewModel.GetDescendentsOfType<CacheManagerData>().Single();
+            elementViewModel = LoggingViewModel.GetDescendentsOfType<TraceListenerData>().Single();
             HostAdapter.TasksChanged += (sender, args) => validationError = args.Tasks.First();
 
             try
             {
-                elementViewModel.Property("ExpirationPollFrequencyInSeconds").BindableProperty.BindableValue = "abc";
+                elementViewModel.Property("Filter").BindableProperty.BindableValue = "abc";
             }
             catch { }
         }

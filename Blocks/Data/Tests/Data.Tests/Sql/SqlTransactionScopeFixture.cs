@@ -240,7 +240,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Sql
         [TestMethod]
         public void CanExecuteOperationAfterExecuteReaderThrowsExceptionWithAmbientTransaction_Bug2769()
         {
-            var database = new SqlDatabase(@"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true");
+            var database = new SqlDatabase(@"server=(localdb)\v11.0;database=Northwind;Integrated Security=true");
 
             using (var scope = new TransactionScope())
             {

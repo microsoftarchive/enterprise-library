@@ -168,7 +168,7 @@ namespace Data.SqlCe.Tests.VSTS
         [TestMethod]
         public void ShouldNotAddConnectionToPoolIfOpenFails()
         {
-            SqlCeDatabase db = new SqlCeDatabase("Data Source='junk.sdf'");
+            SqlCeDatabase db = new SqlCeDatabase("Data Source='invalid.sdf'");
             try
             {
                 DatabaseConnectionWrapper connection = SqlCeConnectionPool.CreateConnection(db);

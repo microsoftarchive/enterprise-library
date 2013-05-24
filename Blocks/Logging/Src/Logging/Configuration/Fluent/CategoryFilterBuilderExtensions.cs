@@ -10,11 +10,18 @@
 //===============================================================================
 
 using System;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
-using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using System.Diagnostics;
+using System.Messaging;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
+using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
+using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -82,7 +89,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 categoryFilter.CategoryFilters.Clear();
                 foreach (string category in categories)
                 {
-                    categoryFilter.CategoryFilters.Add(new CategoryFilterEntry { Name = category });
+                    categoryFilter.CategoryFilters.Add(new CategoryFilterEntry(category));
                 }
             }
         }

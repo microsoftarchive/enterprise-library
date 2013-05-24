@@ -13,10 +13,11 @@ using System;
 using System.Collections.Generic;
 using System.Configuration.Install;
 using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using System.Resources;
+using System.Security;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
-using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 {
@@ -25,6 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
     /// with HasInstallableResourceAttribute and EventLogDefinition attributes to EventLogInstallers.
     /// One installer is created for each unique performance counter category that is found.
     /// </summary>
+    [SecurityCritical]
     public class PerformanceCounterInstallerBuilder : AbstractInstallerBuilder
     {
         /// <summary>
@@ -32,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
         /// </summary>
         /// <param name="availableTypes">Array of types to inspect check for performance counter definitions needing installation</param>
         public PerformanceCounterInstallerBuilder(Type[] availableTypes)
-            : base(availableTypes, typeof(PerformanceCountersDefinitionAttribute)) {}
+            : base(availableTypes, typeof(PerformanceCountersDefinitionAttribute)) { }
 
         void CollectPerformanceCounters(Type instrumentedType,
                                         PerformanceCounterInstaller installer)
@@ -62,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
                             throw new InvalidOperationException(
                                 string.Format(
                                     CultureInfo.CurrentCulture,
-                                    Resources_Desktop.ExceptionPerformanceCounterRedefined,
+                                    Resources.ExceptionPerformanceCounterRedefined,
                                     counter.CounterName,
                                     installer.CategoryName,
                                     instrumentedType.FullName));
@@ -80,6 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
         /// <param name="instrumentedTypes">Collection of <see cref="Type"></see>s that represent types defining
         /// performance counter definitions to be installed.</param>
         /// <returns>Collection of installers containing performance counter definitions to be installed.</returns>
+        [SecurityCritical]
         protected override ICollection<Installer> CreateInstallers(ICollection<Type> instrumentedTypes)
         {
             List<Installer> installers = new List<Installer>();
@@ -168,7 +171,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
             {
                 try
                 {
-                    int lastDotResourcesString = resourceNames[i].LastIndexOf(".resources");
+                    int lastDotResourcesString = resourceNames[i].LastIndexOf(".resources", StringComparison.OrdinalIgnoreCase);
                     string resourceName = resourceNames[i].Remove(lastDotResourcesString);
                     ResourceManager manager = new ResourceManager(resourceName, originalAssembly);
                     translatedHelpString = manager.GetString(name);

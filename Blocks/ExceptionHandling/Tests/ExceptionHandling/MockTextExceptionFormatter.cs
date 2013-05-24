@@ -10,7 +10,7 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
 
@@ -19,8 +19,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
 
     public class MockTextExceptionFormatter : TextExceptionFormatter
     {
-        public Dictionary<string, object> properties = new Dictionary<string, object>();
-        public Dictionary<string, object> fields = new Dictionary<string, object>();
+        public NameValueCollection properties = new NameValueCollection();
+        public NameValueCollection fields = new NameValueCollection();
 
         public MockTextExceptionFormatter(TextWriter writer, Exception exception, Guid handlingInstanceId)
             : base(writer, exception, handlingInstanceId)

@@ -30,15 +30,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         [TestInitialize]
         public void Setup()
         {
+            Logger.SetLogWriter(new LogWriter(new List<ILogFilter>(), new List<LogSource>(), new LogSource("errors"), "default"), throwIfSet: false);
             distributorServiceTestFacade = new DistributorServiceTestFacade();
             distributorServiceTestFacade.Initialize();
             listener = new MsmqListener(distributorServiceTestFacade, 1000, CommonUtil.MessageQueuePath);
             //this.eventLogger = distributorServiceTestFacade.EventLogger;
-            mockQ = new MockMsmqLogDistributor(new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), new LogSource("errors"), "default"), CommonUtil.MessageQueuePath);
+            mockQ = new MockMsmqLogDistributor(CommonUtil.MessageQueuePath);
         }
 
         [TestCleanup]
-        public void Teardown() { }
+        public void Teardown() 
+        {
+            Logger.Reset();
+        }
 
         [TestMethod]
         public void StartListener()

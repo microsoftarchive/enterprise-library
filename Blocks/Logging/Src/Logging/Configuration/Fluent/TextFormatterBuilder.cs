@@ -10,10 +10,18 @@
 //===============================================================================
 
 using System;
-using System.ComponentModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using System.Diagnostics;
+using System.Messaging;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
+using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
+using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
 {
@@ -26,6 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
     public class TextFormatterBuilder : ITextFormatterBuilder, IFormatterBuilder, IFluentInterface
     {
         TextFormatterData formatterData = new TextFormatterData();
+
 
         internal TextFormatterBuilder(string name)
         {

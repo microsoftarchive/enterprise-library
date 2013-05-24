@@ -283,7 +283,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.TestSupport
 
                 DataSet ds = new DataSet();
                 DbCommand command = db.GetSqlStringCommand(queryString);
-                db.LoadDataSet(command, ds, "Junk");
+                db.LoadDataSet(command, ds, "SomeName");
 
                 Assert.AreEqual(5, ds.Tables[0].Rows.Count);
             }
@@ -296,7 +296,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.TestSupport
                 db.ExecuteNonQuery(CommandType.Text, insertString);
 
                 DataSet ds = new DataSet();
-                db.LoadDataSet(CommandType.Text, queryString, ds, new string[] { "Junk" });
+                db.LoadDataSet(CommandType.Text, queryString, ds, new string[] { "SomeName" });
 
                 Assert.AreEqual(5, ds.Tables[0].Rows.Count);
             }

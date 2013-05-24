@@ -54,10 +54,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             using (DbConnection connection = db.CreateConnection())
             {
                 connection.Open();
-                using (DbTransaction trans = connection.BeginTransaction())
+                using (DbTransaction transaction = connection.BeginTransaction())
                 {
-                    db.ExecuteNonQuery(trans, "Ten Most Expensive Products");
-                    trans.Commit();
+                    db.ExecuteNonQuery(transaction, "Ten Most Expensive Products");
+                    transaction.Commit();
                 }
             }
         }

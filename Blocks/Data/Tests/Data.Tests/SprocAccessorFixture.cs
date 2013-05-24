@@ -11,14 +11,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Data.Common;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 {
@@ -31,7 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 
         protected override void Arrange()
         {
-            ConnectionString = @"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true; Async=True";
+            ConnectionString = @"server=(localdb)\v11.0;database=Northwind;Integrated Security=true; Async=True";
             Database = new TestableSqlDatabase(ConnectionString, this);
         }
 
@@ -166,7 +165,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         {
             public void AssignParameters(DbCommand command, object[] parameterValues)
             {
-                command.Parameters.Add( new SqlParameter("@CategoryName", "Beverages"));
+                command.Parameters.Add(new SqlParameter("@CategoryName", "Beverages"));
             }
         }
 
@@ -221,7 +220,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             {
                 return new ProductSales
                 {
-                    ProductName =  "pname",
+                    ProductName = "pname",
                     TotalPurchase = 12
                 };
             }
@@ -300,7 +299,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void ThenCreateSprocAccessorWithNullMapperThrows()
         {
-            Database.CreateSprocAccessor<Product>("prodedure name", (IRowMapper<Product>) null);
+            Database.CreateSprocAccessor<Product>("prodedure name", (IRowMapper<Product>)null);
         }
 
         [TestMethod]
@@ -647,9 +646,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         public void Then_CallingParemeterizedSpocThrowsException()
         {
             var accessor = Database.CreateSprocAccessor<object>("SalesByCategory");
-           
+
             try
-            { 
+            {
                 var result = accessor.Execute("Chai");
                 Assert.Fail();
             }

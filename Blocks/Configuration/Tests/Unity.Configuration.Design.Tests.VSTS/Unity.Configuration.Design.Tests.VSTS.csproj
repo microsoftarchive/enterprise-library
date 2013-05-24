@@ -1,0 +1,163 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C7221A59-7CD8-4BA7-8117-82B3555DFB7A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Practices.Unity.Configuration.Design.Tests</RootNamespace>
+    <AssemblyName>Microsoft.Practices.Unity.Configuration.Design.Tests</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5, Version=5.0.414.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=2.1.505.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Moq, Version=3.1.416.3, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Desktop\ThirdParty\Moq v3\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="given_add_constructor_command\given_add_constructor_command.cs" />
+    <Compile Include="given_add_constructor_command\when_accessing_child_commands.cs" />
+    <Compile Include="given_add_method_command\given_add_method_command.cs" />
+    <Compile Include="given_add_method_command\when_acessing_child_commands.cs" />
+    <Compile Include="given_add_property_command\given_add_property_command.cs" />
+    <Compile Include="given_add_property_command\when_accessing_child_commands.cs" />
+    <Compile Include="given_add_templated_ctor_command\given_add_templated_ctor_command.cs" />
+    <Compile Include="given_add_templated_ctor_command\when_executing_command.cs" />
+    <Compile Include="given_add_templated_method_command\given_add_templated_method_command.cs" />
+    <Compile Include="given_add_templated_method_command\when_executing_command.cs" />
+    <Compile Include="given_add_templated_property_command\when_executing_command.cs" />
+    <Compile Include="given_assembly_element\given_assembly_element.cs" />
+    <Compile Include="given_configuration_cloner\when_cloning_unity_section.cs" />
+    <Compile Include="given_constructor_element\given_constructor_element.cs" />
+    <Compile Include="given_constructor_element\when_accessing_register_element_commands.cs" />
+    <Compile Include="given_constructor_element\when_displaying_constructor_element.cs" />
+    <Compile Include="given_empty_application_model\given_empty_application_model_unity.cs" />
+    <Compile Include="given_empty_application_model\when_accessing_add_application_block_commands.cs" />
+    <Compile Include="given_empty_application_model\when_opening_configuration_with_unity_section.cs" />
+    <Compile Include="given_lifetime_element_property\given_lifetime_element_property.cs" />
+    <Compile Include="given_lifetime_element_property\when_getting_custom_lifetime_element_property_value.cs" />
+    <Compile Include="given_lifetime_element_property\when_getting_known_lifetime_element_property.cs" />
+    <Compile Include="given_lifetime_element_property\when_getting_null_lifetime_element_property_value.cs" />
+    <Compile Include="given_lifetime_element_property\when_setting_known_lifetime_element_property.cs" />
+    <Compile Include="given_lifetime_element_property\when_setting_null_lifetime_element_property.cs" />
+    <Compile Include="given_method_element\given_method_element.cs" />
+    <Compile Include="given_method_element\when_displaying_method_element.cs" />
+    <Compile Include="given_namespace_element\given_namespace_element.cs" />
+    <Compile Include="given_parameter_element\given_parameter_element.cs" />
+    <Compile Include="given_parameter_element\when_accessing_paramter_element_properties.cs" />
+    <Compile Include="given_parameter_element\when_accessing_value_property.cs" />
+    <Compile Include="given_parameter_element\when_adding_paramter_element.cs" />
+    <Compile Include="given_parameter_element\when_assigning_value.cs" />
+    <Compile Include="given_parameter_value\when_assigning_value_element.cs" />
+    <Compile Include="given_parameter_value\when_assinging_dependency_value.cs" />
+    <Compile Include="given_parameter_value\when_assinging_optional_value.cs" />
+    <Compile Include="given_parameter_value\when_assinging_array_element.cs" />
+    <Compile Include="given_populated_unity_section\given_populated_unity_section.cs" />
+    <Compile Include="given_populated_unity_section\when_cloning_section.cs" />
+    <Compile Include="given_property_element\given_property_element.cs" />
+    <Compile Include="given_property_element\when_accessing_properties.cs" />
+    <Compile Include="given_property_element\when_displaying_property_element.cs" />
+    <Compile Include="given_registration_of_alias\given_registration_of_alias.cs" />
+    <Compile Include="given_registration_element\given_registration_element.cs" />
+    <Compile Include="given_container_element\given_container_element.cs" />
+    <Compile Include="given_container_element\when_adding_unity_registration.cs" />
+    <Compile Include="given_registration_element\when_accessing_register_element_commands.cs" />
+    <Compile Include="given_registration_element\when_accessing_register_element_properties.cs" />
+    <Compile Include="given_registration_element\when_registration_type_changes.cs" />
+    <Compile Include="given_registration_element\when_setting_map_to_name_property.cs" />
+    <Compile Include="given_registration_element\when_setting_type_name_property.cs" />
+    <Compile Include="given_add_templated_property_command\given_add_templated_property_command.cs" />
+    <Compile Include="given_registration_of_alias\when_changing_alias_type_name.cs" />
+    <Compile Include="given_registration_of_alias\when_duplicating_alias_type_name.cs" />
+    <Compile Include="given_registration_of_alias\when_resolving_registration_type.cs" />
+    <Compile Include="given_unity_section\given_unity_section.cs" />
+    <Compile Include="given_unity_section\when_adding_alias.cs" />
+    <Compile Include="given_unity_section\when_adding_assembly.cs" />
+    <Compile Include="given_unity_section\when_adding_unity_container.cs" />
+    <Compile Include="given_unity_section\when_validating_unity_section.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
+      <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\Tests\Common.TestSupport\Common.TestSupport.csproj">
+      <Project>{C6DE0220-E31B-486B-AB57-107636AEB927}</Project>
+      <Name>Common.TestSupport</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Src\Design\Configuration.Design.csproj">
+      <Project>{C7E21FE1-53B4-4355-AB4A-834DA21B2607}</Project>
+      <Name>Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Src\Unity.Configuration.Design\Unity.Configuration.Design.csproj">
+      <Project>{00DE2BB0-A33F-4166-938F-FCD27DDBF819}</Project>
+      <Name>Unity.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Configuration.Design.TestSupport\Configuration.Design.TestSupport.csproj">
+      <Project>{99053495-86CF-466C-92C0-79BBF686DDBC}</Project>
+      <Name>Configuration.Design.TestSupport</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="unity.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

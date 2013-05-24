@@ -9,13 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Security.Permissions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.ConstrainedExecution;
-
-[assembly: SecurityPermission(SecurityAction.RequestMinimum)]
 
 [assembly: AssemblyTitle("Enterprise Library Validation Application Block ASP.NET Integration Tests")]
 [assembly: AssemblyDescription("Enterprise Library Validation Application Block ASP.NET Integration Tests")]
-[assembly: AssemblyVersion("5.0.505.0")]
+[assembly: AssemblyVersion("6.0.0.0")]
+[assembly: AssemblyFileVersion("6.0.1304.0")]

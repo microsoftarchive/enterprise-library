@@ -42,8 +42,8 @@ namespace Data.SqlCe.Tests.VSTS
         }
 
         const string instanceName = "Database Instance";
-        const string connectionString = "Data Source='junk.sdf'";
-        const string providerName = "System.Data.SqlServerCe.3.5";
+        const string connectionString = "Data Source='invalid.sdf'";
+        const string providerName = "System.Data.SqlServerCe.4.0";
 
         static ConnectionStringsSection GetConnectionStringsSection()
         {

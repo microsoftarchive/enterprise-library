@@ -42,6 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
         /// </summary>
         /// <param name="log">Log entry message.</param>
         /// <returns>Return <b>true</b> if the message passes through all of the filters.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Exception is handled by delegate")]
         public bool CheckFilters(LogEntry log)
         {
             bool passFilters = true;
@@ -80,10 +81,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
         {
             foreach (ILogFilter filter in this.filters)
             {
-                var castFilter = filter as T;
-                if (castFilter != null)
+                if (filter is T)
                 {
-                    return castFilter;
+                    return filter as T;
                 }
             }
             return null;
@@ -103,10 +103,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
 
             foreach (ILogFilter filter in this.filters)
             {
-                var castFilter = filter as T;
-                if (castFilter != null && name.Equals(castFilter.Name))
+                if (filter is T && name.Equals(filter.Name))
                 {
-                    return castFilter;
+                    return filter as T;
                 }
             }
             return null;

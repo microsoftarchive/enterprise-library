@@ -23,7 +23,7 @@ using Microsoft.Practices.Unity;
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
 #pragma warning disable 1591
-    
+
     /// <summary>
     /// This class supports block-specific configuration design-time and is not
     /// intended to be used directly from your code.
@@ -44,7 +44,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                             new Type[]{
                                 typeof(SystemDiagnosticsTraceListenerData), 
                                 typeof(CustomTraceListenerData)
-                            }).ToArray();
+                            }.Where(t => ConfigurationTypesService.CheckType(t))).ToArray();
             }
         }
     }

@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
@@ -19,8 +18,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// Logging Application Block exception.
     /// </summary>
     [Serializable]
-    [ComVisible(false)]
-
     public class LoggingException : Exception
     {
         /// <summary>
@@ -47,8 +44,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="message">The error message that explains the reason for 
         /// the exception.
         /// </param>
-        /// <param name="exception">The exception that is the cause of the current 
-		/// exception.  If the innerException parameter is not a <see langword="null"/> reference, 
+        /// <param name="exception">The exception that is the cause of the current
+        /// exception.  If the innerException parameter is not a <see langword="null"/> reference, 
         /// the current exception is raised in a catch block that handles the inner 
         /// exception.
         /// </param>

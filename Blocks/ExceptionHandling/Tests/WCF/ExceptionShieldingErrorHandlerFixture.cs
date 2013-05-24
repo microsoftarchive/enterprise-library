@@ -9,14 +9,16 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Configuration;
 using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Text.RegularExpressions;
 using System.Web.Services.Protocols;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests
 {
@@ -26,6 +28,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests
     [TestClass]
     public class ExceptionShieldingErrorHandlerFixture
     {
+        [TestInitialize]
+        public void Initialize()
+        {
+            Logger.SetLogWriter(new LogWriterFactory().Create(), false);
+            ExceptionPolicy.SetExceptionManager(new ExceptionPolicyFactory().CreateManager(), false);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            ExceptionPolicy.Reset();
+            Logger.Reset();
+        }
+
         [TestMethod]
         public void CanCreateInstance()
         {

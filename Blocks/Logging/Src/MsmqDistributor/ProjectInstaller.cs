@@ -66,13 +66,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
             try
             {
                 XmlDocument configurationDoc = new XmlDocument();
-                configurationDoc.Load(configurationFilepath);
-
-                XmlNode serviceNameNode = configurationDoc.SelectSingleNode("/configuration/msmqDistributorSettings/@serviceName");
-
-                if (serviceNameNode != null && !string.IsNullOrEmpty(serviceNameNode.Value))
+                using (var reader = XmlReader.Create(configurationFilepath))
                 {
-                    this.serviceName = serviceNameNode.Value;
+                    configurationDoc.Load(reader);
+
+                    XmlNode serviceNameNode = configurationDoc.SelectSingleNode("/configuration/msmqDistributorSettings/@serviceName");
+
+                    if (serviceNameNode != null && !string.IsNullOrEmpty(serviceNameNode.Value))
+                    {
+                        this.serviceName = serviceNameNode.Value;
+                    }
                 }
             }
             catch (Exception ex)

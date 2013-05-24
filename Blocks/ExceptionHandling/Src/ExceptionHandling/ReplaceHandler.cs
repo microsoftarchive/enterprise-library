@@ -10,18 +10,18 @@
 //===============================================================================
 
 using System;
-using System.Globalization;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 {
     /// <summary>
     /// Replaces the exception in the chain of handlers with a cleansed exception.
     /// </summary>
-#if !SILVERLIGHT
-    [Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ConfigurationElementType(typeof(Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.ReplaceHandlerData))]
-#endif
+    [ConfigurationElementType(typeof(ReplaceHandlerData))]
     public class ReplaceHandler : IExceptionHandler
     {
         private readonly IStringResolver exceptionMessageResolver;

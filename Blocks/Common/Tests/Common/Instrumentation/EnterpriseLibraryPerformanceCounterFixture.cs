@@ -9,6 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Tests
@@ -25,6 +26,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Tests
         public void CreateCounterFactory()
         {
             counterFactory = new EnterpriseLibraryPerformanceCounterFactory();
+
+            try
+            {
+                counterFactory.CreateCounter(counterCategoryName, counterName, new string[] { "Total" });
+            }
+            catch (InvalidOperationException)
+            {
+                Assert.Inconclusive("In order to run the test, please run RegAssemblies.bat script first as an Administrator.");
+            }
         }
 
         [TestMethod]

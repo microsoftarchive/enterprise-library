@@ -19,7 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     public abstract class Given_GenericDatabaseInstance : ArrangeActAssert
     {
         protected Database Database { get; private set; }
-        private const string northwind = @"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true";
+        private const string northwind = @"server=(localdb)\v11.0;database=Northwind;Integrated Security=true";
 
         protected override void Arrange()
         {

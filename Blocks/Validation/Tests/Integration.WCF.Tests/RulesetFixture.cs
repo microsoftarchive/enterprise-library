@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System.ServiceModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.Tests.VSTS.TestService;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -22,6 +23,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.Tests
     [TestClass]
     public class RulesetFixture
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
+        }
+
         [TestMethod]
         [ExpectedException(typeof(FaultException<ValidationFault>))]
         public void ShouldFailValidationWhenViolatingBank1Ruleset()

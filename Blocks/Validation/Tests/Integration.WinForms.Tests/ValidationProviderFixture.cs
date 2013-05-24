@@ -14,6 +14,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms.Tests.TestClasses;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
@@ -29,12 +30,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms.
         ValueConvertEventArgs valueConvertEventArgs;
 
         [TestInitialize]
-        public void SetUp()
+        public void TestInitialize()
         {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
             MockValidator<object>.ResetCaches();
             validationStatusOnCallback = null;
             valueConvertEventArgs = null;
             validationPerformedEventArgs = null;
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
         }
 
         [TestMethod]
@@ -111,37 +119,37 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms.
                 validationProvider.GetPerformValidation(control);
                 Assert.Fail("should have thrown");
             }
-            catch (ArgumentNullException) {}
+            catch (ArgumentNullException) { }
             try
             {
                 validationProvider.GetSourcePropertyName(control);
                 Assert.Fail("should have thrown");
             }
-            catch (ArgumentNullException) {}
+            catch (ArgumentNullException) { }
             try
             {
                 validationProvider.GetValidatedProperty(control);
                 Assert.Fail("should have thrown");
             }
-            catch (ArgumentNullException) {}
+            catch (ArgumentNullException) { }
             try
             {
                 validationProvider.SetPerformValidation(control, true);
                 Assert.Fail("should have thrown");
             }
-            catch (ArgumentNullException) {}
+            catch (ArgumentNullException) { }
             try
             {
                 validationProvider.SetSourcePropertyName(control, "");
                 Assert.Fail("should have thrown");
             }
-            catch (ArgumentNullException) {}
+            catch (ArgumentNullException) { }
             try
             {
                 validationProvider.SetValidatedProperty(control, "");
                 Assert.Fail("should have thrown");
             }
-            catch (ArgumentNullException) {}
+            catch (ArgumentNullException) { }
         }
 
         //[TestMethod]

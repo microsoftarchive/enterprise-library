@@ -11,27 +11,24 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
-#if !SILVERLIGHT
 using System.Diagnostics;
-#else
-using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
-#endif
+using System.Threading;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
     /// <summary>
     /// Provides tracing services through a set of <see cref="TraceListener"/>s.
     /// </summary>
-    public partial class LogSource : IDisposable
+    public class LogSource
     {
         /// <summary>
         /// Default Auto Flush property for the LogSource instance.
         /// </summary>
         public const bool DefaultAutoFlushProperty = true;
-        private readonly ILoggingInstrumentationProvider instrumentationProvider;
-        private readonly string name;
+        private SourceLevels level;
+        private string name;
+        private IList<TraceListener> traceListeners;
         private bool autoFlush = DefaultAutoFlushProperty;
 
         /// <summary>
@@ -72,29 +69,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="level">The <see cref="SourceLevels"/> value.</param>
         /// <param name="autoFlush">If Flush should be called on the Listeners after every write.</param>
         public LogSource(string name, IEnumerable<TraceListener> traceListeners, SourceLevels level, bool autoFlush)
-            : this(name, traceListeners, level, autoFlush, new NullLoggingInstrumentationProvider())
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LogSource"/> class with a name, a collection of <see cref="TraceListener"/>s, a level and the auto flush.
-        /// </summary>
-        /// <param name="name">The name for the instance.</param>
-        /// <param name="traceListeners">The collection of <see cref="TraceListener"/>s.</param>
-        /// <param name="level">The <see cref="SourceLevels"/> value.</param>
-        /// <param name="autoFlush">If Flush should be called on the Listeners after every write.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public LogSource(
-            string name,
-            IEnumerable<TraceListener> traceListeners,
-            SourceLevels level,
-            bool autoFlush,
-            ILoggingInstrumentationProvider instrumentationProvider)
         {
             this.name = name;
-            this.Listeners = new List<TraceListener>(traceListeners);
-            this.Level = level;
-            this.instrumentationProvider = instrumentationProvider;
+            this.traceListeners = new List<TraceListener>(traceListeners);
+            this.level = level;
             this.autoFlush = autoFlush;
         }
 
@@ -109,12 +87,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <summary>
         /// Gets the collection of trace listeners for the <see cref="LogSource"/> instance.
         /// </summary>
-        public IList<TraceListener> Listeners { get; private set; }
+        public IEnumerable<TraceListener> Listeners
+        {
+            get { return traceListeners; }
+        }
 
         /// <summary>
-        /// Gets the <see cref="SourceLevels"/> values at which to trace for the <see cref="LogSource"/> instance.
+        /// Gets or sets the <see cref="SourceLevels"/> values at which to trace for the <see cref="LogSource"/> instance.
         /// </summary>
-        public SourceLevels Level { get; protected set; }
+        public SourceLevels Level
+        {
+            get { return level; }
+            set { this.level = value; }
+        }
 
         /// <summary>
         /// Gets or sets the <see cref="AutoFlush"/> values for the <see cref="LogSource"/> instance.
@@ -151,89 +136,84 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="traceListenerFilter">The filter for already written to trace listeners.</param>
         public void TraceData(TraceEventType eventType, int id, LogEntry logEntry, TraceListenerFilter traceListenerFilter)
         {
-            this.TraceData(eventType, id, logEntry, traceListenerFilter, new TraceEventCache());
+            this.TraceData(eventType, id, logEntry, traceListenerFilter, new TraceEventCache(), null);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2002:DoNotLockOnObjectsWithWeakIdentity", Justification = "Copied behavior from TraceSource")]
         internal void TraceData(
             TraceEventType eventType,
             int id,
             LogEntry logEntry,
             TraceListenerFilter traceListenerFilter,
-            TraceEventCache traceEventCache)
+            TraceEventCache traceEventCache,
+            ReportTracingError reportError)
         {
             if (!ShouldTrace(eventType)) return;
 
-#if !SILVERLIGHT
             bool isTransfer = logEntry.Severity == TraceEventType.Transfer && logEntry.RelatedActivityId != null;
-#endif
 
-            foreach (TraceListener listener in traceListenerFilter.GetAvailableTraceListeners(this.Listeners))
+            try
             {
-                try
+                foreach (TraceListener listener in traceListenerFilter.GetAvailableTraceListeners(traceListeners))
                 {
-                    if (!listener.IsThreadSafe) Monitor.Enter(listener);
-
-#if !SILVERLIGHT
-                    if (!isTransfer)
-#endif
+                    var asynchronousListener = listener as IAsynchronousTraceListener;
+                    if (asynchronousListener == null)
                     {
-                        listener.TraceData(traceEventCache, Name, eventType, id, logEntry);
+                        try
+                        {
+                            if (!listener.IsThreadSafe) Monitor.Enter(listener);
+
+                            if (!isTransfer)
+                            {
+                                listener.TraceData(traceEventCache, this.Name, eventType, id, logEntry);
+                            }
+                            else
+                            {
+                                listener.TraceTransfer(traceEventCache, this.Name, id, logEntry.Message, logEntry.RelatedActivityId.Value);
+                            }
+
+                            if (this.AutoFlush)
+                            {
+                                listener.Flush();
+                            }
+                        }
+                        finally
+                        {
+                            if (!listener.IsThreadSafe) Monitor.Exit(listener);
+                        }
                     }
-#if !SILVERLIGHT
                     else
                     {
-                        listener.TraceTransfer(traceEventCache, Name, id, logEntry.Message, logEntry.RelatedActivityId.Value);
-                    }
-#endif
-                    instrumentationProvider.FireTraceListenerEntryWrittenEvent();
+                        if (!isTransfer)
+                        {
+                            asynchronousListener.TraceData(traceEventCache, this.Name, eventType, id, logEntry, reportError);
+                        }
+                        else
+                        {
+                            asynchronousListener.TraceTransfer(traceEventCache, this.Name, id, logEntry.Message, logEntry.RelatedActivityId.Value, reportError);
+                        }
 
-                    if (this.AutoFlush)
-                    {
-                        listener.Flush();
+                        if (this.AutoFlush)
+                        {
+                            asynchronousListener.Flush(reportError);
+                        }
                     }
-                }
-                finally
-                {
-                    if (!listener.IsThreadSafe) Monitor.Exit(listener);
                 }
             }
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        /// <param name="disposing"><see langword="true"/> if the method is being called from the <see cref="Dispose()"/> method. <see langword="false"/> if it is being called from within the object finalizer.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
+            catch (Exception e)
             {
-                foreach (TraceListener listener in this.Listeners)
+                if (reportError == null)
                 {
-                    listener.Dispose();
+                    throw;
                 }
-            }
-        }
 
-        /// <summary>
-        /// Releases resources for the <see cref="LogSource"/> instance before garbage collection.
-        /// </summary>
-        ~LogSource()
-        {
-            this.Dispose(false);
+                reportError(e, logEntry, this.name);
+            }
         }
 
         private bool ShouldTrace(TraceEventType eventType)
         {
-            return ((((TraceEventType)this.Level) & eventType) != (TraceEventType)0);
+            return ((((TraceEventType)level) & eventType) != (TraceEventType)0);
         }
     }
 }

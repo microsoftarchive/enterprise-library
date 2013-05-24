@@ -1,12 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F584B324-C649-4841-936E-B0CC18CAAFE4}"
-	ProjectSection(SolutionItems) = preProject
-		..\codecoverage.testrunconfig = ..\codecoverage.testrunconfig
-		localtestrun.testrunconfig = localtestrun.testrunconfig
-		PolicyInjection.vsmdi = PolicyInjection.vsmdi
-	EndProjectSection
 	ProjectSection(FolderStartupServices) = postProject
 		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
 	EndProjectSection
@@ -32,8 +27,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionHandling", "..\Exc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging", "..\Logging\Src\Logging\Logging.csproj", "{6AC97717-899D-4F72-BC5B-2C37959CD4FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security", "..\Security\Src\Security\Security.csproj", "{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validation", "..\Validation\Src\Validation\Validation.csproj", "{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolicyInjection", "Src\PolicyInjection\PolicyInjection.csproj", "{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}"
@@ -47,55 +40,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolicyInjection.TestSupport", "Tests\PolicyInjection.TestSupport\PolicyInjection.TestSupport.csproj", "{EBCB52B8-C189-4958-9BB2-B7670BCB49FB}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 11
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://pagtfs2008:8080/
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = ..\\Common\\Src\\Common.csproj
-		SccProjectTopLevelParentUniqueName1 = PolicyInjection.sln
-		SccProjectName1 = ../Common/Src
-		SccLocalPath1 = ..\\Common\\Src
-		SccProjectUniqueName2 = ..\\ExceptionHandling\\Src\\ExceptionHandling\\ExceptionHandling.csproj
-		SccProjectTopLevelParentUniqueName2 = PolicyInjection.sln
-		SccProjectName2 = ../ExceptionHandling/Src/ExceptionHandling
-		SccLocalPath2 = ..\\ExceptionHandling\\Src\\ExceptionHandling
-		SccProjectUniqueName3 = ..\\Logging\\Src\\Logging\\Logging.csproj
-		SccProjectTopLevelParentUniqueName3 = PolicyInjection.sln
-		SccProjectName3 = ../Logging/Src/Logging
-		SccLocalPath3 = ..\\Logging\\Src\\Logging
-		SccProjectUniqueName4 = ..\\Security\\Src\\Security\\Security.csproj
-		SccProjectTopLevelParentUniqueName4 = PolicyInjection.sln
-		SccProjectName4 = ../Security/Src/Security
-		SccLocalPath4 = ..\\Security\\Src\\Security
-		SccProjectUniqueName5 = ..\\Validation\\Src\\Validation\\Validation.csproj
-		SccProjectTopLevelParentUniqueName5 = PolicyInjection.sln
-		SccProjectName5 = ../Validation/Src/Validation
-		SccLocalPath5 = ..\\Validation\\Src\\Validation
-		SccProjectUniqueName6 = Src\\PolicyInjection\\PolicyInjection.csproj
-		SccProjectTopLevelParentUniqueName6 = PolicyInjection.sln
-		SccProjectName6 = Src/PolicyInjection
-		SccLocalPath6 = Src\\PolicyInjection
-		SccProjectUniqueName7 = Tests\\PolicyInjection\\PolicyInjection.Tests.VSTS.csproj
-		SccProjectTopLevelParentUniqueName7 = PolicyInjection.sln
-		SccProjectName7 = Tests/PolicyInjection
-		SccLocalPath7 = Tests\\PolicyInjection
-		SccProjectUniqueName8 = Tests\\CallHandlers\\PolicyInjection.CallHandlers.Tests.VSTS.csproj
-		SccProjectTopLevelParentUniqueName8 = PolicyInjection.sln
-		SccProjectName8 = Tests/CallHandlers
-		SccLocalPath8 = Tests\\CallHandlers
-		SccProjectUniqueName9 = ..\\Common\\Tests\\Common.TestSupport\\Common.TestSupport.csproj
-		SccProjectTopLevelParentUniqueName9 = PolicyInjection.sln
-		SccProjectName9 = ../Common/Tests/Common.TestSupport
-		SccLocalPath9 = ..\\Common\\Tests\\Common.TestSupport
-		SccProjectUniqueName10 = Tests\\PolicyInjection.TestSupport\\PolicyInjection.TestSupport.csproj
-		SccProjectTopLevelParentUniqueName10 = PolicyInjection.sln
-		SccProjectName10 = Tests/PolicyInjection.TestSupport
-		SccLocalPath10 = Tests\\PolicyInjection.TestSupport
-	EndGlobalSection
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = PolicyInjection.vsmdi
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -113,10 +57,6 @@ Global
 		{6AC97717-899D-4F72-BC5B-2C37959CD4FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AC97717-899D-4F72-BC5B-2C37959CD4FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AC97717-899D-4F72-BC5B-2C37959CD4FF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -149,7 +89,6 @@ Global
 		{A09297C8-2C40-470B-8856-D856676DDFFA} = {3FC05EF8-5475-42B5-A49C-A30BFA7F439D}
 		{2DB0AD6D-BF59-4EBB-9F99-49ABD8539FD2} = {3FC05EF8-5475-42B5-A49C-A30BFA7F439D}
 		{6AC97717-899D-4F72-BC5B-2C37959CD4FF} = {3FC05EF8-5475-42B5-A49C-A30BFA7F439D}
-		{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744} = {3FC05EF8-5475-42B5-A49C-A30BFA7F439D}
 		{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD} = {3FC05EF8-5475-42B5-A49C-A30BFA7F439D}
 		{C6DE0220-E31B-486B-AB57-107636AEB927} = {3FC05EF8-5475-42B5-A49C-A30BFA7F439D}
 		{3E6129C8-18E4-410D-89FC-0DBBE6009FC5} = {4DFF495E-F437-4030-B77C-78020FF78F09}

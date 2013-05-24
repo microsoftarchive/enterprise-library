@@ -23,6 +23,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
     [TestClass]
     public class ValidationFixture
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
+        }
+
         [TestMethod]
         public void CanValidateObjectWithoutRuleSet()
         {
@@ -229,20 +241,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
             ValidationSettings settings = new ValidationSettings();
             configurationSource.Add(ValidationSettings.SectionName, settings);
-            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(BaseTestDomainObject));
+            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(BaseTestDomainObject));
             settings.Types.Add(typeReference);
             typeReference.DefaultRuleset = "RuleA";
-            ValidationRulesetData ruleData = new ValidationRulesetData { Name = "RuleA" };
+            ValidationRulesetData ruleData = new ValidationRulesetData("RuleA");
             typeReference.Rulesets.Add(ruleData);
-            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference { Name = "Property1" };
+            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference("Property1");
             ruleData.Properties.Add(propertyReference1);
             MockValidatorData validator11 = new MockValidatorData("validator1", true);
             propertyReference1.Validators.Add(validator11);
             validator11.MessageTemplate = "message-from-config1-RuleA";
 
-            CompositeValidatorFactory factory
-                = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource)
-                        .GetInstance<CompositeValidatorFactory>();
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(configurationSource);
+            ValidatorFactory factory = ValidationFactory.DefaultCompositeValidatorFactory;
 
             var validator = factory.CreateValidator<BaseTestDomainObject>("RuleA");
             var results = validator.Validate(new BaseTestDomainObject());
@@ -282,14 +293,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
                 get { return "failing2"; }
             }
         }
-
-#if SILVERLIGHT
-        [TestInitialize]
-        public void Setup()
-        {
-            var configurationSource = DictionaryConfigurationSource.FromXaml(new Uri("/Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight.Tests;component/Configuration.xaml", UriKind.Relative));
-            EnterpriseLibraryContainer.Current = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
-        }
-#endif
     }
 }

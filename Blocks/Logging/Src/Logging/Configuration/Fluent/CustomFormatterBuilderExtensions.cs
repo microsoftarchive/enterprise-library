@@ -90,8 +90,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             if (attributes == null) throw new ArgumentNullException("attributes");
 
             if (!typeof(ILogFormatter).IsAssignableFrom(customFormatterType))
-                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
-                    Resources.ExceptionTypeMustImplementInterface, typeof(ILogFormatter)), "customFilterType");
+            {
+                throw new ArgumentException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.ExceptionTypeMustImplementInterface, 
+                        typeof(ILogFormatter)), 
+                    "customFormatterType");
+            }
 
             return new CustomFormatterBuilder(formatterName, customFormatterType, attributes);
         }

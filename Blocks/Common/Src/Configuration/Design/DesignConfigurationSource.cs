@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using  Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
 {
@@ -83,7 +83,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
 
             DesignConfigurationSource rootSourceAsDesignSource = rootSource as DesignConfigurationSource;
             if (rootSourceAsDesignSource == null)
-                throw new ArgumentException(Resources_Desktop.CannotCreateDesignSource, "rootSource");
+                throw new ArgumentException(Resources.CannotCreateDesignSource, "rootSource");
 
             {
                 string mainConfigurationFileDirectory =

@@ -11,16 +11,15 @@
 
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
     [TestClass]
-    [DeploymentItem("test.exe.config")]
     public class ReturnTypeMatchingRuleDataFixture : MatchingRuleDataFixtureBase
     {
-#if !SILVERLIGHT
         [TestMethod]
         public void CanSerializeTypeMatchingRule()
         {
@@ -34,19 +33,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.IsTrue(deserializedRule.IgnoreCase);
             Assert.AreEqual(returnTypeMatchingRule.Match, deserializedRule.Match);
         }
-#endif
 
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {
-            ReturnTypeMatchingRuleData ruleData = new ReturnTypeMatchingRuleData
-                {
-                    Name = "RuleName", 
-                    Match = "System.Int32"
-                };
-            TypeRegistration registration = ruleData.GetRegistrations("").First();
+            ReturnTypeMatchingRuleData ruleData = new ReturnTypeMatchingRuleData("RuleName", "System.Int32");
 
-            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+            using (var container = new UnityContainer())
+            {
+                ruleData.ConfigureContainer(container, "-test");
+                var registration = container.Registrations.Single(r => r.Name == "RuleName-test");
+                Assert.AreSame(typeof(IMatchingRule), registration.RegisteredType);
+                Assert.AreSame(typeof(ReturnTypeMatchingRule), registration.MappedToType);
+                Assert.AreSame(typeof(TransientLifetimeManager), registration.LifetimeManagerType);
+            }
         }
     }
 }

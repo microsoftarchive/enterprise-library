@@ -11,32 +11,26 @@
 
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
     [TestClass]
-    [DeploymentItem("test.exe.config")]
     public class PropertyMatchingRuleDataFixture : MatchingRuleDataFixtureBase
     {
-#if !SILVERLIGHT
         [TestMethod]
         public void ShouldSerializeAndDeserializeCorrectly()
         {
             PropertyMatchingRuleData original =
-                new PropertyMatchingRuleData
-                {
-                    Name = "MatchMyProperty",
-                    Matches = 
-                        {
-                            new PropertyMatchData { Match = "MyProperty", MatchOption = PropertyMatchingOption.Set, IgnoreCase = true },
-                            new PropertyMatchData { Match = "*Name" },
-                            new PropertyMatchData { Match = "Foo??", MatchOption = PropertyMatchingOption.Get },
-                        }
-                };
+                new PropertyMatchingRuleData("MatchMyProperty",
+                                             new PropertyMatchData[]
+                                                 {
+                                                     new PropertyMatchData("MyProperty", PropertyMatchingOption.Set, true),
+                                                     new PropertyMatchData("*Name"),
+                                                     new PropertyMatchData("Foo??", PropertyMatchingOption.Get)
+                                                 });
 
             PropertyMatchingRuleData rehydrated =
                 (PropertyMatchingRuleData)SerializeAndDeserializeMatchingRule(original);
@@ -50,14 +44,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
                                          "Match at index {0} is incorrect", i);
             }
         }
-#endif
+
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {
-            PropertyMatchingRuleData ruleData = new PropertyMatchingRuleData { Name ="Foo" };
-            TypeRegistration registration = ruleData.GetRegistrations("").First();
+            PropertyMatchingRuleData ruleData = new PropertyMatchingRuleData("Foo");
 
-            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+            using (var container = new UnityContainer())
+            {
+                ruleData.ConfigureContainer(container, "-test");
+                var registration = container.Registrations.Single(r => r.Name == "Foo-test");
+                Assert.AreSame(typeof(IMatchingRule), registration.RegisteredType);
+                Assert.AreSame(typeof(PropertyMatchingRule), registration.MappedToType);
+                Assert.AreSame(typeof(TransientLifetimeManager), registration.LifetimeManagerType);
+            }
         }
 
         void AssertPropertyMatchEqual(PropertyMatchData expected,

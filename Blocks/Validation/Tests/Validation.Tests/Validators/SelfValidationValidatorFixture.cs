@@ -41,20 +41,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         [ExpectedException(typeof(ArgumentException))]
         public void CreatingAValidatorWithMethodReturningAValueThrows()
         {
-            new SelfValidationValidator(GetType().GetMethod("SelfValidationMethodReturningAResult", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance));
+            new SelfValidationValidator(GetType().GetMethod("SelfValidationMethodReturningAResult", BindingFlags.NonPublic | BindingFlags.Instance));
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void CreatingAValidatorWithMethodWithWrongSignatureThrows()
         {
-            new SelfValidationValidator(GetType().GetMethod("SelfValidationMethodWithWrongParameters", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance));
+            new SelfValidationValidator(GetType().GetMethod("SelfValidationMethodWithWrongParameters", BindingFlags.NonPublic | BindingFlags.Instance));
         }
 
         [TestMethod]
         public void ProvidesValidationResultsToValidationMethod()
         {
-            Validator validator = new SelfValidationValidator(GetType().GetMethod("SelfValidationMethod", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance));
+            Validator validator = new SelfValidationValidator(GetType().GetMethod("SelfValidationMethod", BindingFlags.NonPublic | BindingFlags.Instance));
             ValidationResults validationResults = new ValidationResults();
 
             validator.Validate(this, validationResults);
@@ -65,7 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         [TestMethod]
         public void LogsOwnValidationFailureIfValidatedObjectIsANullReference()
         {
-            Validator validator = new SelfValidationValidator(GetType().GetMethod("SelfValidationMethod", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance));
+            Validator validator = new SelfValidationValidator(GetType().GetMethod("SelfValidationMethod", BindingFlags.NonPublic | BindingFlags.Instance));
             validator.Tag = "tag";
             ValidationResults validationResults = new ValidationResults();
 
@@ -84,7 +84,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         [TestMethod]
         public void LogsOwnValidationFailureIfValidatedObjectIsOfIncompatibleType()
         {
-            Validator validator = new SelfValidationValidator(GetType().GetMethod("SelfValidationMethod", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance));
+            Validator validator = new SelfValidationValidator(GetType().GetMethod("SelfValidationMethod", BindingFlags.NonPublic | BindingFlags.Instance));
             ValidationResults validationResults = new ValidationResults();
 
             validator.Validate("a string", validationResults);
@@ -102,7 +102,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         [TestMethod]
         public void LogsOwnValidationFailureIfValidationMethodThrows()
         {
-            Validator validator = new SelfValidationValidator(GetType().GetMethod("ThrowingSelfValidationMethod", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance));
+            Validator validator = new SelfValidationValidator(GetType().GetMethod("ThrowingSelfValidationMethod", BindingFlags.NonPublic | BindingFlags.Instance));
             ValidationResults validationResults = new ValidationResults();
 
             validator.Validate(this, validationResults);
@@ -113,20 +113,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             Assert.AreEqual(Resources.SelfValidationMethodThrownMessage, resultsList[0].Message);
         }
 
-        public void SelfValidationMethod(ValidationResults suppliedValidationResults)
+        void SelfValidationMethod(ValidationResults suppliedValidationResults)
         {
             this.suppliedValidationResults = suppliedValidationResults;
         }
 
-        public object SelfValidationMethodReturningAResult(ValidationResults suppliedValidationResults)
+        object SelfValidationMethodReturningAResult(ValidationResults suppliedValidationResults)
         {
             return null;
         }
 
-        public void SelfValidationMethodWithWrongParameters(ValidationResults suppliedValidationResults,
+        void SelfValidationMethodWithWrongParameters(ValidationResults suppliedValidationResults,
                                                      bool shouldSucceed) {}
 
-        public void ThrowingSelfValidationMethod(ValidationResults suppliedValidationResults)
+        void ThrowingSelfValidationMethod(ValidationResults suppliedValidationResults)
         {
             throw new Exception();
         }

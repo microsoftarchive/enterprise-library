@@ -13,4 +13,5 @@ using System.Reflection;
 
 [assembly: AssemblyTitle("Enterprise Library Validation Application Block Test Support")]
 [assembly: AssemblyDescription("Enterprise Library Validation Application Block Test Support")]
-[assembly: AssemblyVersion("5.0.505.0")]
+[assembly: AssemblyVersion("6.0.0.0")]
+[assembly: AssemblyFileVersion("6.0.1304.0")]

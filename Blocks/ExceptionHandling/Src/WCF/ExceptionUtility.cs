@@ -28,6 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF
         /// </summary>
         /// <param name="exception">The exception.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "As designed. Exception is logged.")]
         public static Guid LogServerException(Exception exception)
         {
             // try to get the handoling instance from the exception message or get a new one.

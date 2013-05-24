@@ -9,16 +9,13 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Configuration;
 using System.Diagnostics;
-using System.Linq.Expressions;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -177,10 +174,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <param name="userName">User name to pass to the server if using <see cref="EmailAuthenticationMode.UserNameAndPassword"/>.</param>
         /// <param name="password">Password to pass to the server if using <see cref="EmailAuthenticationMode.UserNameAndPassword"/>.</param>
         /// <param name="useSSL">Connect to the server using SSL?</param>
-        public EmailTraceListenerData(string name, 
-            string toAddress, string fromAddress, 
-            string subjectLineStarter, string subjectLineEnder, 
-            string smtpServer, int smtpPort, 
+        public EmailTraceListenerData(string name,
+            string toAddress, string fromAddress,
+            string subjectLineStarter, string subjectLineEnder,
+            string smtpServer, int smtpPort,
             string formatterName, TraceOptions traceOutputOptions, SourceLevels filter,
             EmailAuthenticationMode authenticationMode, string userName, string password, bool useSSL)
             : base(name, typeof(EmailTraceListener), traceOutputOptions, filter)
@@ -251,7 +248,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets and sets the SMTP server to use to send messages.
         /// </summary>
-        [ConfigurationProperty(smtpServerProperty, DefaultValue="127.0.0.1")]
+        [ConfigurationProperty(smtpServerProperty, DefaultValue = "127.0.0.1")]
         [ResourceDescription(typeof(DesignResources), "EmailTraceListenerDataSmtpServerDescription")]
         [ResourceDisplayName(typeof(DesignResources), "EmailTraceListenerDataSmtpServerDisplayName")]
         public string SmtpServer
@@ -263,7 +260,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets and sets the SMTP port.
         /// </summary>
-        [ConfigurationProperty(smtpPortProperty, DefaultValue=25)]
+        [ConfigurationProperty(smtpPortProperty, DefaultValue = 25)]
         [ResourceDescription(typeof(DesignResources), "EmailTraceListenerDataSmtpPortDescription")]
         [ResourceDisplayName(typeof(DesignResources), "EmailTraceListenerDataSmtpPortDisplayName")]
         public int SmtpPort
@@ -293,7 +290,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ResourceDescription(typeof(DesignResources), "EmailTraceListenerAuthenticationModeDescription")]
         public EmailAuthenticationMode AuthenticationMode
         {
-            get { return (EmailAuthenticationMode) base[authenticationModeProperty]; }
+            get { return (EmailAuthenticationMode)base[authenticationModeProperty]; }
             set { base[authenticationModeProperty] = value; }
         }
 
@@ -305,7 +302,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ResourceDescription(typeof(DesignResources), "EmailTraceListenerUseSSLDescription")]
         public bool UseSSL
         {
-            get { return (bool) base[useSSLProperty]; }
+            get { return (bool)base[useSSLProperty]; }
             set { base[useSSLProperty] = value; }
         }
 
@@ -317,7 +314,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ResourceDescription(typeof(DesignResources), "EmailTraceListenerUserNameDescription")]
         public string UserName
         {
-            get { return (string) base[userNameProperty]; }
+            get { return (string)base[userNameProperty]; }
             set { base[userNameProperty] = value; }
         }
 
@@ -330,31 +327,33 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ViewModel(LoggingDesignTime.ViewModelTypeNames.EmailTraceListenerPropertyViewModel)]
         public string Password
         {
-            get { return (string) base[passwordProperty]; }
+            get { return (string)base[passwordProperty]; }
             set { base[passwordProperty] = value; }
         }
 
-
         /// <summary>
-        /// Returns a lambda expression that represents the creation of the trace listener described by this
-        /// configuration object.
+        /// Builds the <see cref="TraceListener" /> object represented by this configuration object.
         /// </summary>
-        /// <returns>A lambda expression to create a trace listener.</returns>
-        protected override Expression<Func<TraceListener>> GetCreationExpression()
+        /// <param name="settings">The logging configuration settings.</param>
+        /// <returns>
+        /// An <see cref="EmailTraceListener"/>.
+        /// </returns>
+        protected override TraceListener CoreBuildTraceListener(LoggingSettings settings)
         {
-            return () =>
-                    new EmailTraceListener(
-                        this.ToAddress,
-                        this.FromAddress,
-                        this.SubjectLineStarter,
-                        this.SubjectLineEnder,
-                        this.SmtpServer,
-                        this.SmtpPort,
-                        Container.ResolvedIfNotNull<ILogFormatter>(this.Formatter),
-                        this.AuthenticationMode,
-                        this.UserName,
-                        this.Password,
-                        this.UseSSL);
+            var formatter = this.BuildFormatterSafe(settings, this.Formatter);
+
+            return new EmailTraceListener(
+                this.ToAddress,
+                this.FromAddress,
+                this.SubjectLineStarter,
+                this.SubjectLineEnder,
+                this.SmtpServer,
+                this.SmtpPort,
+                formatter,
+                this.AuthenticationMode,
+                this.UserName,
+                this.Password,
+                this.UseSSL);
         }
     }
 }

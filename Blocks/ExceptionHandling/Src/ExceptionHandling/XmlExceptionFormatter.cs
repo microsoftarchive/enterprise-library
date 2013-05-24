@@ -10,17 +10,12 @@
 //===============================================================================
 
 using System;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
-#if !SILVERLIGHT
-using System.Collections.Specialized;
-#else
-using NameValueCollection = System.Collections.Generic.Dictionary<string, string>;
-#endif
-
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 {
@@ -51,7 +46,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// <param name="writer">The <see cref="TextWriter"/> in which to write the XML.</param>
         /// <param name="exception">The <see cref="Exception"/> to format.</param>
         /// <remarks>
-        /// An <see cref="XmlWriter"/> with indented formatting is created from the specified <see cref="TextWriter"/>.
+        /// An <see cref="XmlTextWriter"/> with indented formatting is created from the  specified <see cref="TextWriter"/>.
         /// </remarks>
         /// <param name="handlingInstanceId">The id of the handling chain.</param>
         public XmlExceptionFormatter(TextWriter writer, Exception exception, Guid handlingInstanceId)
@@ -59,7 +54,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         {
             if (writer == null) throw new ArgumentNullException("writer");
 
-            xmlWriter = XmlWriter.Create(writer, new XmlWriterSettings { Indent = true });
+            XmlTextWriter textWriter = new XmlTextWriter(writer);
+            textWriter.Formatting = Formatting.Indented;
+            xmlWriter = textWriter;
         }
 
         /// <summary>
@@ -89,8 +86,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             base.Format();
 
             Writer.WriteEndElement();
-
-            Writer.Flush();
         }
 
         /// <summary>
@@ -121,7 +116,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             WriteSingleElement("Description", string.Format(CultureInfo.CurrentCulture, Resources.ExceptionWasCaught, base.Exception.GetType().FullName));
         }
 
-#if !SILVERLIGHT
         /// <summary>
         /// Writes the value of the specified help link taken
         /// from the value of the <see cref="Exception.HelpLink"/>
@@ -134,22 +128,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         }
 
         /// <summary>
-        /// Writes the value of the specified source taken from the value of the <see cref="Exception.Source"/> property to the <see cref="XmlWriter"/>.
-        /// </summary>
-        /// <param name="source">The source of the exception.</param>
-        protected override void WriteSource(string source)
-        {
-            WriteSingleElement("Source", source);
-        }
-#endif
-
-        /// <summary>
         /// Writes the value of the specified stack trace taken from the value of the <see cref="Exception.StackTrace"/> property to the <see cref="XmlWriter"/>.
         /// </summary>
         /// <param name="stackTrace">The stack trace of the exception.</param>
         protected override void WriteStackTrace(string stackTrace)
         {
             WriteSingleElement("StackTrace", stackTrace);
+        }
+
+        /// <summary>
+        /// Writes the value of the specified source taken from the value of the <see cref="Exception.Source"/> property to the <see cref="XmlWriter"/>.
+        /// </summary>
+        /// <param name="source">The source of the exception.</param>
+        protected override void WriteSource(string source)
+        {
+            WriteSingleElement("Source", source);
         }
 
         /// <summary>
@@ -231,11 +224,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         {
             Writer.WriteStartElement("additionalInfo");
 
-#if !SILVERLIGHT
             foreach (string name in additionalInformation.AllKeys)
-#else
-            foreach (string name in additionalInformation.Keys)
-#endif
             {
                 Writer.WriteStartElement("info");
                 Writer.WriteAttributeString("name", name);

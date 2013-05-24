@@ -118,7 +118,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <param name="objectToValidate">The object for which validation was performed.</param>
         /// <param name="key">The key representing the value being validated for <paramref name="objectToValidate"/>.</param>
         /// <returns>The message representing the validation failure.</returns>
-        /// <remarks>The default validation message formatting provides the object to validate, the key and the tag.<para/>
+        /// <remarks>The default validation maessage formatting provides the object to validate, the key and the tag.<para/>
         /// Subclasses may provide additional formatting parameters.
         /// </remarks>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720",

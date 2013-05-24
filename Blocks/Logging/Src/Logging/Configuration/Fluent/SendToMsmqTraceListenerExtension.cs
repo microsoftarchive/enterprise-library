@@ -10,25 +10,22 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using System.Diagnostics;
 using System.Messaging;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using System.Collections.Specialized;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using System.Security;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
     /// <summary>
     /// Extension methods to support configuration of <see cref="MsmqTraceListener"/>.
     /// </summary>
+    [SecurityCritical]
     public static class SendToMsmqTraceListenerExtensions
-    {        
+    {
         /// <summary>
         /// Adds a new <see cref="MsmqTraceListener"/> to the logging settings and creates
         /// a reference to this Trace Listener for the current category source.
@@ -45,11 +42,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             return new SendToMsmqTraceListenerBuilder(context, listenerName);
         }
 
+        [SecurityCritical]
         private class SendToMsmqTraceListenerBuilder : SendToTraceListenerExtension, ILoggingConfigurationSendToMsmqTraceListener
         {
             MsmqTraceListenerData msmqTraceListener;
             public SendToMsmqTraceListenerBuilder(ILoggingConfigurationSendTo context, string listenerName)
-                :base(context)
+                : base(context)
             {
                 msmqTraceListener = new MsmqTraceListenerData
                 {
@@ -59,6 +57,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 base.AddTraceListenerToSettingsAndCategory(msmqTraceListener);
             }
 
+            [SecurityCritical]
             public ILoggingConfigurationSendToMsmqTraceListener WithTransactionType(MessageQueueTransactionType TransactionType)
             {
                 msmqTraceListener.TransactionType = TransactionType;
@@ -66,6 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 return this;
             }
 
+            [SecurityCritical]
             public ILoggingConfigurationSendToMsmqTraceListener SetTimeToReachQueue(TimeSpan maximumTimeToReachQueue)
             {
                 msmqTraceListener.TimeToReachQueue = maximumTimeToReachQueue;
@@ -73,6 +73,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 return this;
             }
 
+            [SecurityCritical]
             public ILoggingConfigurationSendToMsmqTraceListener SetTimeToBeReceived(TimeSpan maximumTimeToBeReceived)
             {
                 msmqTraceListener.TimeToBeReceived = maximumTimeToBeReceived;
@@ -80,6 +81,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 return this;
             }
 
+            [SecurityCritical]
             public ILoggingConfigurationSendToMsmqTraceListener AsRecoverable()
             {
                 msmqTraceListener.Recoverable = true;
@@ -87,6 +89,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 return this;
             }
 
+            [SecurityCritical]
             public ILoggingConfigurationSendToMsmqTraceListener UseDeadLetterQueue()
             {
                 msmqTraceListener.UseDeadLetterQueue = true;
@@ -94,6 +97,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 return this;
             }
 
+            [SecurityCritical]
             public ILoggingConfigurationSendToMsmqTraceListener UseEncryption()
             {
                 msmqTraceListener.UseEncryption = true;
@@ -101,6 +105,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 return this;
             }
 
+            [SecurityCritical]
             public ILoggingConfigurationSendToMsmqTraceListener UseAuthentication()
             {
                 msmqTraceListener.UseAuthentication = true;
@@ -108,6 +113,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 return this;
             }
 
+            [SecurityCritical]
             public ILoggingConfigurationSendToMsmqTraceListener FormatWith(IFormatterBuilder formatBuilder)
             {
                 if (formatBuilder == null) throw new ArgumentNullException("formatBuilder");
@@ -119,6 +125,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 return this;
             }
 
+            [SecurityCritical]
             public ILoggingConfigurationSendToMsmqTraceListener FormatWithSharedFormatter(string formatterName)
             {
                 if (string.IsNullOrEmpty(formatterName)) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "formatterName");
@@ -128,6 +135,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 return this;
             }
 
+            [SecurityCritical]
             public ILoggingConfigurationSendToMsmqTraceListener Filter(SourceLevels sourceLevel)
             {
                 msmqTraceListener.Filter = sourceLevel;
@@ -135,6 +143,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 return this;
             }
 
+            [SecurityCritical]
             public ILoggingConfigurationSendToMsmqTraceListener WithTraceOptions(TraceOptions traceOptions)
             {
                 msmqTraceListener.TraceOutputOptions = traceOptions;
@@ -142,14 +151,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 return this;
             }
 
+            [SecurityCritical]
             public ILoggingConfigurationSendToMsmqTraceListener Prioritize(MessagePriority priority)
             {
                 msmqTraceListener.MessagePriority = priority;
-                
+
                 return this;
             }
 
-
+            [SecurityCritical]
             public ILoggingConfigurationSendToMsmqTraceListener UseQueue(string queuePath)
             {
                 msmqTraceListener.QueuePath = queuePath;

@@ -13,11 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using System.ComponentModel;
-using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Extensions;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services.PlatformProfile;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.Unity;
 
@@ -32,13 +30,33 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
     public class DiscoverDerivedConfigurationTypesService
     {
         private readonly AssemblyLocator assemblyLocator;
+        private readonly Profile profile;
 
         /// <summary>
         /// This constructor supports the configuration design-time and is not intended to be used directly from your code.
         /// </summary>
         public DiscoverDerivedConfigurationTypesService(AssemblyLocator assemblyLocator)
+            : this(assemblyLocator, new Profile())
+        {
+        }
+
+        /// <summary>
+        /// This constructor supports the configuration design-time and is not intended to be used directly from your code.
+        /// </summary>
+        public DiscoverDerivedConfigurationTypesService(AssemblyLocator assemblyLocator, Profile profile)
         {
             this.assemblyLocator = assemblyLocator;
+            this.profile = profile;
+        }
+
+        /// <summary>
+        /// Check if type is filtered by the profile or not.
+        /// </summary>
+        /// <param name="type">The actual type.</param>
+        /// <returns>True is type should be included.</returns>
+        public bool CheckType(Type type)
+        {
+            return this.profile.Check(type);
         }
 
         /// <summary>
@@ -78,9 +96,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
         private static Type GetDerivedElementType(Type handlerType)
         {
             var configAttribute = GetConfigurationElementTypeAttribute(handlerType);
-            
+
             return configAttribute.ConfigurationType;
         }
-
     }
 }

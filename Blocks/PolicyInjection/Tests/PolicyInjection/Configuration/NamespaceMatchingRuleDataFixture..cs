@@ -11,16 +11,15 @@
 
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
     [TestClass]
-    [DeploymentItem("test.exe.config")]
     public class NamespaceMatchingRuleDataFixture : MatchingRuleDataFixtureBase
     {
-#if !SILVERLIGHT
         [TestMethod]
         public void CanSerializeTypeMatchingRule()
         {
@@ -46,14 +45,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
                                      "Match data at index {0} is incorrect", i);
             }
         }
-#endif
+
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {
-            NamespaceMatchingRuleData ruleData = new NamespaceMatchingRuleData { Name = "ruleName", Matches = { new MatchData { Match = "Foo" } }};
-            TypeRegistration registration = ruleData.GetRegistrations("").First();
+            NamespaceMatchingRuleData ruleData = new NamespaceMatchingRuleData("ruleName", "Foo");
 
-            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+            using (var container = new UnityContainer())
+            {
+                ruleData.ConfigureContainer(container, "-test");
+                var registration = container.Registrations.Single(r => r.Name == "ruleName-test");
+                Assert.AreSame(typeof(IMatchingRule), registration.RegisteredType);
+                Assert.AreSame(typeof(NamespaceMatchingRule), registration.MappedToType);
+                Assert.AreSame(typeof(TransientLifetimeManager), registration.LifetimeManagerType);
+            }
         }
     }
 }

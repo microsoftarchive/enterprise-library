@@ -200,9 +200,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             dictConfigurationSource.Add(PolicyInjectionSettings.SectionName, settings);
 
             IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
-            settings.ConfigureContainer(container, dictConfigurationSource);
+            settings.ConfigureContainer(container);
 
-            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("policy");
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
 
             ICallHandler handler
                 = (policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
@@ -272,11 +272,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
                                       string instanceName,
                                       bool readOnly)
         {
-            return new PerformanceCounter(
-                TestCategoryName,
-                counterName,
-                instanceName,
-                readOnly);
+            try
+            {
+                return new PerformanceCounter(
+                    TestCategoryName,
+                    counterName,
+                    instanceName,
+                    readOnly);
+            }
+            catch (InvalidOperationException)
+            {
+                Assert.Inconclusive("In order to run the test, please run RegAssemblies.bat script first as an Administrator.");
+                return null;
+            }
         }
 
         PerformanceCounter GetCallsPerSecondCounter(string instanceName,

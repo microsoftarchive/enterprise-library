@@ -24,7 +24,6 @@ using Moq;
 namespace Console.Wpf.Tests.VSTS.DevTests.given_open_environment_delta_command
 {
     [TestClass]
-    [DeploymentItem("environment.dconfig")]
     public class when_opening_environment_delta_file : ContainerContext
     {
         private string environmentDeltaFilePath;
@@ -39,7 +38,10 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_open_environment_delta_command
                              DialogResult = true,
                              FileName = environmentDeltaFilePath
                          });
-            var openEnvironmentDelta = Container.Resolve<OpenEnvironmentConfigurationDeltaCommand>();
+
+            var openEnvironmentDelta = new OpenEnvironmentConfigurationDeltaCommand(
+                Container.Resolve<IUIServiceWpf>(), Container.Resolve<ApplicationViewModel>(), true);
+
             openEnvironmentDelta.Execute(null);
         }
 

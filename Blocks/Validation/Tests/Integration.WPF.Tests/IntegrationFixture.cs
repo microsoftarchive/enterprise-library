@@ -9,10 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SWC = System.Windows.Controls;
 
@@ -21,6 +19,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
     [TestClass]
     public class IntegrationFixture
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
+        }
+
         [TestMethod]
         public void CanValidateWithExplicitlySuppliedValidatorRule()
         {
@@ -92,7 +102,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
         {
             var control = new ControlWithImplicitRuleWithRulesetAndSource();
             var textBox = control.TextBoxWithTwoWayBinding;
-            var source = (ValidatedObject) control.Resources["validated"];
+            var source = (ValidatedObject)control.Resources["validated"];
 
             source.TwoWayValidatedStringProperty = "Hello";
 

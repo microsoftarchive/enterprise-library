@@ -31,7 +31,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="EnumConversionValidatorAttribute"/> </para>
 		/// </summary>
-		/// <param name="enumType">The type of enum that should be validated</param>
 		public EnumConversionValidatorAttribute(Type enumType)
 		{
 			ValidatorArgumentsValidatorHelper.ValidateEnumConversionValidator(enumType);
@@ -47,18 +46,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 	        get { return enumType; }
 	    }
 
-	    /// <summary>
+		/// <summary>
 		/// Creates the <see cref="EnumConversionValidator"/> described by the attribute object.
 		/// </summary>
 		/// <param name="targetType">The type of object that will be validated by the validator.</param>
-        /// <remarks>This operation must be overridden by subclasses.</remarks>
+		/// <remarks>This operation must be overriden by subclasses.</remarks>
 		/// <returns>The created <see cref="EnumConversionValidator"/>.</returns>
 		protected override Validator DoCreateValidator(Type targetType)
 		{
 			return new EnumConversionValidator(EnumType, Negated);
 		}
 
-#if !SILVERLIGHT
         private readonly Guid typeId = Guid.NewGuid();
 
         /// <summary>
@@ -71,6 +69,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                 return this.typeId;
             }
         }
-#endif
     }
 }

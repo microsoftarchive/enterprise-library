@@ -10,20 +10,27 @@
 //===============================================================================
 
 using System;
-using System.Configuration;
-using System.Diagnostics;
-using System.Linq;
 using System.Security;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
 {
     [TestClass]
     public class ExceptionPolicyFixture
     {
+        [TestInitialize]
+        public void Initialize()
+        {
+            ExceptionPolicy.SetExceptionManager(new ExceptionPolicyFactory().CreateManager(), false);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            ExceptionPolicy.Reset();
+            MockExceptionHandler.Clear();
+        }
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void HandleExceptionWithNullPolicyThrows()
@@ -55,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ActivationException))]
+        [ExpectedException(typeof(ExceptionHandlingException))]
         public void UndefinedPolicyRequestedThrows()
         {
             ExceptionPolicy.HandleException(new MockException(), "Undefined Policy");
@@ -106,7 +113,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         [TestMethod]
         public void CustomHandlerTest()
         {
-            MockExceptionHandler.Clear();
             Exception originalException = new ArgumentNullException();
             Exception customException = null;
 
@@ -123,12 +129,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             Assert.AreEqual(2, MockExceptionHandler.attributes.Count);
             Assert.AreEqual("32", MockExceptionHandler.attributes["Age"]);
             Assert.AreEqual(typeof(ArgumentNullException), customException.GetType());
-
-            MockExceptionHandler.Clear();
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ActivationException))]
+        [ExpectedException(typeof(ExceptionHandlingException))]
         public void InvalidExceptionTypeInConfigurationTest()
         {
             try
@@ -144,26 +148,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
                     throw;
                 }
 
-            }
-        }
-
-        [TestMethod]
-        public void EventLogWrittenWhenCreatingUndefinedPolicy()
-        {
-            using (var tracker = new EventLogTracker("Application"))
-            {
-                try
-                {
-                    ExceptionPolicy.HandleException(new Exception(), "ThisIsAnUnknownKey");
-                }
-                catch (ActivationException)
-                {
-                    var entries = from entry in tracker.NewEntries()
-                        where entry.Source == "Enterprise Library ExceptionHandling" &&
-                            entry.Message.Contains("ThisIsAnUnknownKey")
-                        select entry;
-                    Assert.AreEqual(1, entries.Count());
-                }
             }
         }
 

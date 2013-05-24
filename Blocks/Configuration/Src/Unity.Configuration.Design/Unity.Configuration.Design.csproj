@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{00DE2BB0-A33F-4166-938F-FCD27DDBF819}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Practices.Unity.Configuration.Design</RootNamespace>
+    <AssemblyName>Microsoft.Practices.Unity.Configuration.Design</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5, Version=5.0.414.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=2.1.505.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AliasElementCloneable.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Commands\AddRegistrationConstructorCommand.cs" />
+    <Compile Include="Commands\AddRegistrationMethodCommand.cs" />
+    <Compile Include="Commands\AddRegistrationPropertyCommand.cs" />
+    <Compile Include="Commands\AddTemplatedRegistrationConstructorCommand.cs" />
+    <Compile Include="Commands\AddTemplatedRegistrationMethodCommand.cs" />
+    <Compile Include="Commands\DefaultCollectionElementAddConstructorCommand.cs" />
+    <Compile Include="Commands\TemplatedInjectionMemberCommandBase.cs" />
+    <Compile Include="Commands\TemplatedInjectionMemberCommandContainerBase.cs" />
+    <Compile Include="Commands\AddTemplatedInjectionPropertyCommand.cs" />
+    <Compile Include="ComponentModel\AssemblySuggestionTypeConverter.cs" />
+    <Compile Include="ComponentModel\KnownLifetimeElementConverter.cs" />
+    <Compile Include="ComponentModel\NamespaceSuggestionTypeConverter.cs" />
+    <Compile Include="ComponentModel\SuggestionTypeConverterBase.cs" />
+    <Compile Include="ComponentModel\KnownTypeNameConverter.cs" />
+    <Compile Include="Editors\PopupCollectionEditor.cs" />
+    <Compile Include="Editors\PopupCollectionEditorWindow.xaml.cs">
+      <DependentUpon>PopupCollectionEditorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ParameterElementCloneable.cs" />
+    <Compile Include="PropertyElementCloneable.cs" />
+    <Compile Include="Validation\ErrorReporter.cs" />
+    <Compile Include="Validation\ExtensionTypeValidator.cs" />
+    <Compile Include="Validation\MapToNameValidator.cs" />
+    <Compile Include="Validation\TypeConverterNameValidator.cs" />
+    <Compile Include="Validation\TypeNameValidator.cs" />
+    <Compile Include="Validation\TypeNameValidatorBase.cs" />
+    <Compile Include="ViewModel\AliasProperty.cs" />
+    <Compile Include="ViewModel\ContainerElementViewModel.cs" />
+    <Compile Include="ViewModel\ConstructorElementViewModel.cs" />
+    <Compile Include="DesignResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DesignResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\InjectionMemberCollectionViewModel.cs" />
+    <Compile Include="ViewModel\InjectionMemberElementViewModel.cs" />
+    <Compile Include="ViewModel\InstanceElementViewModel.cs" />
+    <Compile Include="MergeableDeserializableConfigurationElementCollection.cs" />
+    <Compile Include="ViewModel\LifetimeElementProperty.cs" />
+    <Compile Include="ViewModel\MethodElementViewModel.cs" />
+    <Compile Include="ViewModel\ParameterElementViewModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModel\ParameterValueCollectionViewModel.cs" />
+    <Compile Include="ViewModel\PropertyElementViewModel.cs" />
+    <Compile Include="ViewModel\RegisterElementViewModel.cs" />
+    <Compile Include="ViewModel\AliasElementViewModel.cs" />
+    <Compile Include="UnityDesignTime.cs" />
+    <Compile Include="ViewModel\UnitySectionViewModel.cs" />
+    <Compile Include="ViewModel\ValueElementProperty.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DesignResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
+      <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Design\Configuration.Design.csproj">
+      <Project>{C7E21FE1-53B4-4355-AB4A-834DA21B2607}</Project>
+      <Name>Configuration.Design</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Editors\PopupCollectionEditorWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

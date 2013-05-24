@@ -26,7 +26,6 @@ using Moq;
 namespace Console.Wpf.Tests.VSTS.DevTests.given_satelite_provider_add_command
 {
     [TestClass]
-    [DeploymentItem("Microsoft.Practices.EnterpriseLibrary.Logging.Database.dll")]
     public class when_executing_satelite_provider : LoggingConfigurationContext
     {
         private ConfigurationSourceModel configurationSourceModel;

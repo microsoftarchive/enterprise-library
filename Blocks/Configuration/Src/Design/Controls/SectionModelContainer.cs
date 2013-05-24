@@ -11,16 +11,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using System.ComponentModel;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Hosting;
-using System.ComponentModel.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 {
@@ -57,6 +53,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
         /// <summary>
         /// Initializes a new instance of <see cref="SectionModelContainer"/>.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.Windows.Input.RoutedUICommand.#ctor(System.String,System.String,System.Type,System.Windows.Input.InputGestureCollection)", Justification = "Not a user-visible string")]
         public SectionModelContainer()
         {
             this.DataContextChanged += DataContextChangedHandler;
@@ -114,7 +111,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
                 {
                     currentAdorner.ElementContainerControl.Element.Deleted -= AdornedElementDeleted;
                 }
-            
+
                 currentAdorner.Dispose();
                 currentAdorner = null;
             }
@@ -177,7 +174,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
                 {
                     Point offsetOrigin = GetOffsetOrigin(root.ElementContainerControl, destinationControl);
                     Point offsetDestination = GetOffsetDestination(destinationControl, root.ElementContainerControl);
-                    DrawRelationshipLine(offsetOrigin, offsetDestination);    
+                    DrawRelationshipLine(offsetOrigin, offsetDestination);
                 }
             }
 
@@ -291,7 +288,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
                 this.elementContainerControl = elementContainer;
                 this.adorner = elementContainer.Template.FindName("PART_Adorner", elementContainer) as Border;
                 this.relationshipCanvas = relationshipCanvas;
-               
+
                 ShowAdorner();
                 elementContainerControl.SizeChanged += ElementSizeChanged;
                 elementContainerControl.Element.ElementReferencesChanged += ElementRelationshipsChanged;
@@ -305,7 +302,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 
             void ElementSizeChanged(object sender, SizeChangedEventArgs e)
             {
-                RedrawRelationships();   
+                RedrawRelationships();
             }
 
             private void ShowAdorner()

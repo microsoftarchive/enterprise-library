@@ -187,7 +187,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
 			tokenMPos = -1;
 			foreach (string token in tokens)
 			{
-				currentPos = lowConnString.IndexOf(token);
+				currentPos = lowConnString.IndexOf(token, StringComparison.OrdinalIgnoreCase);
 				if (currentPos > previousPos)
 				{
 					tokenPos = currentPos;
@@ -214,7 +214,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
 				{
 					foreach (string avoidToken in avoidTokens)
 					{
-						if (token.StartsWith(avoidToken))
+						if (token.StartsWith(avoidToken, StringComparison.OrdinalIgnoreCase))
 						{
 							found = true;
 							break;

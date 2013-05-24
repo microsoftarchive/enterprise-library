@@ -11,17 +11,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
-
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-#if !SILVERLIGHT
-using System.ComponentModel.DataAnnotations;
-#else
-using Microsoft.Practices.EnterpriseLibrary.Validation.DataAnnotations;
-#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 {
@@ -33,11 +29,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         ReflectionMemberValueAccessBuilder valueAccessBuilder;
 
         [TestInitialize]
-        public void SetUp()
+        public void TestInitialize()
         {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
             valueAccessBuilder = new ReflectionMemberValueAccessBuilder();
             mockFactory = new MockMemberAccessValidatorBuilderFactory(valueAccessBuilder);
             builder = new MetadataValidatorBuilder(mockFactory, ValidationFactory.DefaultCompositeValidatorFactory);
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
         }
 
         #region test cases for individual properties
@@ -772,6 +775,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.AreEqual(4, resultsMapping.Count);
             Assert.IsTrue(resultsMapping.ContainsKey("PublicMethodWithSelfValidationAttributeAndMatchingSignature"));
             Assert.IsFalse(resultsMapping.ContainsKey("PublicMethodWithMatchingSignatureButWithoutSelfValidationAttribute"));
+            Assert.IsTrue(resultsMapping.ContainsKey("PrivateMethodWithSelfValidationAttributeAndMatchingSignature"));
             Assert.IsFalse(resultsMapping.ContainsKey("PublicMethodWithSelfValidationAttributeAndWithInvalidParameters"));
             Assert.IsFalse(resultsMapping.ContainsKey("PublicMethodWithSelfValidationAttributeAndWithoutReturnType"));
             Assert.IsTrue(resultsMapping.ContainsKey("InheritedPublicMethodWithSelfValidationAttributeAndMatchingSignature"));
@@ -779,11 +783,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.IsFalse(resultsMapping.ContainsKey("InheritedProtectedMethodWithSelfValidationAttributeAndMatchingSignature"));
             Assert.IsFalse(resultsMapping.ContainsKey("OverridenPublicMethodWithMatchingSignatureAndSelfValidationAttributeOnBaseButNotOnOverride"));
             Assert.IsTrue(resultsMapping.ContainsKey("OverridenPublicMethodWithMatchingSignatureAndSelfValidationAttributeOnBaseAndOnOverride-Derived"));
-#if !SILVERLIGHT
-            Assert.IsTrue(resultsMapping.ContainsKey("PrivateMethodWithSelfValidationAttributeAndMatchingSignature"));
-#else
-            Assert.IsFalse(resultsMapping.ContainsKey("PrivateMethodWithSelfValidationAttributeAndMatchingSignature"));
-#endif
         }
 
         [TestMethod]

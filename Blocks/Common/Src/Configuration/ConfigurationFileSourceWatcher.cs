@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage;
 
@@ -100,12 +99,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             get { return this.configWatcher; }
         }
 
-        void IDisposable.Dispose()
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
         {
-            if (this.configWatcher != null)
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                this.configWatcher.Dispose();
-                this.configWatcher = null;
+                if (this.configWatcher != null)
+                {
+                    this.configWatcher.Dispose();
+                    this.configWatcher = null;
+                }
             }
         }
     }

@@ -9,9 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -27,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// Initializes a new instance of the <see cref="SystemConfigurationSourceElement"/> class with default values.
         /// </summary>
         public SystemConfigurationSourceElement()
-            : this(Resources_Desktop.SystemConfigurationSourceName)
+            : this(Resources.SystemConfigurationSourceName)
         { }
 
         /// <summary>

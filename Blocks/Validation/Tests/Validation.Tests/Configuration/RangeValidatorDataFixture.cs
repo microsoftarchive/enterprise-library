@@ -12,6 +12,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Configuration;
@@ -25,7 +26,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
     [TestClass]
     public class RangeValidatorDataFixture
     {
-#if !SILVERLIGHT
         [TestMethod]
         public void CanDeserializeSerializedInstanceWithNameOnly()
         {
@@ -36,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -65,7 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -83,14 +83,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 Assert.AreEqual(CultureInfo.GetCultureInfo("nl-NL"), rwValidatorData.Culture);
             }
         }
-#endif
 
         [TestMethod]
         public void CanCreateValidatorWithSpecificCulture()
         {
             MockRangeValidatorData validatorData = new MockRangeValidatorData();
-
-            validatorData.Culture = new CultureInfo("nl-NL");
+            
+            validatorData.Culture = CultureInfo.GetCultureInfo("nl-NL");
             validatorData.LowerBound = "12,4";
             validatorData.LowerBoundType = RangeBoundaryType.Inclusive;
             validatorData.UpperBound = "24,4";
@@ -120,7 +119,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObject()
         {
-            RangeValidatorData rwValidatorData = new RangeValidatorData { Name = "validator1" };
+            RangeValidatorData rwValidatorData = new RangeValidatorData("validator1");
             rwValidatorData.Negated = true;
             rwValidatorData.LowerBound = "12";
             rwValidatorData.LowerBoundType = RangeBoundaryType.Exclusive;
@@ -142,7 +141,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObjectWithMessageTemplateOverride()
         {
-            RangeValidatorData rwValidatorData = new RangeValidatorData { Name = "validator1" };
+            RangeValidatorData rwValidatorData = new RangeValidatorData("validator1");
             rwValidatorData.MessageTemplate = "message template override";
             rwValidatorData.Negated = true;
             rwValidatorData.LowerBound = "12";

@@ -30,17 +30,6 @@ pushd %binDir%
 
 @ECHO.
 @ECHO -----------------------------------------------------------------
-@ECHO Caching Database
-@ECHO -----------------------------------------------------------------
-@ECHO.
-cd ..\Blocks\Caching\Src\Database\Scripts
-if Exist CreateCachingDb.cmd Call CreateCachingDb.cmd
-@if errorlevel 1 goto :error
-popd
-pushd %binDir%
-
-@ECHO.
-@ECHO -----------------------------------------------------------------
 @ECHO Logging
 @ECHO -----------------------------------------------------------------
 @ECHO.

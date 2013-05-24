@@ -68,10 +68,10 @@ namespace Data.SqlCe.Tests.VSTS
             using (DbConnection connection = db.CreateConnection())
             {
                 connection.Open();
-                using (DbTransaction trans = connection.BeginTransaction())
+                using (DbTransaction transaction = connection.BeginTransaction())
                 {
-                    db.ExecuteNonQuery(trans, "Ten Most Expensive Products");
-                    trans.Rollback();
+                    db.ExecuteNonQuery(transaction, "Ten Most Expensive Products");
+                    transaction.Rollback();
                 }
             }
         }

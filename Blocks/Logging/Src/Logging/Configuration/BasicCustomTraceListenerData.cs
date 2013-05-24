@@ -10,17 +10,13 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
@@ -32,7 +28,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         : TraceListenerData, IHelperAssistedCustomConfigurationData<BasicCustomTraceListenerData>
     {
         internal const string initDataProperty = "initializeData";
-        private const string AttributeWrappedPrefix = "\u200Cwrapped";
 
         private readonly CustomProviderDataHelper<BasicCustomTraceListenerData> helper;
 
@@ -227,88 +222,97 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
             return base.IsModified();
         }
 
-        ///<summary>
-        /// Returns the type <see cref="TypeRegistration"/> entries for the specified configuration data.
-        ///</summary>
-        /// <remarks>
-        /// This will return multiple <see cref="TypeRegistration"/> entries only if the <see cref="BasicCustomTraceListenerData.Attributes"/>
-        /// property is populated.  The additional registration returned is a <see cref="AttributeSettingTraceListenerWrapper"/> to handle
-        /// supplying the attribute data to the underlying <see cref="TraceListener"/>.
-        /// </remarks>
-        ///<returns>A set of registry entries.</returns>        
-        public override IEnumerable<TypeRegistration> GetRegistrations()
+        /// <summary>
+        /// Builds the <see cref="TraceListener" /> object represented by this configuration object.
+        /// </summary>
+        /// <param name="settings">The logging configuration settings.</param>
+        /// <returns>
+        /// A trace listener.
+        /// </returns>
+        protected override TraceListener CoreBuildTraceListener(LoggingSettings settings)
         {
-            var mainListenerRegistration = GetTraceListenerTypeRegistration();
+            Type[] constructorParameterTypes = new Type[0];
+            object[] constructorArguments = new object[0];
+
+            if (!string.IsNullOrEmpty(this.InitData))
+            {
+                constructorParameterTypes = new Type[] { typeof(string) };
+                constructorArguments = new object[] { this.InitData };
+            }
+
+            var constructor = GetConstructor(constructorParameterTypes);
+
+            var listener = (TraceListener)constructor.Invoke(constructorArguments);
+
             if (this.Attributes.Count > 0)
             {
-                mainListenerRegistration.Name = WrappedTraceListenerName + AttributeWrappedPrefix;
-
-                yield return GetWrappingRegistration(mainListenerRegistration.Name);
+                foreach (string key in this.Attributes)
+                {
+                    listener.Attributes.Add(key, this.Attributes[key]);
+                }
             }
 
-            yield return mainListenerRegistration;
-            yield return GetTraceListenerWrapperTypeRegistration();
-        }
-
-        private TypeRegistration GetWrappingRegistration(string mainListenerRegistrationName)
-        {
-            return new TypeRegistration<TraceListener>(
-                  () => new AttributeSettingTraceListenerWrapper(
-                            Container.Resolved<TraceListener>(mainListenerRegistrationName),
-                            this.Attributes
-                            )
-                  )
-            {
-                Name = this.WrappedTraceListenerName,
-                Lifetime = TypeRegistrationLifetime.Transient
-            };
-        }
-
-
-        /// <summary>
-        /// Gets the creation expression used to produce a <see cref="TypeRegistration"/> during
-        /// <see cref="TraceListenerData.GetRegistrations"/>.
-        /// </summary>
-        /// <remarks>
-        /// This must be overridden by a subclass, but is not marked as abstract due to configuration serialization needs.
-        /// </remarks>
-        /// <returns>A <see cref="Expression"/> that creates a <see cref="TraceListener"/></returns>
-        /// <exception cref="ArgumentException">Throws an argument exception if it cannot locate an appropriate constructor for the <see cref="NameTypeConfigurationElement.Type"/>.</exception>
-        protected override Expression<Func<TraceListener>> GetCreationExpression()
-        {
-            Expression<Func<TraceListener>> expression;
-            Type[] constructorParameters = new Type[0];
-            Expression[] expressionArguments = new Expression[0];
-
-            if (!string.IsNullOrEmpty(InitData))
-            {
-                constructorParameters = new Type[] { InitData.GetType() };
-                expressionArguments = new Expression[] { Expression.Constant(InitData) };
-            }
-
-            ConstructorInfo constructor = GetConstructor(constructorParameters);
-
-            expression =
-                Expression.Lambda<Func<TraceListener>>(
-                    Expression.New(
-                        constructor,
-                        expressionArguments)
-                );
-
-            return expression;
+            return listener;
         }
 
         private ConstructorInfo GetConstructor(Type[] constructorParameters)
         {
-            ConstructorInfo constructor = Type.GetConstructor(constructorParameters);
+            Type traceListenerType;
+
+            try
+            {
+                traceListenerType = this.Type;
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.ExceptionInvalidTraceListenerType,
+                        this.ElementInformation.Source,
+                        this.ElementInformation.LineNumber,
+                        this.Name),
+                    e);
+            }
+
+            if (traceListenerType == null)
+            {
+                throw new InvalidOperationException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.ExceptionInvalidTraceListenerType,
+                        this.ElementInformation.Source,
+                        this.ElementInformation.LineNumber,
+                        this.Name));
+            }
+
+            if (!traceListenerType.IsSubclassOf(typeof(TraceListener)))
+            {
+                throw new InvalidOperationException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.ExceptionCustomTraceListenerNotATraceListenerType,
+                        this.ElementInformation.Source,
+                        this.ElementInformation.LineNumber,
+                        this.Name,
+                        traceListenerType.FullName));
+            }
+
+            ConstructorInfo constructor = traceListenerType.GetConstructor(constructorParameters);
 
             if (constructor == null)
             {
-                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
-                                                          Resources_Desktop.ExceptionCannotFindAppropriateConstructor,
-                                                          Type.Name,
-                                                          constructorParameters.Length));
+                throw new InvalidOperationException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Logging.Properties.Resources.ExceptionCannotFindAppropriateConstructor,
+                        this.ElementInformation.Source,
+                        this.ElementInformation.LineNumber,
+                        this.Name,
+                        traceListenerType.FullName,
+                        constructorParameters.Length));
             }
+
             return constructor;
         }
     }

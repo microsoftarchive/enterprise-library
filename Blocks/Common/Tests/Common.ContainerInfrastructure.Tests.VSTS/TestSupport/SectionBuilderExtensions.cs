@@ -15,11 +15,6 @@ namespace Common.ContainerInfrastructure.Tests.VSTS.TestSupport
 {
     public static class SectionBuilderExtensions
     {
-        public static CryptoSectionBuilder CryptoSection(this SectionBuilder builder)
-        {
-            return new CryptoSectionBuilder();
-        }
-
         public static ExceptionSectionBuilder ExceptionSection(this SectionBuilder builder)
         {
             return new ExceptionSectionBuilder();

@@ -14,9 +14,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
-#if SILVERLIGHT
-using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
-#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
 {
@@ -26,7 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
     public interface ILoggingConfigurationCategoryOptions : ILoggingConfigurationCategoryContd
     {
         /// <summary>
-        /// Specified the default <see cref="SourceLevels"/> for this Category.<br/>
+        /// Specifed the default <see cref="SourceLevels"/> for this Category.<br/>
         /// By default the source level is set to <see cref="SourceLevels.All"/>.
         /// </summary>
         /// <param name="sourceLevels">The <see cref="SourceLevels"/> to be set as default.</param>
@@ -34,7 +31,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
         ILoggingConfigurationCategoryOptions ToSourceLevels(SourceLevels sourceLevels);
 
         /// <summary>
-        /// Specifies that Flush doesn't have to be called after every write to a listener.<br/>
+        /// Specifies that Flush doesnt have to be called after every write to a listener.<br/>
         /// By default a Flush will be called after every write to a listener.
         /// </summary>
         /// <returns>Fluent interface that allows for this Category Source to be configured further.</returns>

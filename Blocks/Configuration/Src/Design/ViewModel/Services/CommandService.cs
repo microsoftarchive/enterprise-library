@@ -16,6 +16,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Extensions;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services.PlatformProfile;
 using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services
@@ -33,13 +34,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
         IList<CommandModel> globalCommands;
         IUnityContainer builder;
         ConfigurationSourceDependency configurationSourceRefresh;
+        Profile profile;
 
         /// <summary>
         /// This constructor supports the configuration design-time and is not intended to be used directly from your code.
         /// </summary>
-        public MenuCommandService(IUnityContainer builder, AssemblyLocator assemblyLocator, ConfigurationSourceDependency configurationSourceRefresh)
+        public MenuCommandService(IUnityContainer builder, AssemblyLocator assemblyLocator, ConfigurationSourceDependency configurationSourceRefresh, Profile profile)
         {
             this.configurationSourceRefresh = configurationSourceRefresh;
+            this.profile = profile;
             this.builder = builder;
             this.assemblyLocator = assemblyLocator;
         }
@@ -75,7 +78,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
                    .Select(x => builder.Resolve(x.CommandModelType, new DependencyOverride(x.GetType(), x)))
                    .Cast<CommandModel>();
 
-                this.globalCommands = globalAssemblyCommands.OrderBy(c => c.Title).ToList();
+                this.globalCommands = globalAssemblyCommands
+                    .Where(t => profile.Check(t))
+                    .OrderBy(c => c.Title).ToList();
+
                 configurationSourceRefresh.Cleared += configurationSourceRefresh_Refresh;
             }
         }

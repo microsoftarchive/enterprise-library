@@ -1,2 +1,0 @@
-This is the place where the DLL's of the Unit Testing framework should be placed. 
- You can download them from: http://silverlight.codeplex.com

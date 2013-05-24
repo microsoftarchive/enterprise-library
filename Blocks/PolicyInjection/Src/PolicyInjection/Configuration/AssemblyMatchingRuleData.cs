@@ -9,11 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Properties;
+using System.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
 
@@ -22,28 +20,54 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// <summary>
     /// Configuration element for the <see cref="AssemblyMatchingRule"/>.
     /// </summary>
-    public partial class AssemblyMatchingRuleData : MatchingRuleData
+    [ResourceDescription(typeof(DesignResources), "AssemblyMatchingRuleDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "AssemblyMatchingRuleDataDisplayName")]
+    public class AssemblyMatchingRuleData : MatchingRuleData
     {
-        /// <summary>
-        /// Get the set of <see cref="TypeRegistration"/> objects needed to
-        /// register the matching rule represented by this config element and its associated objects.
-        /// </summary>
-        /// <param name="nameSuffix">A suffix for the names in the generated type registration objects.</param>
-        /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
-        public override IEnumerable<TypeRegistration> GetRegistrations(string nameSuffix)
-        {
-            if (string.IsNullOrEmpty(this.Match))
-            {
-                throw new InvalidOperationException(
-                    string.Format(CultureInfo.CurrentCulture, Resources.ErrorAssemblyMatchingRuleMatchNotSet, this.Name));
-            }
+        private const string MatchPropertyName = "match";
 
-            yield return
-                new TypeRegistration<IMatchingRule>(() => new AssemblyMatchingRule(this.Match))
-                {
-                    Name = this.Name + nameSuffix,
-                    Lifetime = TypeRegistrationLifetime.Transient
-                };
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AssemblyMatchingRuleData"/> class with default settings.
+        /// </summary>
+        public AssemblyMatchingRuleData()
+            : base()
+        {
+            base.Type = typeof(FakeRules.AssemblyMatchingRule);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AssemblyMatchingRuleData"/> class with the given
+        /// rule name and assembly name pattern to match.
+        /// </summary>
+        /// <param name="matchingRuleName">The name of rule from the configuration file.</param>
+        /// <param name="assemblyName">The assembly name to match.</param>
+        public AssemblyMatchingRuleData(string matchingRuleName, string assemblyName)
+            : base(matchingRuleName, typeof(FakeRules.AssemblyMatchingRule))
+        {
+            Match = assemblyName;
+        }
+
+        /// <summary>
+        /// The assembly name to match.
+        /// </summary>
+        /// <value>Assembly name to match.</value>
+        [ConfigurationProperty(MatchPropertyName)]
+        [ResourceDescription(typeof(DesignResources), "AssemblyMatchingRuleDataMatchDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "AssemblyMatchingRuleDataMatchDisplayName")]
+        public string Match
+        {
+            get { return (string)base[MatchPropertyName]; }
+            set { base[MatchPropertyName] = value; }
+        }
+
+        /// <summary>
+        /// Configures an <see cref="IUnityContainer"/> to resolve the represented matching rule by using the specified name.
+        /// </summary>
+        /// <param name="container">The container to configure.</param>
+        /// <param name="registrationName">The name of the registration.</param>
+        protected override void DoConfigureContainer(IUnityContainer container, string registrationName)
+        {
+            container.RegisterType<IMatchingRule, AssemblyMatchingRule>(registrationName, new InjectionConstructor(this.Match));
         }
     }
 }

@@ -15,7 +15,6 @@ using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
@@ -25,76 +24,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
     [ConfigurationElementType(typeof(FlatFileTraceListenerData))]
     public class FlatFileTraceListener : FormattedTextWriterTraceListener
     {
-        string header = String.Empty;
-        string footer = String.Empty;
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FlatFileTraceListener"/>.
-        /// </summary>
-        public FlatFileTraceListener()
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a <see cref="ILogFormatter"/>.
-        /// </summary>
-        /// <param name="formatter">The formatter.</param>
-        public FlatFileTraceListener(ILogFormatter formatter)
-            : base(formatter)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a <see cref="FileStream"/> and 
-        /// a <see cref="ILogFormatter"/>.
-        /// </summary>
-        /// <param name="stream">The file stream writen to.</param>
-        /// <param name="formatter">The formatter.</param>
-        public FlatFileTraceListener(FileStream stream, ILogFormatter formatter)
-            : base(stream, formatter)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a <see cref="FileStream"/>.
-        /// </summary>
-        /// <param name="stream">The file stream.</param>
-        public FlatFileTraceListener(FileStream stream)
-            : base(stream)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a <see cref="StreamWriter"/> and 
-        /// a <see cref="ILogFormatter"/>.
-        /// </summary>
-        /// <param name="writer">The stream writer.</param>
-        /// <param name="formatter">The formatter.</param>
-        public FlatFileTraceListener(StreamWriter writer, ILogFormatter formatter)
-            : base(writer, formatter)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a <see cref="StreamWriter"/>.
-        /// </summary>
-        /// <param name="writer">The stream writer.</param>
-        public FlatFileTraceListener(StreamWriter writer)
-            : base(writer)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a file name and 
-        /// a <see cref="ILogFormatter"/>.
-        /// </summary>
-        /// <param name="fileName">The file name.</param>
-        /// <param name="formatter">The formatter.</param>
-        public FlatFileTraceListener(string fileName, ILogFormatter formatter)
-            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName), formatter)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a file name.
-        /// </summary>
-        /// <param name="fileName">The file name.</param>
-        public FlatFileTraceListener(string fileName)
-            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName))
-        { }
+        private string header = string.Empty;
+        private string footer = string.Empty;
 
         /// <summary>
         /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a file name, a header, a footer and 
@@ -104,24 +35,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="header">The header.</param>
         /// <param name="footer">The footer.</param>
         /// <param name="formatter">The formatter.</param>
-        public FlatFileTraceListener(string fileName, string header, string footer, ILogFormatter formatter)
+        public FlatFileTraceListener(string fileName, string header = null, string footer = null, ILogFormatter formatter = null)
             : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName), formatter)
         {
-            this.header = header;
-            this.footer = footer;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a file name, a header, and a footer.
-        /// </summary>
-        /// <param name="fileName">The file stream.</param>
-        /// <param name="header">The header.</param>
-        /// <param name="footer">The footer.</param>
-        public FlatFileTraceListener(string fileName, string header, string footer)
-            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName))
-        {
-            this.header = header;
-            this.footer = footer;
+            this.header = header ?? string.Empty;
+            this.footer = footer ?? string.Empty;
         }
 
         /// <summary>
@@ -131,17 +49,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="stream">The file stream.</param>
         /// <param name="name">The name.</param>
         /// <param name="formatter">The formatter.</param>
-        public FlatFileTraceListener(FileStream stream, string name, ILogFormatter formatter)
+        public FlatFileTraceListener(FileStream stream, string name = null, ILogFormatter formatter = null)
             : base(stream, name, formatter)
-        { }
-
-        /// <summary>
-        /// Initializes a new name instance of <see cref="FlatFileTraceListener"/> with a <see cref="FileStream"/>.
-        /// </summary>
-        /// <param name="stream">The file stream.</param>
-        /// <param name="name">The name.</param>
-        public FlatFileTraceListener(FileStream stream, string name)
-            : base(stream, name)
         { }
 
         /// <summary>
@@ -151,37 +60,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="writer">The stream writer.</param>
         /// <param name="name">The name.</param>
         /// <param name="formatter">The formatter.</param>
-        public FlatFileTraceListener(StreamWriter writer, string name, ILogFormatter formatter)
+        public FlatFileTraceListener(StreamWriter writer, string name = null, ILogFormatter formatter = null)
             : base(writer, name, formatter)
-        { }
-
-        /// <summary>
-        /// Initializes a new named instance of <see cref="FlatFileTraceListener"/> with a <see cref="StreamWriter"/>.
-        /// </summary>
-        /// <param name="writer">The stream writer.</param>
-        /// <param name="name">The name.</param>
-        public FlatFileTraceListener(StreamWriter writer, string name)
-            : base(writer, name)
-        { }
-
-        /// <summary>
-        /// Initializes a new named instance of <see cref="FlatFileTraceListener"/> with a file name and 
-        /// a <see cref="ILogFormatter"/>.
-        /// </summary>
-        /// <param name="fileName">The file name.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="formatter">The formatter.</param>
-        public FlatFileTraceListener(string fileName, string name, ILogFormatter formatter)
-            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName), name, formatter)
-        { }
-
-        /// <summary>
-        /// Initializes a new named instance of <see cref="FlatFileTraceListener"/> with a file name.
-        /// </summary>
-        /// <param name="fileName">The file name.</param>
-        /// <param name="name">The name.</param>
-        public FlatFileTraceListener(string fileName, string name)
-            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName), name)
         { }
 
         /// <summary>

@@ -10,10 +10,12 @@
 //===============================================================================
 
 using System;
+using System.Configuration;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests
@@ -24,6 +26,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests
     [TestClass]
     public class ExceptionShieldingBehaviorFixture
     {
+        [TestInitialize]
+        public void Initialize()
+        {
+            ExceptionPolicy.SetExceptionManager(new ExceptionPolicyFactory().CreateManager(), false);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            ExceptionPolicy.Reset();
+        }
+
         [TestMethod]
         public void ShouldSetShieldingWithNonIncludeExceptionDetailInFaults()
         {
@@ -31,7 +45,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests
             Uri serviceUri = new Uri("http://tests:30003");
             ServiceHost host = new ServiceHost(typeof(MockService), serviceUri);
             host.AddServiceEndpoint(typeof(IMockService), new WSHttpBinding(), serviceUri);
-            host.Open();
+            try
+            {
+                host.Open();
+            }
+            catch (AddressAccessDeniedException ex)
+            {
+                Assert.Inconclusive("In order to run the tests, please run Visual Studio as Administrator.\r\n{0}", ex.ToString());
+            }
             try
             {
                 // check that we have no ErrorHandler loaded into each channel that
@@ -78,7 +99,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests
             SecurityMode securityMode = SetMexAndSecurity(host, mexScheme);
             WSHttpBinding mockServiceBinding = new WSHttpBinding(securityMode);
             host.AddServiceEndpoint(typeof(IMockService), mockServiceBinding, serviceUri);
-            host.Open();
+            try
+            {
+                host.Open();
+            }
+            catch (AddressAccessDeniedException ex)
+            {
+                Assert.Inconclusive("In order to run the tests, please run Visual Studio as Administrator.\r\n{0}", ex.ToString());
+            }
             try
             {
                 foreach (ChannelDispatcher dispatcher in host.ChannelDispatchers)

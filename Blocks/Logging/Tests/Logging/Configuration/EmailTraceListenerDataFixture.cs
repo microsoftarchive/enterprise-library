@@ -9,10 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Diagnostics;
-using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -38,7 +36,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
                     UseSSL = true
                 };
         }
-        
 
         [TestMethod]
         public void WhenCreatingInstanceUsingDefaultContructor_ThenListenerDataTypeIsSet()
@@ -48,96 +45,63 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
         }
 
         [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatesTwoTypeRegistrations()
+        public void WhenCreatingListener_ThenCreatesEmailListener()
         {
-            Assert.AreEqual(2, listenerData.GetRegistrations().Count());
+            var settings = new LoggingSettings { Formatters = { new TextFormatterData { Name = "formatter", Template = "template" } } };
+
+            var listener = (EmailTraceListener)listenerData.BuildTraceListener(settings);
+
+            Assert.IsNotNull(listener);
+            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual(TraceOptions.DateTime | TraceOptions.Callstack, listener.TraceOutputOptions);
+            Assert.IsNotNull(listener.Filter);
+            Assert.AreEqual(SourceLevels.Warning, ((EventTypeFilter)listener.Filter).EventType);
+            Assert.IsInstanceOfType(listener.Formatter, typeof(TextFormatter));
         }
 
         [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatesATypeRegistrationForTheWrapperWithTheOriginalName()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenCreatingListenerWithNoFormatterAvailable_ThenThrows()
         {
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener").First()
-                .AssertForServiceType(typeof(TraceListener))
-                .ForName("listener")
-                .ForImplementationType(typeof(ReconfigurableTraceListenerWrapper));
+            var settings = new LoggingSettings { Formatters = { } };
+
+            listenerData.BuildTraceListener(settings);
+        }
+    }
+
+    [TestClass]
+    public class GivenEmailTraceListenerDataWithNoFormatter
+    {
+        private TraceListenerData listenerData;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            listenerData =
+                new EmailTraceListenerData("listener", "to", "from", "subject starter", "subject ender", "smtp", 25, "")
+                {
+                    TraceOutputOptions = TraceOptions.DateTime | TraceOptions.Callstack,
+                    Filter = SourceLevels.Warning,
+                    AuthenticationMode = EmailAuthenticationMode.UserNameAndPassword,
+                    UserName = "user",
+                    Password = "secret",
+                    UseSSL = true
+                };
         }
 
         [TestMethod]
-        public void WhenCreatesRegistration_ThenWrapperRegistrationIsSingleton()
+        public void WhenCreatingListener_ThenCreatesEmailListener()
         {
-            Assert.AreEqual(
-                TypeRegistrationLifetime.Singleton,
-                listenerData.GetRegistrations().Where(tr => tr.Name == "listener").First().Lifetime);
-        }
+            var settings = new LoggingSettings { Formatters = { new TextFormatterData { Name = "formatter", Template = "template" } } };
 
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenWrapperRegistrationIsInjectedWithTheWrappedTraceListenerAndTheLoggingUpdateCoordinator()
-        {
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener").First()
-                .AssertConstructor()
-                .WithContainerResolvedParameter<TraceListener>("listener\u200Cimplementation")
-                .WithContainerResolvedParameter<ILoggingUpdateCoordinator>(null)
-                .VerifyConstructorParameters();
-        }
+            var listener = (EmailTraceListener)listenerData.BuildTraceListener(settings);
 
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenWrapperRegistrationIsInjectedWithTheNameProperty()
-        {
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener").First()
-                .AssertProperties()
-                .WithValueProperty("Name", "listener")
-                .VerifyProperties();
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationMapsTraceListenerToEmailTraceListenerForTheSuppliedName()
-        {
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First()
-                .AssertForServiceType(typeof(TraceListener))
-                .ForName("listener\u200Cimplementation")
-                .ForImplementationType(typeof(EmailTraceListener));
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationHasTheExpectedConstructorParameters()
-        {
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First()
-                .AssertConstructor()
-                .WithValueConstructorParameter("to")
-                .WithValueConstructorParameter("from")
-                .WithValueConstructorParameter("subject starter")
-                .WithValueConstructorParameter("subject ender")
-                .WithValueConstructorParameter("smtp")
-                .WithValueConstructorParameter(25)
-                .WithContainerResolvedParameter<ILogFormatter>("formatter")
-                .WithValueConstructorParameter(EmailAuthenticationMode.UserNameAndPassword)
-                .WithValueConstructorParameter("user")
-                .WithValueConstructorParameter("secret")
-                .WithValueConstructorParameter(true)
-                .VerifyConstructorParameters();
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenCreatedRegistrationInjectsFilterAndNameAndTraceOutputOptionsProperties()
-        {
-            TraceFilter filter;
-
-            listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First()
-                .AssertProperties()
-                .WithValueProperty("Name", "listener\u200Cimplementation")
-                .WithValueProperty("TraceOutputOptions", TraceOptions.DateTime | TraceOptions.Callstack)
-                .WithValueProperty("Filter", out filter)
-                .VerifyProperties();
-
-            Assert.AreEqual(SourceLevels.Warning, ((EventTypeFilter)filter).EventType);
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistration_ThenWrappedRegistrationIsTransient()
-        {
-            Assert.AreEqual(
-                TypeRegistrationLifetime.Transient,
-                listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First().Lifetime);
+            Assert.IsNotNull(listener);
+            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual(TraceOptions.DateTime | TraceOptions.Callstack, listener.TraceOutputOptions);
+            Assert.IsNotNull(listener.Filter);
+            Assert.AreEqual(SourceLevels.Warning, ((EventTypeFilter)listener.Filter).EventType);
+            Assert.IsNull(listener.Formatter);
         }
     }
 }

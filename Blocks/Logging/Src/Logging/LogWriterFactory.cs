@@ -9,21 +9,27 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
+using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
     /// <summary>
     /// Factory to create <see cref="LogWriter"/> instances.
     /// </summary>
-    public class LogWriterFactory : ContainerBasedInstanceFactory<LogWriter>
+    public class LogWriterFactory
     {
+        private readonly LogWriterConfigurationBuilder builder;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="LogWriter"/> class with the default <see cref="IConfigurationSource"/> instance.
         /// </summary>
         public LogWriterFactory()
+            : this(s => (ConfigurationSection)ConfigurationManager.GetSection(s))
         {
         }
 
@@ -32,18 +38,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// </summary>
         /// <param name="configurationSource">The source for configuration information.</param>
         public LogWriterFactory(IConfigurationSource configurationSource)
-            : base(configurationSource)
         {
+            Guard.ArgumentNotNull(configurationSource, "configurationSource");
+
+            this.builder = new LogWriterConfigurationBuilder(configurationSource.GetSection);
         }
 
         /// <summary>
-        /// Create an instance of <see cref="LogWriterFactory"/> that resolves objects
-        /// using the supplied <paramref name="container"/>.
+        /// Initializes a new instance of the <see cref="LogWriter"/> class with a configuration accessor.
         /// </summary>
-        /// <param name="container"><see cref="IServiceLocator"/> to use to resolve objects.</param>
-        public LogWriterFactory(IServiceLocator container)
-            : base(container)
+        /// <param name="configurationAccessor">The source for configuration information.</param>
+        public LogWriterFactory(Func<string, ConfigurationSection> configurationAccessor)
         {
+            Guard.ArgumentNotNull(configurationAccessor, "configurationAccessor");
+
+            this.builder = new LogWriterConfigurationBuilder(configurationAccessor);
         }
 
         /// <summary>
@@ -53,7 +62,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <returns>The created <see cref="LogWriter"/> object.</returns>
         public LogWriter Create()
         {
-            return CreateDefault();
+            return this.builder.Create();
+        }
+
+        private class LogWriterConfigurationBuilder
+        {
+            private readonly LoggingSettings settings;
+
+            public LogWriterConfigurationBuilder(Func<string, ConfigurationSection> configurationAccessor)
+            {
+                Guard.ArgumentNotNull(configurationAccessor, "configurationAccessor");
+
+                this.settings = (LoggingSettings)configurationAccessor(LoggingSettings.SectionName);
+            }
+
+            public LogWriter Create()
+            {
+                if (this.settings == null)
+                {
+                    throw new InvalidOperationException(Resources.ExceptionLoggingSectionNotFound);
+                }
+
+                return this.settings.BuildLogWriter();
+            }
         }
     }
 }

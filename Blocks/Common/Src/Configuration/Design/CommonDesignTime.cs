@@ -133,11 +133,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
             /// Type name of the IEnvironmentalOverridesEditor interface, declared in the Configuration.DesignTime Assembly.
             /// </summary>
             public const string OverridesEditor = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.IEnvironmentalOverridesEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
-
-            /// <summary>
-            /// Type name of the SaveFileEditor, declared class in the Configuration.DesignTime Assembly.
-            /// </summary>
-            public const string SaveFileEditor = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.SaveFileEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
         }
 
         /// <summary>
@@ -160,17 +155,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
             /// Type name of the SectionViewModel class, declared in the Configuration.DesignTime Assembly.
             /// </summary>
             public const string SectionViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.SectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
-
-            /// <summary>
-            /// Type name of the InstrumentationViewModel class, declared in the Configuration.DesignTime Assembly.
-            /// </summary>
-            public const string InstrumentationViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.InstrumentationViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
-
-            /// <summary>
-            /// Type name of the ManageableConfigurationSourceViewModel class, declared in the Configuration.DesignTime Assembly.
-            /// </summary>
-            public const string ManageableConfigurationSourceViewModel =
-                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.ManageableConfigurationSourceViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
 
             /// <summary>
             /// Type name of the CollectionEditorContainedElementProperty class, declared in the Configuration.DesignTime Assembly.

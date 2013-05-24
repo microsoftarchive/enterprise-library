@@ -10,20 +10,26 @@
 //===============================================================================
 
 using System;
-using System.Diagnostics;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Data.Oracle;
+using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
 using Microsoft.Practices.EnterpriseLibrary.Data.TestSupport;
-using Microsoft.Practices.ServiceLocation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SysConfig=System.Configuration;
-using System.Threading;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 {
     [TestClass]
     public class DatabaseFactoryOldFixture
     {
+#pragma warning disable 612, 618
+        private static readonly Database[] databases = new Database[]
+        {
+            new SqlDatabase(".\\sqlexpress"),
+            new OracleDatabase("test")
+        };
+#pragma warning restore 612, 618
+
         [TestMethod]
         public void CanCreateDefaultDatabase()
         {
@@ -47,80 +53,117 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             Database firstDb = factory.Create("NewDatabase");
             Database secondDb = factory.Create("NewDatabase");
 
-            Assert.IsFalse(firstDb == secondDb);
+            Assert.AreNotSame(firstDb, secondDb);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ActivationException))]
+        [ExpectedException(typeof(InvalidOperationException))]
         public void ExceptionThrownWhenAskingForDatabaseWithUnknownName()
         {
-            Database db = DatabaseFactory.CreateDatabase("ThisIsAnUnknownKey");
-            Assert.IsNotNull(db);
-        }
+            DatabaseFactory.SetDatabaseProviderFactory(new DatabaseProviderFactory(new SystemConfigurationSource(false).GetSection), false);
 
-        //[TestMethod]
-        //public void WmiEventFiredWhenAskingForDatabaseWithUnknownName()
-        //{
-        //    using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
-        //    {
-        //        try
-        //        {
-        //            Database db = DatabaseFactory.CreateDatabase("ThisIsAnUnknownKey");
-        //        }
-        //        catch (ConfigurationErrorsException)
-        //        {
-        //            eventListener.WaitForEvents();
-        //            Assert.AreEqual(1, eventListener.EventsReceived.Count);
-        //            Assert.AreEqual("DataConfigurationFailureEvent", eventListener.EventsReceived[0].ClassPath.ClassName);
-        //            Assert.AreEqual("ThisIsAnUnknownKey", eventListener.EventsReceived[0].GetPropertyValue("InstanceName"));
-        //            string exceptionMessage = (string)eventListener.EventsReceived[0].GetPropertyValue("ExceptionMessage");
-
-        //            Assert.IsFalse(-1 == exceptionMessage.IndexOf("ThisIsAnUnknownKey"));
-
-        //            return;
-        //        }
-
-        //        Assert.Fail("ConfigurationErrorsException expected");
-        //    }
-        //}
-
-        [TestMethod]
-        public void CreatingDatabaseWithUnknownInstanceNameWritesToEventLog()
-        {
-            var startTime = DateTime.Now;
-            Thread.Sleep(1000);
             try
             {
                 Database db = DatabaseFactory.CreateDatabase("ThisIsAnUnknownKey");
             }
-            catch (ActivationException)
+            finally
             {
-                using (EventLog applicationLog = new EventLog("Application"))
-                {
-                    var entries = applicationLog.GetEntriesSince(startTime)
-                        .Where(e => e.Source == "Enterprise Library Data" &&
-                            e.Message.Contains("ThisIsAnUnknownKey"));
-
-                    Assert.AreEqual(1, entries.Count());
-                }
-                return;
+                DatabaseFactory.ClearDatabaseProviderFactory();
             }
+        }
 
-            Assert.Fail("ActivationException expected");
+        [TestMethod]
+        public void SettingDatabaseFactoryTheFirstTimeDoesNotThrow()
+        {
+            DatabaseFactory.ClearDatabaseProviderFactory();
+            DatabaseFactory.SetDatabaseProviderFactory(new DatabaseProviderFactory(sn => null));
+        }
+
+        [TestMethod]
+        public void SettingDatabaseFactoryTheASecondTimeDoesThrows()
+        {
+            DatabaseFactory.ClearDatabaseProviderFactory();
+            DatabaseFactory.SetDatabaseProviderFactory(new DatabaseProviderFactory(sn => null));
+            try
+            {
+                DatabaseFactory.SetDatabaseProviderFactory(new DatabaseProviderFactory(sn => null));
+                Assert.Fail("should have thrown");
+            }
+            catch (InvalidOperationException)
+            {
+                // expected
+            }
+        }
+
+        [TestMethod]
+        public void SettingDatabaseFactoryTheASecondTimeWithOverrideDoesNotThrow()
+        {
+            DatabaseFactory.ClearDatabaseProviderFactory();
+            DatabaseFactory.SetDatabaseProviderFactory(new DatabaseProviderFactory(sn => null));
+            DatabaseFactory.SetDatabaseProviderFactory(new DatabaseProviderFactory(sn => null), false);
         }
 
         [TestMethod]
         public void CreateDatabaseDefaultDatabaseWithDatabaseFactory()
         {
-            Database db = DatabaseFactory.CreateDatabase();
-            Assert.IsNotNull(db);
+            DatabaseFactory.SetDatabaseProviderFactory(new DatabaseProviderFactory(new SystemConfigurationSource(false).GetSection), false);
+
+            try
+            {
+                Database db = DatabaseFactory.CreateDatabase();
+                Assert.IsNotNull(db);
+            }
+            finally
+            {
+                DatabaseFactory.ClearDatabaseProviderFactory();
+            }
         }
 
         [TestMethod]
         public void CreateNamedDatabaseWithDatabaseFactory()
         {
-            Database db = DatabaseFactory.CreateDatabase("OracleTest");
-            Assert.IsNotNull(db);
+            DatabaseFactory.SetDatabaseProviderFactory(new DatabaseProviderFactory(new SystemConfigurationSource(false).GetSection), false);
+
+            try
+            {
+                Database db = DatabaseFactory.CreateDatabase("OracleTest");
+                Assert.IsNotNull(db);
+            }
+            finally
+            {
+                DatabaseFactory.ClearDatabaseProviderFactory();
+            }
+        }
+
+        [TestMethod]
+        public void SetDatabases()
+        {
+            try
+            {
+                DatabaseFactory.SetDatabases(() => databases.First(),
+                                             (name) =>
+                                             {
+                                                 if (name == "sql")
+                                                     return databases.First();
+                                                 else if (name == "oracle")
+                                                     return databases.Last();
+                                                 else
+                                                     return null;
+                                             },
+                                             false);
+
+                var defaultDb = DatabaseFactory.CreateDatabase();
+                Assert.AreEqual<Database>(databases.First(), defaultDb);
+
+                Assert.AreEqual<Database>(databases.First(), DatabaseFactory.CreateDatabase("sql"));
+                Assert.AreEqual<Database>(databases.Last(), DatabaseFactory.CreateDatabase("oracle"));
+
+                Assert.IsNull(DatabaseFactory.CreateDatabase("invalid"));
+            }
+            finally
+            {
+                DatabaseFactory.ClearDatabaseProviderFactory();
+            }
         }
     }
 }

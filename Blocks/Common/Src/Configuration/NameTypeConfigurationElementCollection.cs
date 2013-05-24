@@ -52,7 +52,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                         Attribute attribute = Attribute.GetCustomAttribute(providerType, typeof(ConfigurationElementTypeAttribute));
                         if (attribute == null)
                         {
-                            throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Resources_Desktop.ExceptionNoConfigurationElementAttribute, providerType.Name));
+                            throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Resources.ExceptionNoConfigurationElementAttribute, providerType.Name));
                         }
 
                         configurationElementType = ((ConfigurationElementTypeAttribute)attribute).ConfigurationType;
@@ -62,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
                 if (configurationElementType == null)
                 {
-                    throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Resources_Desktop.ExceptionNoTypeAttribute, reader.Name));
+                    throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Resources.ExceptionNoTypeAttribute, reader.Name));
                 }
 
                 // cover the traces ;)

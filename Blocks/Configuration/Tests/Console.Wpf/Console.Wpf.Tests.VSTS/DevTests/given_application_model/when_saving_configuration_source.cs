@@ -17,7 +17,6 @@ using System.Windows;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Console.Wpf.Tests.VSTS.DevTests.given_shell_service;
 using Console.Wpf.Tests.VSTS.Mocks;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
@@ -26,6 +25,7 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -63,13 +63,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
         public void then_removed_sections_are_removed_when_saving()
         {
             ConfigurationSourceModel sourceModel = Container.Resolve<ConfigurationSourceModel>();
-            var cachingSettings = sourceModel.Sections.Where(x => x.ConfigurationType == typeof(CacheManagerSettings)).First();
-            cachingSettings.Delete();
+            var loggingSettings = sourceModel.Sections.Where(x => x.ConfigurationType == typeof(LoggingSettings)).First();
+            loggingSettings.Delete();
 
             ApplicationModel.Save();
 
-            FileConfigurationSource source = new FileConfigurationSource(TestConfigurationFilePath);
-            Assert.IsNull(source.GetSection(CacheManagerSettings.SectionName));
+            FileConfigurationSource source = new FileConfigurationSource(TestConfigurationFilePath, false);
+            Assert.IsNull(source.GetSection(LoggingSettings.SectionName));
 
         }
 
@@ -94,7 +94,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
         {
             base.Arrange();
             var locator = new Mock<ConfigurationSectionLocator>();
-            locator.Setup(x => x.ConfigurationSectionNames).Returns(new[] {"testSection"});
+            locator.Setup(x => x.ConfigurationSectionNames).Returns(new[] { "testSection" });
             Container.RegisterInstance(locator.Object);
 
             var section = new ElementForValidation();
@@ -150,7 +150,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
             base.Arrange();
 
             var locator = new Mock<ConfigurationSectionLocator>();
-            locator.Setup(x => x.ConfigurationSectionNames).Returns(new[] {"testSection"});
+            locator.Setup(x => x.ConfigurationSectionNames).Returns(new[] { "testSection" });
             Container.RegisterInstance(locator.Object);
 
             var section = new ElementWithOnlyWarning();
@@ -170,7 +170,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
             Assert.IsTrue(errors.All(e => e.IsWarning));
         }
     }
-    
+
     [TestClass]
     public class when_saving_configuratin_with_only_validation_warnings : ConfigurationWithWarningsContext
     {
@@ -206,7 +206,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
         protected override void Arrange()
         {
             base.Arrange();
-            
+
             UIServiceMock.Setup(x => x.ShowFileDialog(It.IsAny<FileDialog>()))
               .Returns(new FileDialogResult { DialogResult = true, FileName = "unused.config" });
 
@@ -237,9 +237,9 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
         [TestMethod]
         public void then_should_prompt_to_fix_validation_errors()
         {
-            UIServiceMock.Verify();   
+            UIServiceMock.Verify();
         }
-        
+
     }
 
     public class ElementWithOnlyWarning : ConfigurationSection

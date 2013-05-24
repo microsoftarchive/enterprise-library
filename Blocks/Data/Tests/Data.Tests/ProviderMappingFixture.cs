@@ -24,7 +24,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     /// Summary description for ConnectionStringHandlingFixture
     /// </summary>
     [TestClass]
-    [DeploymentItem("test.exe.config")]
     public class ProviderMappingFixture
     {
         const string OdbcProviderName = "System.Data.Odbc";
@@ -79,6 +78,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             Assert.AreEqual(typeof(SqlDatabase), mapping.DatabaseType);
         }
 
+#pragma warning disable 612, 618
         [TestMethod]
         public void WillGetDefaultMappingIfProviderTypeIsNotMappedAndDefaultExistsForOracle()
         {
@@ -94,6 +94,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             Assert.AreEqual(DbProviderMapping.DefaultOracleProviderName, mapping.DbProviderName);
             Assert.AreEqual(typeof(OracleDatabase), mapping.DatabaseType);
         }
+#pragma warning restore 612, 618
 
         [TestMethod]
         public void WillGetGenericMappingIfProviderTypeIsNotMappedAndDefaultDoesNotExist()

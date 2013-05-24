@@ -10,16 +10,14 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using System.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration;
+using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configuration
 {
@@ -235,8 +233,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configura
             base.databaseListenerBuilder.FormatWith(null);
         }
     }
-
-
 
     [TestClass]
     public class When_SettingDatabaseInstanceForDatabaseTraceListener : Given_DatabaseListenerInConfigurationSourceBuilder

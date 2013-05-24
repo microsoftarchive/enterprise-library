@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Configuration;
@@ -22,9 +23,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
 {
     [TestClass]
-    public partial class DateRangeValidatorDataFixture
+    public class DateRangeValidatorDataFixture
     {
-#if !SILVERLIGHT
         [TestMethod]
         public void CanDeserializeSerializedInstanceWithNameOnly()
         {
@@ -35,7 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -69,7 +69,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
+            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -85,7 +85,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 Assert.AreEqual(RangeBoundaryType.Inclusive, ((DateTimeRangeValidatorData)roSettings.Validators.Get(0)).UpperBoundType);
             }
         }
-#endif
 
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObject()
@@ -93,7 +92,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             DateTime lowerBound = new DateTime(2006, 1, 1);
             DateTime upperBound = new DateTime(2006, 1, 10);
 
-            DateTimeRangeValidatorData rwValidatorData = new DateTimeRangeValidatorData { Name = "validator1" };
+            DateTimeRangeValidatorData rwValidatorData = new DateTimeRangeValidatorData("validator1");
             rwValidatorData.LowerBound = lowerBound;
             rwValidatorData.LowerBoundType = RangeBoundaryType.Exclusive;
             rwValidatorData.UpperBound = upperBound;
@@ -116,7 +115,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             DateTime lowerBound = new DateTime(2006, 1, 1);
             DateTime upperBound = new DateTime(2006, 1, 10);
 
-            DateTimeRangeValidatorData rwValidatorData = new DateTimeRangeValidatorData { Name = "validator1" };
+            DateTimeRangeValidatorData rwValidatorData = new DateTimeRangeValidatorData("validator1");
             rwValidatorData.LowerBound = lowerBound;
             rwValidatorData.LowerBoundType = RangeBoundaryType.Exclusive;
             rwValidatorData.UpperBound = upperBound;
@@ -133,16 +132,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             Assert.AreEqual(RangeBoundaryType.Inclusive, ((DateTimeRangeValidator)validator).UpperBoundType);
             Assert.AreEqual("message template override", ((DateTimeRangeValidator)validator).MessageTemplate);
         }
-
-        [TestMethod]
-        public void HasDefaultValuesForProperties()
-        {
-            var validatorData = new DateTimeRangeValidatorData();
-
-            Assert.AreEqual(RangeBoundaryType.Ignore, validatorData.LowerBoundType);
-            Assert.AreEqual(RangeBoundaryType.Inclusive, validatorData.UpperBoundType);
-        }
-
-       
     }
 }

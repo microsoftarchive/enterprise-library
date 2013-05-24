@@ -14,16 +14,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Forms.Design;
 using System.Windows.Input;
+using System.Xml.Serialization;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.Unity;
 using Microsoft.Win32;
-
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services.PlatformProfile;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
 {
@@ -41,7 +42,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
         {
             InitializeComponent();
 
-            container = new ConfigurationContainer();
+            AppDomain.CurrentDomain.AssemblyResolve += this.OnAssemblyResolve;
+
+            container =
+                new ConfigurationContainer(GetProfile(App.CommandLineParameters.ProfileFileName));
 
             container.RegisterInstance<IUIServiceWpf>(this);
             container.RegisterInstance<IWindowsFormsEditorService>(this);
@@ -60,6 +64,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
             InputBindings.Add(new InputBinding(applicationModel.SaveConfigurationCommand, new KeyGesture(Key.S, ModifierKeys.Control)));
             InputBindings.Add(new InputBinding(applicationModel.SaveAsConfigurationCommand, new KeyGesture(Key.A, ModifierKeys.Control)));
             InputBindings.Add(new InputBinding(applicationModel.OpenConfigurationCommand, new KeyGesture(Key.O, ModifierKeys.Control)));
+        }
+
+        private Profile GetProfile(string profileFileName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(profileFileName))
+                {
+                    return new Profile();
+                }
+                
+                using (var stream = new FileStream(profileFileName, FileMode.Open, FileAccess.Read))
+                {
+                    var serializer = new XmlSerializer(typeof(Profile));
+                    return (Profile)serializer.Deserialize(stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                // TODO : Fix (the dialog is closing right away)
+                ShowError(string.Format(Properties.Resources.LoadingProfileExceptionMessage, ex.Message));
+            }
+
+            return null;
         }
 
         #region infrastructural services
@@ -171,6 +199,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
 
         #endregion
 
+        private void ShowError(string message)
+        {
+            MessageBox.Show(message, Properties.Resources.ShowErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
         private void RequestClose()
         {
             try
@@ -215,6 +248,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
             }
 
             GC.SuppressFinalize(this);
+        }
+
+        private System.Reflection.Assembly OnAssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            return null;
         }
     }
 }

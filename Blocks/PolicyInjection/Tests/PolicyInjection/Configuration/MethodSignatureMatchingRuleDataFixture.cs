@@ -11,30 +11,21 @@
 
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
     [TestClass]
-    [DeploymentItem("test.exe.config")]
     public class MethodSignatureMatchingRuleDataFixture : MatchingRuleDataFixtureBase
     {
-#if !SILVERLIGHT
         [TestMethod]
         public void CanSerializeTypeMatchingRule()
         {
-            MethodSignatureMatchingRuleData sigMatchingRule =
-                new MethodSignatureMatchingRuleData
-                    {
-                        Name = "RuleName",
-                        Match = "Contains",
-                        IgnoreCase = true,
-                        Parameters =
-                            {
-                                new ParameterTypeElement { Name = "p1", ParameterTypeName = "String" },
-                            }
-                    };
+            MethodSignatureMatchingRuleData sigMatchingRule = new MethodSignatureMatchingRuleData("RuleName", "Contains");
+            sigMatchingRule.IgnoreCase = true;
+            sigMatchingRule.Parameters.Add(new ParameterTypeElement("p1", "String"));
 
             MethodSignatureMatchingRuleData deserializedRule = SerializeAndDeserializeMatchingRule(sigMatchingRule) as MethodSignatureMatchingRuleData;
 
@@ -49,17 +40,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         public void CanSerializeMethodSignatureContainingDuplicatedTypes()
         {
             MethodSignatureMatchingRuleData ruleData =
-                new MethodSignatureMatchingRuleData
-                    {
-                        Name = "ruleName",
-                        Match = "Foo",
-                        Parameters =
-                            {
-                                new ParameterTypeElement { Name = "p1", ParameterTypeName = "System.String" },
-                                new ParameterTypeElement { Name = "p2", ParameterTypeName = "System.Int" },
-                                new ParameterTypeElement { Name = "p3", ParameterTypeName = "System.String" },
-                            }
-                    };
+                new MethodSignatureMatchingRuleData("ruleName", "Foo");
+            ruleData.Parameters.Add(new ParameterTypeElement("p1", "System.String"));
+            ruleData.Parameters.Add(new ParameterTypeElement("p2", "System.Int"));
+            ruleData.Parameters.Add(new ParameterTypeElement("p3", "System.String"));
 
             Assert.AreEqual(3, ruleData.Parameters.Count);
 
@@ -68,19 +52,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.IsNotNull(deserializedRule);
             AssertAreSame(ruleData, deserializedRule);
         }
-#endif
+
 
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {
-            MethodSignatureMatchingRuleData ruleData = new MethodSignatureMatchingRuleData
-                {
-                    Name = "ruleName",
-                    Match = "Foo",
-                };
-            TypeRegistration registration = ruleData.GetRegistrations("").First();
+            MethodSignatureMatchingRuleData ruleData = new MethodSignatureMatchingRuleData("ruleName", "Foo");
 
-            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+            using (var container = new UnityContainer())
+            {
+                ruleData.ConfigureContainer(container, "-test");
+                var registration = container.Registrations.Single(r => r.Name == "ruleName-test");
+                Assert.AreSame(typeof(IMatchingRule), registration.RegisteredType);
+                Assert.AreSame(typeof(MethodSignatureMatchingRule), registration.MappedToType);
+                Assert.AreSame(typeof(TransientLifetimeManager), registration.LifetimeManagerType);
+            }
         }
 
         void AssertAreSame(MethodSignatureMatchingRuleData expected,

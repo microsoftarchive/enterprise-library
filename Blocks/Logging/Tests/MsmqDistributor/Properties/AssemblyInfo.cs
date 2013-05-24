@@ -10,12 +10,11 @@
 //===============================================================================
 
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Enterprise Library Logging Application Block MSMQ Distributor Tests")]
 [assembly: AssemblyDescription("Enterprise Library Logging Application Block MSMQ Distributor Tests")]
-[assembly: AssemblyVersion("5.0.505.0")]
+[assembly: AssemblyVersion("6.0.0.0")]
+[assembly: AssemblyFileVersion("6.0.1304.0")]

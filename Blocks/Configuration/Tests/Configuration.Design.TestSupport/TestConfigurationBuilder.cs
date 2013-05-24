@@ -50,23 +50,14 @@ namespace Console.Wpf.Tests.VSTS.TestSupport
         public TestConfigurationBuilder AddLoggingSettings()
         {
             builder.ConfigureLogging()
-                .WithOptions.FilterOnPriority("PriorityFilter")
+                .WithOptions
+                .FilterOnPriority("PriorityFilter")
                     .StartingWithPriority(10)
                     .UpToPriority(20)
-                .LogToCategoryNamed("General")
+                .LogToCategoryNamed(DefaultCategoryName)
+                    .WithOptions.SetAsDefaultCategory()
                     .SendTo.EventLog("EventLogListener")
                     .ToLog("Application");
-
-            return this;
-        }
-
-        public const string CacheManagerName = "CacheManager";
-        public TestConfigurationBuilder AddCachingSettings()
-        {
-            builder.ConfigureCaching()
-                .ForCacheManagerNamed(CacheManagerName)
-                .UseAsDefaultCache()
-                .StoreInMemory();
 
             return this;
         }
@@ -75,5 +66,7 @@ namespace Console.Wpf.Tests.VSTS.TestSupport
         {
             builder.UpdateConfigurationWithReplace(source);
         }
+
+        public const string DefaultCategoryName = "General";
     }
 }

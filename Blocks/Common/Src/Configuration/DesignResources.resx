@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddApplicationSettingsTitle" xml:space="preserve">
     <value>Add Application Settings</value>
@@ -498,25 +498,5 @@ Typically this is App.config or Web.config, depending on the application type.</
   </data>
   <data name="TypeRegistrationProvidersConfigurationSectionTypeRegistrationProvidersDisplayName" xml:space="preserve">
     <value>Type Registration Providers</value>
-  </data>
-  <data name="CallHandlerDataOrderDescription" xml:space="preserve">
-    <value>The position of the handler within the policy handler chain, starting from 1. 
-The default value is zero, which means that there is no explicit order specified for 
-the handler in relation to other handlers in the same handler chain.</value>
-  </data>
-  <data name="CallHandlerDataOrderDisplayName" xml:space="preserve">
-    <value>Order</value>
-  </data>
-  <data name="CustomCallHandlerDataDescription" xml:space="preserve">
-    <value>A custom implementation of a Call Handler that is added to Enterprise Library.</value>
-  </data>
-  <data name="CustomCallHandlerDataDisplayName" xml:space="preserve">
-    <value>Custom Call Handler</value>
-  </data>
-  <data name="CustomCallHandlerDataTypeNameDescription" xml:space="preserve">
-    <value>The fully qualified type name of the Custom Call Handler.</value>
-  </data>
-  <data name="CustomCallHandlerDataTypeNameDisplayName" xml:space="preserve">
-    <value>Type</value>
   </data>
 </root>

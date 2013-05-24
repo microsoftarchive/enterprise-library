@@ -10,9 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
@@ -75,5 +72,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
         }
     }
 
-   
+
 }

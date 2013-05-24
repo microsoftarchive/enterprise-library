@@ -9,14 +9,11 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
-using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -25,7 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
     /// </summary>
     /// <seealso cref="IConfigurationSource"/>
     /// <seealso cref="ConfigurationSourceHandler"/>
-    public class CompositeConfigurationSourceHandler : ConfigurationSourceHandler, IDisposable
+    public class CompositeConfigurationSourceHandler : ConfigurationSourceHandler
     {
         Dictionary<string, string> sectionRedirectTable = new Dictionary<string, string>();
         readonly IConfigurationSource mainConfigurationSource;
@@ -35,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// </summary>
         /// <param name="mainConfigurationSource">The <see cref="IConfigurationSource"/> instance that should be extended.</param>
         public CompositeConfigurationSourceHandler(IConfigurationSource mainConfigurationSource)
-            :base(mainConfigurationSource)
+            : base(mainConfigurationSource)
         {
             this.mainConfigurationSource = mainConfigurationSource;
         }
@@ -102,9 +99,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
             if (section == null)
                 throw new ConfigurationSourceErrorsException(
-                    string.Format(CultureInfo.CurrentCulture, 
-                    Resources_Desktop.ExceptionRedirectedConfigurationSectionNotFound, 
-                    sectionName, 
+                    string.Format(CultureInfo.CurrentCulture,
+                    Resources.ExceptionRedirectedConfigurationSectionNotFound,
+                    sectionName,
                     sourceNameForSection));
 
             return section;

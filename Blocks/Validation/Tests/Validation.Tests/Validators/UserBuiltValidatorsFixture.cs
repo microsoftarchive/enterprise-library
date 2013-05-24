@@ -9,11 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
-using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -25,6 +23,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
     [TestClass]
     public class UserBuiltValidatorsFixture
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new SystemConfigurationSource(false));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
+        }
+
         [TestMethod]
         public void CustomValidatorAttributesWorkWithoutRulesets_bug4683()
         {
@@ -60,11 +70,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
 
         private static ValidationAttribute GetValidationAttributeOnProperty<T>(string propertyName)
         {
-            var propInfo = typeof (T).GetProperty(propertyName);
+            var propInfo = typeof(T).GetProperty(propertyName);
             Assert.IsNotNull(propInfo);
 
             var attributes =
-                propInfo.GetCustomAttributes(typeof (ValidationAttribute), true).Cast<ValidationAttribute>();
+                propInfo.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
             return attributes.First();
         }
     }

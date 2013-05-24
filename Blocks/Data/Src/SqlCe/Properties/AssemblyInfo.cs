@@ -10,8 +10,11 @@
 //===============================================================================
 
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security;
 
-[assembly : AssemblyVersion("5.0.505.0")]
-[assembly : AllowPartiallyTrustedCallers]
-[assembly : SecurityTransparent]
+[assembly: AssemblyVersion("6.0.0.0")]
+[assembly: AssemblyFileVersion("6.0.1304.0")]
+[assembly: SecurityTransparent]
+
+[assembly: ComVisible(false)]

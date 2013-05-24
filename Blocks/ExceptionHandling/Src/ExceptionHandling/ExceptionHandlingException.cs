@@ -10,25 +10,20 @@
 //===============================================================================
 
 using System;
-#if !SILVERLIGHT
 using System.Runtime.Serialization;
-#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 {
     /// <summary>
     /// An exception that occurred during the exception handling process.
     /// </summary>
-#if !SILVERLIGHT
     [Serializable]
-#endif
     public class ExceptionHandlingException : Exception
     {
         /// <summary>
         /// Initializes with defaults.
         /// </summary>
-        public ExceptionHandlingException()
-            : base()
+        public ExceptionHandlingException() : base()
         {
         }
 
@@ -36,8 +31,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// Initializes with a specified error message.
         /// </summary>
         /// <param name="message">A message that describes the error.</param>
-        public ExceptionHandlingException(string message)
-            : base(message)
+        public ExceptionHandlingException(string message) : base(message)
         {
         }
 
@@ -50,12 +44,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// <param name="innerException">
         /// <para>The exception that is the cause of the current exception. If the innerException parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</para>
         /// </param>
-        public ExceptionHandlingException(string message, Exception innerException)
-            : base(message, innerException)
+        public ExceptionHandlingException(string message, Exception innerException) : base(message, innerException)
         {
         }
 
-#if !SILVERLIGHT
         /// <summary>
         /// Initializes with serialized data.
         /// </summary>
@@ -66,6 +58,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             base(info, context)
         {
         }
-#endif
     }
 }

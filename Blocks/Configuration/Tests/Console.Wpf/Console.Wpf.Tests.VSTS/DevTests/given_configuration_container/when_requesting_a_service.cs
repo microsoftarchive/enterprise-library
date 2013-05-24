@@ -12,6 +12,7 @@
 using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services.PlatformProfile;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections;
 
@@ -132,6 +133,23 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_container
         public void then_service_is_null()
         {
             Assert.IsNull(service);
+        }
+    }
+
+    [TestClass]
+    public class when_requesting_default_profile : given_configuration_container_with_parent_service_provider
+    {
+        private object service;
+
+        protected override void Act()
+        {
+            service = container.GetService(typeof(Profile));
+        }
+
+        [TestMethod]
+        public void then_service_is_null()
+        {
+            Assert.IsNotNull(service);
         }
     }
 }

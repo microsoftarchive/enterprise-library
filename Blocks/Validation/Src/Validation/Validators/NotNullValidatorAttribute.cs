@@ -36,7 +36,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 			return new NotNullValidator(Negated);
 		}
 
-#if !SILVERLIGHT
         private readonly Guid typeId = Guid.NewGuid();
 
         /// <summary>
@@ -49,6 +48,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                 return this.typeId;
             }
         }
-#endif
     }
 }

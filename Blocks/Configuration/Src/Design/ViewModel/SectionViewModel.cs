@@ -60,6 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         ///<param name="sectionName">The name of the section.</param>
         ///<param name="section">The underlying configuration section represented.</param>
         ///<param name="metadataAttributes">Additional <see cref="Attribute"/> instances to apply to this section.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "As designed")]
         public SectionViewModel(IUnityContainer builder, string sectionName, ConfigurationSection section, IEnumerable<Attribute> metadataAttributes)
             : base(null, section, metadataAttributes)
         {

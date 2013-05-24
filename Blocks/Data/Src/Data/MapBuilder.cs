@@ -17,8 +17,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
-using Microsoft.Practices.Unity.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data
 {
@@ -223,6 +223,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// </summary>
         /// <param name="propertySelector">A lambda function that returns the property that should be mapped.</param>
         /// <returns>The fluent interface that can be used further specify mappings.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "As designed. Need an expression tree.")]
         IMapBuilderContext<TResult> MapByName<TMember>(Expression<Func<TResult, TMember>> propertySelector);
 
         /// <summary>
@@ -237,6 +238,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// </summary>
         /// <param name="propertySelector">A lambda function that returns the property that should be mapped.</param>
         /// <returns>The fluent interface that can be used further specify mappings.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "As designed. Need an expression tree.")]
         IMapBuilderContext<TResult> DoNotMap<TMember>(Expression<Func<TResult, TMember>> propertySelector);
 
         /// <summary>
@@ -244,6 +246,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// </summary>
         /// <param name="propertySelector">A lambda function that returns the property that should be mapped.</param>
         /// <returns>The fluent interface that can be used to specify how to map this property.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "As designed. Need an expression tree.")]
         IMapBuilderContextMap<TResult, TMember> Map<TMember>(Expression<Func<TResult, TMember>> propertySelector);
 
         /// <summary>

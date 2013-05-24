@@ -10,9 +10,7 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 {
@@ -35,48 +33,48 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
         }
 
         /// <summary>
-		/// Gets the <see cref="PerformanceCounter"></see> category name.
-		/// </summary>
+        /// Gets the <see cref="PerformanceCounter"></see> category name.
+        /// </summary>
         public string CategoryName
         {
             get { return categoryName; }
         }
 
         /// <summary>
-		/// Gets the <see cref="PerformanceCounter"></see> category help resource name.
-		/// This is not the help text itself, 
-		/// but is the resource name used to look up the internationalized help text at install-time.
-		/// </summary>
+        /// Gets the <see cref="PerformanceCounter"></see> category help resource name.
+        /// This is not the help text itself, 
+        /// but is the resource name used to look up the internationalized help text at install-time.
+        /// </summary>
         public string CategoryHelp
         {
             get { return categoryHelp; }
         }
 
-		/// <overloads>
-		/// Initializes this attribute with information needed to install this performance counter category.
-		/// </overloads>
-		/// <summary>
-		/// Initializes this attribute with information needed to install this performance counter category.
-		/// </summary>
-		/// <param name="categoryName">Performance counter category name</param>
+        /// <overloads>
+        /// Initializes this attribute with information needed to install this performance counter category.
+        /// </overloads>
+        /// <summary>
+        /// Initializes this attribute with information needed to install this performance counter category.
+        /// </summary>
+        /// <param name="categoryName">Performance counter category name</param>
         /// <param name="categoryHelp">Counter category help resource name. 
-		/// This is not the help text itself, 
-		/// but is the resource name used to look up the internationalized help text at install-time.
-		///</param>
+        /// This is not the help text itself, 
+        /// but is the resource name used to look up the internationalized help text at install-time.
+        ///</param>
         public PerformanceCountersDefinitionAttribute(string categoryName, string categoryHelp)
             : this(categoryName, categoryHelp, PerformanceCounterCategoryType.MultiInstance)
         {
         }
 
-		/// <summary>
-		/// Initializes this attribute with information needed to install this performance counter category.
-		/// </summary>
-		/// <param name="categoryName">Performance counter category name</param>
-		/// <param name="categoryHelp">Counter category help resource name. 
-		/// This is not the help text itself, 
-		/// but is the resource name used to look up the internationalized help text at install-time.
-		///</param>
-		/// <param name="categoryType">Performance counter category type.</param>
+        /// <summary>
+        /// Initializes this attribute with information needed to install this performance counter category.
+        /// </summary>
+        /// <param name="categoryName">Performance counter category name</param>
+        /// <param name="categoryHelp">Counter category help resource name. 
+        /// This is not the help text itself, 
+        /// but is the resource name used to look up the internationalized help text at install-time.
+        ///</param>
+        /// <param name="categoryType">Performance counter category type.</param>
         public PerformanceCountersDefinitionAttribute(string categoryName, string categoryHelp, PerformanceCounterCategoryType categoryType)
         {
             this.categoryName = categoryName;

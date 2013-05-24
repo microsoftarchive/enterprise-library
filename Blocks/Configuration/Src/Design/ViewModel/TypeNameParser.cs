@@ -315,8 +315,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         ///                 <paramref name="arrayIndex"/> is equal to or greater than the length of <paramref name="array"/>.
         ///                     -or-
         ///                     The number of elements in the source <see cref="T:System.Collections.Generic.ICollection`1"/> is greater than the available space from <paramref name="arrayIndex"/> to the end of the destination <paramref name="array"/>.
-        ///                     -or-
-        ///                     Type <see cref="ParseResult"/> cannot be cast automatically to the type of the destination <paramref name="array"/>.
         ///                 </exception>
         public void CopyTo(ParseResult[] array, int arrayIndex)
         {

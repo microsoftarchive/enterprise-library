@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
 {
@@ -21,12 +22,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         {
         }
 
-#if !SILVERLIGHT
-		public MockThrowingExceptionHandler(Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.CustomHandlerData customHandlerData)
+		public MockThrowingExceptionHandler(CustomHandlerData customHandlerData)
 			: this()
 		{		
 		}
-#endif
 
         public Exception HandleException(Exception exception, Guid correlationID)
         {

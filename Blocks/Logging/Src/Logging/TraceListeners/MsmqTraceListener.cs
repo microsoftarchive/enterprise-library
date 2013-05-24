@@ -12,9 +12,11 @@
 using System;
 using System.Diagnostics;
 using System.Messaging;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using System.Security;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
@@ -22,18 +24,41 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
     /// Is a <see cref="TraceListener"/> that delivers the log entries to an Msmq instance.
     /// </summary>
     [ConfigurationElementType(typeof(MsmqTraceListenerData))]
+    [SecurityCritical]
     public class MsmqTraceListener : FormattedTraceListenerBase
     {
-        readonly MessagePriority messagePriority;
-        readonly IMsmqSendInterfaceFactory msmqInterfaceFactory;
-        readonly string queuePath;
-        readonly bool recoverable;
-        readonly TimeSpan timeToBeReceived;
-        readonly TimeSpan timeToReachQueue;
-        readonly MessageQueueTransactionType transactionType;
-        readonly bool useAuthentication;
-        readonly bool useDeadLetterQueue;
-        readonly bool useEncryption;
+        private readonly MessagePriority messagePriority;
+        private readonly IMsmqSendInterfaceFactory msmqInterfaceFactory;
+        private readonly string queuePath;
+        private readonly bool recoverable;
+        private readonly TimeSpan timeToBeReceived;
+        private readonly TimeSpan timeToReachQueue;
+        private readonly MessageQueueTransactionType transactionType;
+        private readonly bool useAuthentication;
+        private readonly bool useDeadLetterQueue;
+        private readonly bool useEncryption;
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="MsmqTraceListener"/>.
+        /// </summary>
+        /// <param name="name">The name of the new instance.</param>
+        /// <param name="queuePath">The path to the queue to deliver to.</param>
+        /// <param name="formatter">The formatter to use.</param>
+        public MsmqTraceListener(string name,
+                                 string queuePath,
+                                 ILogFormatter formatter)
+            : this(name,
+                   queuePath,
+                   formatter,
+                   MsmqTraceListenerData.DefaultPriority,
+                   MsmqTraceListenerData.DefaultRecoverable,
+                   MsmqTraceListenerData.DefaultTimeToReachQueue,
+                   MsmqTraceListenerData.DefaultTimeToBeReceived,
+                   MsmqTraceListenerData.DefaultUseAuthentication,
+                   MsmqTraceListenerData.DefaultUseDeadLetter,
+                   MsmqTraceListenerData.DefaultUseEncryption,
+                   MsmqTraceListenerData.DefaultTransactionType)
+        { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="MsmqTraceListener"/>.
@@ -95,6 +120,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                                  IMsmqSendInterfaceFactory msmqInterfaceFactory)
             : base(formatter)
         {
+            Guard.ArgumentNotNull(formatter, "formatter");
+            Guard.ArgumentNotNullOrEmpty(queuePath, "queuePath");
+
             this.queuePath = queuePath;
             this.messagePriority = messagePriority;
             this.recoverable = recoverable;
@@ -130,7 +158,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             return CreateMessage(formattedLogEntry, logEntry.Title);
         }
 
-        Message CreateMessage(string messageBody,
+        private Message CreateMessage(string messageBody,
                               string messageLabel)
         {
             Message queueMessage = new Message();
@@ -148,7 +176,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             return queueMessage;
         }
 
-        string FormatEntry(LogEntry entry)
+        private string FormatEntry(LogEntry entry)
         {
             // Initialize all intrinsic properties
             entry.CollectIntrinsicProperties();
@@ -158,26 +186,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             return formattedMessage;
         }
 
-        void SendMessageToQueue(string message)
+        private void SendMessageToQueue(string message)
         {
             using (IMsmqSendInterface messageQueueInterface = msmqInterfaceFactory.CreateMsmqInterface(queuePath))
             {
                 using (Message queueMessage = CreateMessage(message, string.Empty))
                 {
                     messageQueueInterface.Send(queueMessage, transactionType);
-                    messageQueueInterface.Close();
                 }
             }
         }
 
-        void SendMessageToQueue(LogEntry logEntry)
+        private void SendMessageToQueue(LogEntry logEntry)
         {
             using (IMsmqSendInterface messageQueueInterface = msmqInterfaceFactory.CreateMsmqInterface(queuePath))
             {
                 using (Message queueMessage = CreateMessage(logEntry))
                 {
                     messageQueueInterface.Send(queueMessage, transactionType);
-                    messageQueueInterface.Close();
                 }
             }
         }
@@ -190,6 +216,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="eventType">The type of event.</param>
         /// <param name="id">The id of the event.</param>
         /// <param name="data">The data to trace.</param>
+        [SecuritySafeCritical]
         public override void TraceData(TraceEventCache eventCache,
                                        string source,
                                        TraceEventType eventType,
@@ -217,6 +244,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// Writes the specified message to the message queue.
         /// </summary>
         /// <param name="message">Message to be written.</param>
+        [SecuritySafeCritical]
         public override void Write(string message)
         {
             SendMessageToQueue(message);
@@ -226,6 +254,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// Writes the specified message to the message queue.
         /// </summary>
         /// <param name="message"></param>
+        [SecuritySafeCritical]
         public override void WriteLine(string message)
         {
             Write(message);

@@ -11,12 +11,13 @@
 
 using System;
 using System.IO;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#if !SILVERLIGHT
+using System.Security;
+using System.Security.Permissions;
+using System.Security.Policy;
 using System.Security.Principal;
+using System.Text;
 using System.Threading;
-#endif
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
 {
@@ -45,17 +46,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             StringBuilder sb = new StringBuilder();
             StringWriter writer = new StringWriter(sb);
 
-            Exception exception = new FileNotFoundException(fileNotFoundMessage);
+            Exception exception = new FileNotFoundException(fileNotFoundMessage, theFile);
             TextExceptionFormatter formatter = new TextExceptionFormatter(writer, exception);
 
             formatter.Format();
 
-#if !SILVERLIGHT
             if (string.Compare(permissionDenied, formatter.AdditionalInfo[machineName]) != 0)
             {
                 Assert.AreEqual(Environment.MachineName, formatter.AdditionalInfo[machineName]);
             }
-#endif
 
             DateTime minimumTime = DateTime.UtcNow.AddMinutes(-1);
             DateTime loggedTime = DateTime.Parse(formatter.AdditionalInfo[timeStamp]);
@@ -65,14 +64,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             }
 
             Assert.AreEqual(AppDomain.CurrentDomain.FriendlyName, formatter.AdditionalInfo[appDomainName]);
-#if !SILVERLIGHT
             Assert.AreEqual(Thread.CurrentPrincipal.Identity.Name, formatter.AdditionalInfo[threadIdentity]);
 
             if (string.Compare(permissionDenied, formatter.AdditionalInfo[windowsIdentity]) != 0)
             {
                 Assert.AreEqual(WindowsIdentity.GetCurrent().Name, formatter.AdditionalInfo[windowsIdentity]);
             }
-#endif
         }
 
         [TestMethod]
@@ -88,44 +85,77 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
 
             Assert.AreEqual(formatter.fields[fieldString], mockFieldString);
             Assert.AreEqual(formatter.properties[propertyString], mockPropertyString);
-            Assert.IsFalse(formatter.properties.ContainsKey(message));
+            // The message should be null because the reflection formatter should ignore this property
+            Assert.AreEqual(null, formatter.properties[message]);
         }
 
-        //[TestMethod]
-        //public void CanGetMachineNameWithoutSecurity()
-        //{
-        //    EnvironmentPermission denyPermission = new EnvironmentPermission(EnvironmentPermissionAccess.Read, computerName);
-        //    PermissionSet permissions = new PermissionSet(PermissionState.None);
-        //    permissions.AddPermission(denyPermission);
-        //    permissions.Deny();
+        [TestMethod]
+        public void CanGetMachineNameWithoutSecurity()
+        {
+            var evidence = new Evidence();
+            evidence.AddHostEvidence(new Zone(SecurityZone.Internet));
+            var set = SecurityManager.GetStandardSandbox(evidence);
+            set.AddPermission(new ReflectionPermission(ReflectionPermissionFlag.MemberAccess));
 
-        //    StringBuilder sb = new StringBuilder();
-        //    StringWriter writer = new StringWriter(sb);
-        //    Exception exception = new MockException();
-        //    TextExceptionFormatter formatter = new TextExceptionFormatter(writer, exception);
-        //    Assert.IsTrue(sb.Length == 0);
-        //    formatter.Format();
+            var domain = AppDomain.CreateDomain("partial trust", null, AppDomain.CurrentDomain.SetupInformation, set);
 
-        //    Assert.IsTrue(sb.ToString().Contains(machineName + " : " + permissionDenied));
-        //}
+            try
+            {
+                var instance = ((ExceptionFormatterTester)domain.CreateInstanceAndUnwrap(typeof(ExceptionFormatterTester).Assembly.FullName, typeof(ExceptionFormatterTester).FullName));
+                var formattedMessage = instance.DoTest();
 
-        //[TestMethod]
-        //public void CanGetWindowsIdentityWithoutSecurity()
-        //{
-        //    SecurityPermission denyPermission = new SecurityPermission(SecurityPermissionFlag.ControlPrincipal);
-        //    PermissionSet permissions = new PermissionSet(PermissionState.None);
-        //    permissions.AddPermission(denyPermission);
-        //    permissions.Deny();
+                Assert.IsTrue(formattedMessage.Contains(threadIdentity + " : " + permissionDenied));
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                AppDomain.Unload(domain);
+            }
+        }
 
-        //    StringBuilder sb = new StringBuilder();
-        //    StringWriter writer = new StringWriter(sb);
-        //    Exception exception = new MockException();
-        //    TextExceptionFormatter formatter = new TextExceptionFormatter(writer, exception);
-        //    Assert.IsTrue(sb.Length == 0);
-        //    formatter.Format();
-        //    Console.WriteLine(sb.ToString());
-        //    Assert.IsTrue(sb.ToString().Contains(windowsIdentity + " : " + permissionDenied));
-        //}
+        [TestMethod]
+        public void CanGetWindowsIdentityWithoutSecurity()
+        {
+            var evidence = new Evidence();
+            evidence.AddHostEvidence(new Zone(SecurityZone.Internet));
+            var set = SecurityManager.GetStandardSandbox(evidence);
+            set.AddPermission(new ReflectionPermission(ReflectionPermissionFlag.MemberAccess));
+
+            var domain = AppDomain.CreateDomain("partial trust", null, AppDomain.CurrentDomain.SetupInformation, set);
+
+            try
+            {
+                var instance = ((ExceptionFormatterTester)domain.CreateInstanceAndUnwrap(typeof(ExceptionFormatterTester).Assembly.FullName, typeof(ExceptionFormatterTester).FullName));
+                var formattedMessage = instance.DoTest();
+
+                Assert.IsTrue(formattedMessage.Contains(windowsIdentity + " : " + permissionDenied));
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                AppDomain.Unload(domain);
+            }
+        }
+
+        public class ExceptionFormatterTester : MarshalByRefObject
+        {
+            public string DoTest()
+            {
+                StringBuilder sb = new StringBuilder();
+                StringWriter writer = new StringWriter(sb);
+                Exception exception = new MockException();
+                TextExceptionFormatter formatter = new TextExceptionFormatter(writer, exception);
+                formatter.Format();
+
+                return sb.ToString();
+            }
+        }
 
         [TestMethod]
         public void SkipsIndexerProperties()
@@ -138,12 +168,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
 
             formatter.Format();
 
-#if !SILVERLIGHT
             if (string.Compare(permissionDenied, formatter.AdditionalInfo[machineName]) != 0)
             {
                 Assert.AreEqual(Environment.MachineName, formatter.AdditionalInfo[machineName]);
             }
-#endif
 
             DateTime minimumTime = DateTime.UtcNow.AddMinutes(-1);
             DateTime loggedTime = DateTime.Parse(formatter.AdditionalInfo[timeStamp]);
@@ -153,21 +181,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             }
 
             Assert.AreEqual(AppDomain.CurrentDomain.FriendlyName, formatter.AdditionalInfo[appDomainName]);
-#if !SILVERLIGHT
             Assert.AreEqual(Thread.CurrentPrincipal.Identity.Name, formatter.AdditionalInfo[threadIdentity]);
 
             if (string.Compare(permissionDenied, formatter.AdditionalInfo[windowsIdentity]) != 0)
             {
                 Assert.AreEqual(WindowsIdentity.GetCurrent().Name, formatter.AdditionalInfo[windowsIdentity]);
             }
-#endif
         }
 
         public class FileNotFoundExceptionWithIndexer : FileNotFoundException
         {
             public FileNotFoundExceptionWithIndexer(string message,
                                                     string fileName)
-                : base(message) { }
+                : base(message, fileName) { }
 
             public string this[int index]
             {

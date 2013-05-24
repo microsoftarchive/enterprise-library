@@ -88,7 +88,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.C
             return GetProperties(new Attribute[0]);
         }
 
-        public object GetPropertyOwner(PropertyDescriptor pd)
+        public object GetPropertyOwner(PropertyDescriptor propertyDescriptor)
         {
             return elementViewModel;
         }

@@ -17,8 +17,8 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
-using Microsoft.Practices.Unity.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data
 {
@@ -184,7 +184,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
 
             if (value != DBNull.Value)
             {
-                convertedValue = Convert.ChangeType(value, conversionType);
+                convertedValue = Convert.ChangeType(value, conversionType, CultureInfo.CurrentCulture);
             }
             else if (conversionType.IsValueType)
             {

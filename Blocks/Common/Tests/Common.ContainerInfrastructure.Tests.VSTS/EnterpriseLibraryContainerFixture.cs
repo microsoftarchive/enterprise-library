@@ -20,7 +20,6 @@ using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Data;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -50,8 +49,6 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
             // Rip out the default data provider - it pulls in from machine.config
             // and interferes with the test.
             new SectionBuilder().LocatorSection()
-                .RemoveProviderNamed(
-                TypeRegistrationProvidersConfigurationSection.DataAccessTypeRegistrationProviderName)
                 .AddTo(configSource);
 
             return configSource;
@@ -109,105 +106,6 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
         {
             mockConfigurator.Verify();
             Assert.AreEqual(0, registrations.Count);
-        }
-    }
-
-    [TestClass]
-    public class When_ConfiguringContainerWithCryptoData : Context_MockedContainerConfigurator
-    {
-        protected override IConfigurationSource GetConfig()
-        {
-            return new ConfigSourceBuilder().AddCryptoSettings().ConfigSource;
-        }
-
-        [TestMethod]
-        public void Then_RegisterAllIsCalledExactlyOnce()
-        {
-            mockConfigurator.Verify();
-        }
-
-        [TestMethod]
-        public void Then_RegisterAllIsPassedTypeRegistrations()
-        {
-            Assert.IsNotNull(registrations);
-            Assert.IsTrue(registrations.Count > 0);
-        }
-    }
-
-
-    [TestClass]
-    public class When_ConfiguringContainerWithCryptoAndExceptionData : Context_MockedContainerConfigurator
-    {
-        protected override IConfigurationSource GetConfig()
-        {
-            return new ConfigSourceBuilder()
-                .AddCryptoSettings()
-                .AddConnectionStringSettings()
-                .AddExceptionHandlingSettings()
-                .ConfigSource;
-        }
-
-        [TestMethod]
-        public void Then_RegisterAllIsCalledExactlyOnce()
-        {
-            mockConfigurator.Verify();
-        }
-
-        [TestMethod]
-        public void Then_RegistrationsArePresent()
-        {
-            Assert.IsTrue(registrations.Count > 0);
-        }
-    }
-
-    [TestClass]
-    public class When_ConfiguringUnityContainer : Context_UnityContainerConfigurator
-    {
-        protected override IConfigurationSource GetConfig()
-        {
-            return new ConfigSourceBuilder()
-                .AddCryptoSettings()
-                .AddConnectionStringSettings()
-                .AddExceptionHandlingSettings()
-                .ConfigSource;
-        }
-
-
-        [TestMethod]
-        public void Then_CanResolveHashProvider()
-        {
-            var provider = container.Resolve<IHashProvider>("md5");
-            Assert.IsInstanceOfType(provider, typeof(HashAlgorithmProvider));
-        }
-
-        [TestMethod]
-        public void Then_CanResolveOtherHashProvider()
-        {
-            var provider = container.Resolve<IHashProvider>("sha512");
-            Assert.IsInstanceOfType(provider, typeof(HashAlgorithmProvider));
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ResolutionFailedException))]
-        public void Then_NonConfiguredHashProvidersAreNotResolved()
-        {
-            container.Resolve<IHashProvider>("sha128");
-            Assert.Fail("Should have thrown ResolutionFailedException");
-        }
-
-        [TestMethod]
-        public void Then_CanResolveDatabase()
-        {
-            var db = container.Resolve<Database>("northwind");
-            Assert.AreEqual(ConfigSourceBuilder.NorthwindConnectionString, db.ConnectionString);
-        }
-
-        [TestMethod]
-        public void Then_CanResolveExceptionPolicy()
-        {
-            var policy = container.Resolve<ExceptionPolicyImpl>("default");
-
-            Assert.AreEqual(ConfigSourceBuilder.DefaultExceptionPolicyName, policy.PolicyName);
         }
     }
 

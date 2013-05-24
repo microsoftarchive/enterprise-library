@@ -22,7 +22,6 @@ using Moq;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
 {
-    [DeploymentItem("configuration_error.config")]
     [TestClass]
     public class when_opening_configuration_source_with_errors : given_clean_application_model
     {
@@ -35,7 +34,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
 
             UIServiceMock.Setup(x => x.ShowFileDialog(It.IsAny<OpenFileDialog>()))
                          .Returns(new FileDialogResult { DialogResult = true, FileName = errorSectionConfigurationPath });
-            UIServiceMock.Setup(x => x.ShowWindow(It.IsAny<Window>())).Callback<Window>((w) => w.Closed += (o,e)=> waitClosed = true);
+            UIServiceMock.Setup(x => x.ShowWindow(It.IsAny<Window>())).Callback<Window>((w) => w.Closed += (o, e) => waitClosed = true);
 
             UIServiceMock.Setup(x => x.ShowError(It.IsAny<ConfigurationErrorsException>(), It.IsAny<string>()))
                 .Verifiable();

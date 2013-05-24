@@ -11,17 +11,12 @@
 
 using System;
 using System.Collections.Generic;
-#if !SILVERLIGHT
 using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-#else
-using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
-#endif
 using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,17 +27,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
     public class LogEntryFixture
     {
         static LogEntry log;
-#if SILVERLIGHT
-        protected LogWriter Logger;
-#endif
+
         [TestInitialize]
         public void SetUp()
         {
-#if SILVERLIGHT
-            var configurationSource = DictionaryConfigurationSource.FromXaml(new Uri("/Microsoft.Practices.EnterpriseLibrary.Logging.Silverlight.Tests;component/Configuration.xaml", UriKind.Relative));
-            EnterpriseLibraryContainer.Current = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
-            Logger = EnterpriseLibraryContainer.Current.GetInstance<LogWriter>();
-#endif
+            Logger.SetLogWriter(new LogWriterFactory().Create(), false);
             MockTraceListener.Reset();
             log = new LogEntry();
         }
@@ -50,7 +39,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         [TestCleanup]
         public void TearDown()
         {
-            EnterpriseLibraryContainer.Current = null;
             MockTraceListener.Reset();
         }
 
@@ -114,15 +102,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             log.TimeStamp = DateTime.MinValue;
             Assert.AreEqual(DateTime.MinValue, log.TimeStamp);
 
-            log.AppDomainName = "AppDomainName";
-            Assert.AreEqual("AppDomainName", log.AppDomainName);
-
-            log.ManagedThreadName = "ManagedThreadId";
-            Assert.AreEqual("ManagedThreadId", log.ManagedThreadName);
-
-#if !SILVERLIGHT
             log.MachineName = "MachineName";
             Assert.AreEqual("MachineName", log.MachineName);
+
+            log.AppDomainName = "AppDomainName";
+            Assert.AreEqual("AppDomainName", log.AppDomainName);
 
             log.ProcessId = "ProcessId";
             Assert.AreEqual("ProcessId", log.ProcessId);
@@ -130,9 +114,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             log.ProcessName = "ProcessName";
             Assert.AreEqual("ProcessName", log.ProcessName);
 
+            log.ManagedThreadName = "ManagedThreadId";
+            Assert.AreEqual("ManagedThreadId", log.ManagedThreadName);
+
             log.Win32ThreadId = "Win32ThreadId";
             Assert.AreEqual("Win32ThreadId", log.Win32ThreadId);
-#endif
         }
 
         [TestMethod]
@@ -169,42 +155,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         {
             // NOTE: There is no way to test Timestamp
 
-            Assert.AreEqual(AppDomain.CurrentDomain.FriendlyName, log.AppDomainName);
-            Assert.AreEqual(Thread.CurrentThread.Name, log.ManagedThreadName);
-#if !SILVERLIGHT
             Assert.AreEqual(Environment.MachineName, log.MachineName);
+            Assert.AreEqual(AppDomain.CurrentDomain.FriendlyName, log.AppDomainName);
             Assert.AreEqual(NativeMethods.GetCurrentProcessId().ToString(), log.ProcessId);
             Assert.AreEqual(GetExpectedProcessName(), log.ProcessName);
+            Assert.AreEqual(Thread.CurrentThread.Name, log.ManagedThreadName);
             Assert.AreEqual(NativeMethods.GetCurrentThreadId().ToString(), log.Win32ThreadId);
-#endif
         }
-
-
 
         [TestMethod]
         public void ReuseLogEntryForMultipleWrites()
         {
-#if SILVERLIGHT
-            var configurationSource = DictionaryConfigurationSource.FromXaml(new Uri("/Microsoft.Practices.EnterpriseLibrary.Logging.Silverlight.Tests;component/Configuration.xaml", UriKind.Relative));
-            EnterpriseLibraryContainer.Current = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
-            var Logger = EnterpriseLibraryContainer.Current.GetInstance<LogWriter>();
-#endif
-            try
-            {
-                log.Categories = new string[] { "MockCategoryOne" };
+            log.Categories = new string[] { "MockCategoryOne" };
 
-                log.Message = "apples";
-                Logger.Write(log);
-                Assert.AreEqual("apples", MockTraceListener.LastEntry.Message);
+            log.Message = "apples";
+            Logger.Write(log);
+            Assert.AreEqual("apples", MockTraceListener.LastEntry.Message);
 
-                log.Message = "oranges";
-                Logger.Write(log);
-                Assert.AreEqual("oranges", MockTraceListener.LastEntry.Message);
-            }
-            finally
-            {
-                EnterpriseLibraryContainer.Current = null;
-            }
+            log.Message = "oranges";
+            Logger.Write(log);
+            Assert.AreEqual("oranges", MockTraceListener.LastEntry.Message);
         }
 
         [TestMethod]
@@ -361,19 +331,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             Assert.AreEqual(entry.ExtendedProperties.Count, clonedEntry.ExtendedProperties.Count);
             Assert.AreEqual(entry.Message, clonedEntry.Message);
             Assert.AreEqual(entry.Priority, clonedEntry.Priority);
+            Assert.AreEqual(entry.ProcessId, clonedEntry.ProcessId);
+            Assert.AreEqual(entry.ProcessName, clonedEntry.ProcessName);
             Assert.AreEqual(entry.Severity, clonedEntry.Severity);
             Assert.AreEqual(entry.TimeStamp, clonedEntry.TimeStamp);
             Assert.AreEqual(entry.TimeStampString, clonedEntry.TimeStampString);
             Assert.AreEqual(entry.Title, clonedEntry.Title);
+            Assert.AreEqual(entry.Win32ThreadId, clonedEntry.Win32ThreadId);
             Assert.AreEqual(entry.ManagedThreadName, clonedEntry.ManagedThreadName);
+            Assert.AreEqual(entry.MachineName, clonedEntry.MachineName);
             Assert.AreEqual(entry.ErrorMessages, clonedEntry.ErrorMessages);
             Assert.AreEqual(entry.AppDomainName, clonedEntry.AppDomainName);
-#if !SILVERLIGHT
-            Assert.AreEqual(entry.ProcessId, clonedEntry.ProcessId);
-            Assert.AreEqual(entry.ProcessName, clonedEntry.ProcessName);
-            Assert.AreEqual(entry.Win32ThreadId, clonedEntry.Win32ThreadId);
-            Assert.AreEqual(entry.MachineName, clonedEntry.MachineName);
-#endif
+
             clonedEntry.Categories.Add("Debug");
             clonedEntry.ExtendedProperties.Add("key2", "value2");
             clonedEntry.ActivityId = new Guid("EEEEFFFFEEEEFFFFEEEEFFFFEEEEFFFF");
@@ -385,7 +354,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             Assert.IsFalse(entry.ActivityIdString == clonedEntry.ActivityIdString);
         }
 
-#if !SILVERLIGHT
         string GetExpectedProcessName()
         {
             StringBuilder buffer = new StringBuilder(1024);
@@ -414,10 +382,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
                 AppDomain.Unload(domain);
             }
         }
-#endif
     }
 
-#if !SILVERLIGHT
     public class ToStringUsesDefaultFormatterWithTokenReplacementsHelper : MarshalByRefObject
     {
         public string GetLogEntryToString()
@@ -428,5 +394,4 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             return entry.ToString();
         }
     }
-#endif
 }

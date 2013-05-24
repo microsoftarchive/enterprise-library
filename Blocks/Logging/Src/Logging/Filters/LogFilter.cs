@@ -26,7 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
 		/// Initializes a new instance of <see cref="LogFilter"/>.
 		/// </summary>
 		/// <param name="name">The name for the log filter.</param>
-		public LogFilter(string name)
+		protected LogFilter(string name)
 		{
 			this.name = name;
 		}

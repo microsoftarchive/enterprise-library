@@ -18,7 +18,6 @@ using System.Transactions;
 using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
-using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
@@ -29,19 +28,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         [TestMethod]
         public void ThenSupportsAsyncIsTrue()
         {
-            var db = new SqlDatabase(@"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true");
+            var db = new SqlDatabase(@"server=(localdb)\v11.0;database=Northwind;Integrated Security=true");
             Assert.IsTrue(db.SupportsAsync);
         }
     }
 
     [TestClass]
+    [Ignore]    // No longer an error in .NET 4.5
     public class WhenConnectionStringDoesntContainAsyncTrue : ArrangeActAssert
     {
         protected SqlDatabase database;
 
         protected override void Arrange()
         {
-            database = new SqlDatabase(@"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true");
+            database = new SqlDatabase(@"server=(localdb)\v11.0;database=Northwind;Integrated Security=true");
         }
 
         [TestMethod]
@@ -55,7 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
     [TestClass]
     public class WhenUsingAnySqlDatabase : ArrangeActAssert
     {
-        protected string connectionstring = @"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true;Async=True";
+        protected string connectionstring = @"server=(localdb)\v11.0;database=Northwind;Integrated Security=true;Async=True";
         protected SqlDatabase database;
 
         protected override void Arrange()
@@ -81,19 +81,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
     public abstract class AsynchronousConnectionContext : ArrangeActAssert
     {
-        protected List<DateTime> commandExecutedEvents;
-        protected List<CommandFailedArgs> commandFailedEvents;
         protected int numberOfConnectionsCreated;
         protected ConnectionState lastConnectionStateChange;
-        protected string connectionstring = @"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true;Async=True";
+        protected string connectionstring = @"server=(localdb)\v11.0;database=Northwind;Integrated Security=true;Async=True";
         protected SqlDatabase database;
 
         protected override void Arrange()
         {
             numberOfConnectionsCreated = 0;
             database = new TestableSqlConnection(connectionstring, this);
-            commandExecutedEvents = new List<DateTime>();
-            commandFailedEvents = new List<CommandFailedArgs>();
         }
 
         protected class CommandFailedArgs
@@ -103,49 +99,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             public string ConnectionString { get; set; }
         }
 
-        private class InstrumentationProvider : IDataInstrumentationProvider
-        {
-            AsynchronousConnectionContext context;
-            public InstrumentationProvider(AsynchronousConnectionContext context)
-            {
-                this.context = context;
-            }
-
-            #region IDataInstrumentationProvider Members
-
-            public void FireCommandExecutedEvent(DateTime startTime)
-            {
-                context.commandExecutedEvents.Add(startTime);
-            }
-
-            public void FireCommandFailedEvent(string commandText, string connectionString, Exception exception)
-            {
-                context.commandFailedEvents.Add(new CommandFailedArgs
-                {
-                    CommandText = commandText,
-                    ConnectionString = connectionString,
-                    Exception = exception
-                });
-            }
-
-            public void FireConnectionOpenedEvent()
-            {
-
-            }
-
-            public void FireConnectionFailedEvent(string connectionString, Exception exception)
-            {
-
-            }
-
-            #endregion
-        }
-
         private class TestableSqlConnection : SqlDatabase
         {
             AsynchronousConnectionContext context;
             public TestableSqlConnection(string connectionstring, AsynchronousConnectionContext context)
-                : base(connectionstring, new InstrumentationProvider(context))
+                : base(connectionstring)
             {
                 this.context = context;
             }
@@ -176,7 +134,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
             connection = database.CreateConnection();
             connection.Open();
-            
+
             //reset number of connections
             numberOfConnectionsCreated = 0;
 
@@ -285,7 +243,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
             //reset number of  connections created
             numberOfConnectionsCreated = 0;
-            commandExecutedEvents.Clear();
 
             database.BeginExecuteNonQuery(transaction, CommandType.Text, "DELETE FROM [Order Details]",
                 ar =>
@@ -314,14 +271,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             barrier.Await(4000);
             Assert.AreEqual(0, numberOfConnectionsCreated);
-        }
-
-        [TestMethod]
-        public void ThenCommandExecutedEventWasFiredOnEndExecute()
-        {
-            Assert.AreEqual(0, commandExecutedEvents.Count);
-            barrier.Await(4000);
-            Assert.AreEqual(1, commandExecutedEvents.Count);
         }
     }
 
@@ -356,31 +305,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
             Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
         }
-
-        [TestMethod]
-        public void ThenNoCommandExecutedEventWasFired()
-        {
-            try
-            {
-                database.EndExecuteNonQuery(asyncResult);
-            }
-            catch (SqlException) { }
-
-            Assert.AreEqual(0, commandExecutedEvents.Count);
-        }
-
-
-        [TestMethod]
-        public void ThenCommandFailedEventWasFired()
-        {
-            try
-            {
-                database.EndExecuteNonQuery(asyncResult);
-            }
-            catch (SqlException) { }
-
-            Assert.AreEqual(1, commandFailedEvents.Count);
-        }
     }
 
     [TestClass]
@@ -407,14 +331,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             database.EndExecuteNonQuery(asyncResult);
 
             Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
-        }
-
-        [TestMethod]
-        public void ThenCommandExecutedEventWasFiredOnEndExecute()
-        {
-            Assert.AreEqual(0, commandExecutedEvents.Count);
-            database.EndExecuteNonQuery(asyncResult);
-            Assert.AreEqual(1, commandExecutedEvents.Count);
         }
     }
 
@@ -451,14 +367,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
             Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
         }
-
-        [TestMethod]
-        public void ThenCommandExecutedEventWasFiredOnEndExecute()
-        {
-            Assert.AreEqual(0, commandExecutedEvents.Count);
-            database.EndExecuteNonQuery(asyncResult);
-            Assert.AreEqual(1, commandExecutedEvents.Count);
-        }
     }
 
     [TestClass]
@@ -488,14 +396,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             database.EndExecuteNonQuery(asyncResult);
             Assert.AreEqual(0, numberOfConnectionsCreated);
         }
-
-        [TestMethod]
-        public void ThenCommandExecutedEventWasFiredOnEndExecute()
-        {
-            Assert.AreEqual(0, commandExecutedEvents.Count);
-            database.EndExecuteNonQuery(asyncResult);
-            Assert.AreEqual(1, commandExecutedEvents.Count);
-        }
     }
 
     [TestClass]
@@ -510,7 +410,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             asyncResult = database.BeginExecuteReader(CommandType.Text, "SELECT 'hello there'", null, null);
         }
 
-
         [TestMethod]
         public void ThenConnectionIsClosedOnceReaderIsClosed()
         {
@@ -519,14 +418,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
             reader.Close();
             Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
-        }
-
-        [TestMethod]
-        public void ThenCommandExecutedEventWasFiredOnEndExecute()
-        {
-            Assert.AreEqual(0, commandExecutedEvents.Count);
-            database.EndExecuteReader(asyncResult).Dispose();
-            Assert.AreEqual(1, commandExecutedEvents.Count);
         }
     }
 
@@ -554,14 +445,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
             reader.Close();
             Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
-        }
-
-        [TestMethod]
-        public void ThenCommandExecutedEventWasFiredOnEndExecute()
-        {
-            Assert.AreEqual(0, commandExecutedEvents.Count);
-            database.EndExecuteReader(asyncResult).Dispose();
-            Assert.AreEqual(1, commandExecutedEvents.Count);
         }
     }
 
@@ -596,16 +479,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
                 Assert.IsNotNull(reader);
                 Assert.IsNotNull(reader.MoveToContent());
             }
-        }
-
-        [TestMethod]
-        public void ThenCommandExecutedEventWasFiredOnEndExecute()
-        {
-            Assert.AreEqual(0, commandExecutedEvents.Count);
-            barrier.Await(4000);
-            barrier.Await(4000);
-            reader.Close();
-            Assert.AreEqual(1, commandExecutedEvents.Count);
         }
     }
 
@@ -689,15 +562,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             Assert.AreEqual(0, numberOfConnectionsCreated);
         }
 
-
-        [TestMethod]
-        public void ThenCommandExecutedEventWasFiredOnEndExecute()
-        {
-            Assert.AreEqual(0, commandExecutedEvents.Count);
-            database.EndExecuteXmlReader(asyncResult).Close();
-            Assert.AreEqual(1, commandExecutedEvents.Count);
-        }
-
         [TestMethod]
         public void ThenConnectionIsNotClosedWhenReaderIsClosed()
         {
@@ -732,31 +596,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             database.EndExecuteXmlReader(asyncResult);
         }
-
-        [TestMethod]
-        public void ThenNoCommandExecutedEventWasFired()
-        {
-            try
-            {
-                database.EndExecuteXmlReader(asyncResult);
-            }
-            catch (SqlException) { }
-
-            Assert.AreEqual(0, commandExecutedEvents.Count);
-        }
-
-
-        [TestMethod]
-        public void ThenCommandFailedEventWasFired()
-        {
-            try
-            {
-                database.EndExecuteXmlReader(asyncResult);
-            }
-            catch (SqlException) { }
-
-            Assert.AreEqual(1, commandFailedEvents.Count);
-        }
     }
 
     [TestClass]
@@ -790,14 +629,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             Assert.AreEqual(0, numberOfConnectionsCreated);
             DisposeReader();
         }
-
-        [TestMethod]
-        public void ThenCommandExecutedEventWasFiredOnEndExecute()
-        {
-            Assert.AreEqual(0, commandExecutedEvents.Count);
-            DisposeReader();
-            Assert.AreEqual(1, commandExecutedEvents.Count);
-        }
     }
 
     [TestClass]
@@ -830,31 +661,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             catch (SqlException) { }
 
             Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
-        }
-
-        [TestMethod]
-        public void ThenNoCommandExecutedEventWasFired()
-        {
-            try
-            {
-                database.EndExecuteReader(asyncResult);
-            }
-            catch (SqlException) { }
-
-            Assert.AreEqual(0, commandExecutedEvents.Count);
-        }
-
-
-        [TestMethod]
-        public void ThenCommandFailedEventWasFired()
-        {
-            try
-            {
-                database.EndExecuteReader(asyncResult);
-            }
-            catch (SqlException) { }
-
-            Assert.AreEqual(1, commandFailedEvents.Count);
         }
     }
 
@@ -891,31 +697,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             }
             catch (SqlException) { }
             Assert.AreEqual(0, numberOfConnectionsCreated);
-        }
-
-        [TestMethod]
-        public void ThenNoCommandExecutedEventWasFired()
-        {
-            try
-            {
-                database.EndExecuteReader(asyncResult);
-            }
-            catch (SqlException) { }
-
-            Assert.AreEqual(0, commandExecutedEvents.Count);
-        }
-
-
-        [TestMethod]
-        public void ThenCommandFailedEventWasFired()
-        {
-            try
-            {
-                database.EndExecuteReader(asyncResult);
-            }
-            catch (SqlException) { }
-
-            Assert.AreEqual(1, commandFailedEvents.Count);
         }
     }
 
@@ -1039,7 +820,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             asyncResult = database.BeginExecuteScalar(CommandType.Text, "SELECT 'hello there'", null, null);
         }
 
-
         [TestMethod]
         public void ThenConnectionIsClosedOnceScalarExecuted()
         {
@@ -1047,14 +827,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
 
             Assert.AreEqual("hello there", scalar);
-        }
-
-        [TestMethod]
-        public void ThenCommandExecutedEventWasFiredOnEndExecute()
-        {
-            Assert.AreEqual(0, commandExecutedEvents.Count);
-            var result = database.EndExecuteScalar(asyncResult);
-            Assert.AreEqual(1, commandExecutedEvents.Count);
         }
     }
 
@@ -1090,7 +862,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             asyncResult = database.BeginExecuteScalar(CommandType.Text, "SELECT 'Hello World' WHERE 1=0", null, null);
         }
 
-
         [TestMethod]
         public void ThenEndResultReturnsNull()
         {
@@ -1124,14 +895,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             Assert.AreEqual(0, numberOfConnectionsCreated);
             database.EndExecuteScalar(asyncResult);
         }
-
-        [TestMethod]
-        public void ThenCommandExecutedEventWasFiredOnEndExecute()
-        {
-            Assert.AreEqual(0, commandExecutedEvents.Count);
-            database.EndExecuteScalar(asyncResult);
-            Assert.AreEqual(1, commandExecutedEvents.Count);
-        }
     }
 
     [TestClass]
@@ -1164,31 +927,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             catch (SqlException) { }
 
             Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
-        }
-
-        [TestMethod]
-        public void ThenNoCommandExecutedEventWasFired()
-        {
-            try
-            {
-                database.EndExecuteScalar(asyncResult);
-            }
-            catch (SqlException) { }
-
-            Assert.AreEqual(0, commandExecutedEvents.Count);
-        }
-
-
-        [TestMethod]
-        public void ThenCommandFailedEventWasFired()
-        {
-            try
-            {
-                database.EndExecuteScalar(asyncResult);
-            }
-            catch (SqlException) { }
-
-            Assert.AreEqual(1, commandFailedEvents.Count);
         }
     }
 
@@ -1226,31 +964,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             catch (SqlException) { }
             Assert.AreEqual(0, numberOfConnectionsCreated);
         }
-
-        [TestMethod]
-        public void ThenNoCommandExecutedEventWasFired()
-        {
-            try
-            {
-                database.EndExecuteScalar(asyncResult);
-            }
-            catch (SqlException) { }
-
-            Assert.AreEqual(0, commandExecutedEvents.Count);
-        }
-
-
-        [TestMethod]
-        public void ThenCommandFailedEventWasFired()
-        {
-            try
-            {
-                database.EndExecuteScalar(asyncResult);
-            }
-            catch (SqlException) { }
-
-            Assert.AreEqual(1, commandFailedEvents.Count);
-        }
     }
 
     [TestClass]
@@ -1273,7 +986,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             Assert.AreEqual("Côte de Blaye", result);
         }
 
-
         [TestMethod]
         public void ThenConnectionIsClosedOnceScalarIsClosed()
         {
@@ -1281,7 +993,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
         }
     }
-    
+
     [TestClass]
     public class WhenAsynchronouslyInvokingExecuteScalarOnSprocWithinTransaction : TransactionalAsynchronousConnectionWithRollback
     {
@@ -1424,7 +1136,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
     {
         protected override void Arrange()
         {
-            this.connectionstring = @"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true";
+            this.connectionstring = @"server=(localdb)\v11.0;database=Northwind;Integrated Security=true";
             base.Arrange();
         }
     }
@@ -1434,12 +1146,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
     {
         protected override void Arrange()
         {
-            this.connectionstring = @"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true";
+            this.connectionstring = @"server=(localdb)\v11.0;database=Northwind;Integrated Security=true";
             base.Arrange();
         }
     }
 
     [TestClass]
+    [Ignore]    // No longer an error in .NET 4.5
     public class WhenAsynchronouslyInvokingBeginExecuteNonQueryWithNonAsyncConnectionString
         : AsynchronousConnectionContextWithNonAsyncConnectionString
     {
@@ -1464,15 +1177,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             Assert.AreEqual(ConnectionState.Closed, this.lastConnectionStateChange);
         }
-
-        [TestMethod]
-        public void ThenCommandFailedInstrumentationIsIncremented()
-        {
-            Assert.AreEqual(1, this.commandFailedEvents.Count);
-        }
     }
 
     [TestClass]
+    [Ignore]    // No longer an error in .NET 4.5
     public class WhenAsynchronouslyInvokingBeginExecuteReaderWithNonAsyncConnectionString
         : AsynchronousConnectionContextWithNonAsyncConnectionString
     {
@@ -1497,15 +1205,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             Assert.AreEqual(ConnectionState.Closed, this.lastConnectionStateChange);
         }
-
-        [TestMethod]
-        public void ThenCommandFailedInstrumentationIsIncremented()
-        {
-            Assert.AreEqual(1, this.commandFailedEvents.Count);
-        }
     }
 
     [TestClass]
+    [Ignore]    // No longer an error in .NET 4.5
     public class WhenAsynchronouslyInvokingBeginExecuteXmlReaderWithNonAsyncConnectionString
         : AsynchronousConnectionContextWithNonAsyncConnectionString
     {
@@ -1537,15 +1240,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             Assert.AreEqual(ConnectionState.Closed, this.lastConnectionStateChange);
         }
-
-        [TestMethod]
-        public void ThenCommandFailedInstrumentationIsIncremented()
-        {
-            Assert.AreEqual(1, this.commandFailedEvents.Count);
-        }
     }
 
     [TestClass]
+    [Ignore]    // No longer an error in .NET 4.5
     public class WhenAsynchronouslyInvokingBeginExecuteNonQueryInTransactionWithNonAsyncConnectionString
         : TransactionalAsynchronousConnectionWithRollbackNonAsyncConnectionString
     {
@@ -1570,15 +1268,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             Assert.AreEqual(ConnectionState.Open, this.lastConnectionStateChange);
         }
-
-        [TestMethod]
-        public void ThenCommandFailedInstrumentationIsIncremented()
-        {
-            Assert.AreEqual(1, this.commandFailedEvents.Count);
-        }
     }
 
     [TestClass]
+    [Ignore]    // No longer an error in .NET 4.5
     public class WhenAsynchronouslyInvokingBeginExecuteReaderInTransactionWithNonAsyncConnectionString
         : TransactionalAsynchronousConnectionWithRollbackNonAsyncConnectionString
     {
@@ -1603,15 +1296,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             Assert.AreEqual(ConnectionState.Open, this.lastConnectionStateChange);
         }
-
-        [TestMethod]
-        public void ThenCommandFailedInstrumentationIsIncremented()
-        {
-            Assert.AreEqual(1, this.commandFailedEvents.Count);
-        }
     }
 
     [TestClass]
+    [Ignore]    // No longer an error in .NET 4.5
     public class WhenAsynchronouslyInvokingBeginExecuteXmlReaderInTransactionWithNonAsyncConnectionString
         : TransactionalAsynchronousConnectionWithRollbackNonAsyncConnectionString
     {
@@ -1643,12 +1331,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         public void ThenConnectionIsNotClosed()
         {
             Assert.AreEqual(ConnectionState.Open, this.lastConnectionStateChange);
-        }
-
-        [TestMethod]
-        public void ThenCommandFailedInstrumentationIsIncremented()
-        {
-            Assert.AreEqual(1, this.commandFailedEvents.Count);
         }
     }
 }

@@ -10,8 +10,8 @@
 //===============================================================================
 
 using System;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
+using System.Security;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
@@ -21,47 +21,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     public class TraceManager
     {
         private readonly LogWriter logWriter;
-        private readonly ITracerInstrumentationProvider instrumentationProvider;
 
         /// <summary>
         /// For testing purpose
         /// </summary>
         public LogWriter LogWriter
-        { 
+        {
             get { return this.logWriter; }
         }
 
         /// <summary>
-        /// For testing purpose
-        /// </summary>
-        public ITracerInstrumentationProvider InstrumentationProvider
-        {
-            get { return this.instrumentationProvider; }
-        }
-
-        /// <summary>
         /// Create an instance of <see cref="TraceManager"/> giving the <see cref="LogWriter"/>.
         /// </summary>
         /// <param name="logWriter">The <see cref="LogWriter"/> that is used to write trace messages.</param>
-        public TraceManager(LogWriter logWriter):
-            this(logWriter, new NullTracerInstrumentationProvider())
+        public TraceManager(LogWriter logWriter)
         {
-        }
-
-        /// <summary>
-        /// Create an instance of <see cref="TraceManager"/> giving the <see cref="LogWriter"/>.
-        /// </summary>
-        /// <param name="logWriter">The <see cref="LogWriter"/> that is used to write trace messages.</param>
-        /// <param name="instrumentationProvider">The <see cref="ITracerInstrumentationProvider"/> used to determine if instrumentation should be enabled</param>
-        public TraceManager(LogWriter logWriter, ITracerInstrumentationProvider instrumentationProvider)
-        {
-            if (logWriter == null)
-            {
-                throw new ArgumentNullException("logWriter");
-            }
+            Guard.ArgumentNotNull(logWriter, "logWriter");
 
             this.logWriter = logWriter;
-            this.instrumentationProvider = instrumentationProvider;
         }
 
         /// <summary>
@@ -71,7 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <returns></returns>
         public Tracer StartTrace(string operation)
         {
-            return new Tracer(operation, this.logWriter, this.instrumentationProvider);
+            return new Tracer(operation, this.logWriter);
         }
 
         /// <summary>
@@ -82,7 +59,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <returns></returns>
         public Tracer StartTrace(string operation, Guid activityId)
         {
-            return new Tracer(operation, activityId, this.logWriter, this.instrumentationProvider);
+            return new Tracer(operation, activityId, this.logWriter);
         }
     }
 }

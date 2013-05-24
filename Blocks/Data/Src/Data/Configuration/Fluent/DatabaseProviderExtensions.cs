@@ -9,6 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Data.Common;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Fluent;
 
@@ -63,6 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         ///</summary>
         ///<returns></returns>
         ///<seealso cref="System.Data.OracleClient"/>
+        [Obsolete("OracleDatabase has been deprecated. http://go.microsoft.com/fwlink/?LinkID=144260", false)]
         public static IDatabaseOracleConfiguration AnOracleDatabase(this IDatabaseConfigurationProviders context)
         {
             return new OracleConfigurationExtension(context);

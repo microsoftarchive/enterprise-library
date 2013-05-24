@@ -94,7 +94,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 	        get { return lowerBound; }
 	    }
 
-
         /// <summary>
         /// The lower bound unit of time.
         /// </summary>
@@ -135,18 +134,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 	        get { return upperBoundType; }
 	    }
 
-	    /// <summary>
+		/// <summary>
 		/// Creates the <see cref="RelativeDateTimeValidator"/> described by the attribute object.
 		/// </summary>
 		/// <param name="targetType">The type of object that will be validated by the validator.</param>
-        /// <remarks>This operation must be overridden by subclasses.</remarks>
+		/// <remarks>This operation must be overriden by subclasses.</remarks>
 		/// <returns>The created <see cref="RelativeDateTimeValidator"/>.</returns>
 		protected override Validator DoCreateValidator(Type targetType)
 		{
 			return new RelativeDateTimeValidator(LowerBound, LowerUnit, LowerBoundType, UpperBound, UpperUnit, UpperBoundType, Negated);
 		}
 
-#if !SILVERLIGHT
         private readonly Guid typeId = Guid.NewGuid();
 
         /// <summary>
@@ -159,7 +157,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                 return this.typeId;
             }
         }
-#endif
     }
 }
 

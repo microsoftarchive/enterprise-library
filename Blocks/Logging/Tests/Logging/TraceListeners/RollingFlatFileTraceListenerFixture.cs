@@ -13,6 +13,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Permissions;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -91,7 +92,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners
 
                 traceListener.Write("12345");
 
-                Assert.AreEqual(5L, ((RollingFlatFileTraceListener.TallyKeepingFileStreamWriter)traceListener.Writer).Tally);
+                Assert.AreEqual(5L, ((TallyKeepingFileStreamWriter)traceListener.Writer).Tally);
             }
         }
 
@@ -110,7 +111,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners
                 traceListener.RollingHelper.PerformRoll(new DateTime(2007, 01, 01));
                 traceListener.Write("12345");
 
-                Assert.AreEqual(5L, ((RollingFlatFileTraceListener.TallyKeepingFileStreamWriter)traceListener.Writer).Tally);
+                Assert.AreEqual(5L, ((TallyKeepingFileStreamWriter)traceListener.Writer).Tally);
             }
 
             Assert.IsTrue(File.Exists(fileName));
@@ -136,7 +137,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners
                     traceListener.RollingHelper.PerformRoll(new DateTime(2007, 01, 01));
                     traceListener.Write("12345");
 
-                    Assert.AreEqual(5L, ((RollingFlatFileTraceListener.TallyKeepingFileStreamWriter)traceListener.Writer).Tally);
+                    Assert.AreEqual(5L, ((TallyKeepingFileStreamWriter)traceListener.Writer).Tally);
                 }
             }
         }
@@ -664,6 +665,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners
                     return base.CurrentDateTime;
                 }
             }
+        }
+
+        [TestMethod]
+        public void RollingFlatFileTraceListenerThrowsArgumentNullExceptionIfNullRollingFile()
+        {
+            string nullFileName = null;
+            AssertEx.Throws<ArgumentNullException>(() => new RollingFlatFileTraceListener(nullFileName));
         }
     }
 }

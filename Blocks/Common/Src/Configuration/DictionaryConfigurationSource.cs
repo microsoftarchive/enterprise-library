@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
@@ -18,12 +19,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
     /// <summary>
     /// Represents a configuration source that is backed by a dictionary of named objects.
     /// </summary>
-    public partial class DictionaryConfigurationSource : IConfigurationSource
+    public class DictionaryConfigurationSource : IConfigurationSource
     {
         /// <summary>
         /// This field supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
         /// </summary>
         protected internal Dictionary<string, ConfigurationSection> sections;
+        /// <summary>
+        /// This field supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
+        /// </summary>
+        protected internal EventHandlerList eventHandlers = new EventHandlerList();
+
+        /// <summary>
+        /// Raised when anything in the source changes.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="DictionaryConfigurationSource"/> does not report any
+        /// configuration change events.
+        /// </remarks>
+        public event EventHandler<ConfigurationSourceChangedEventArgs> SourceChanged;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DictionaryConfigurationSource"/> class.
@@ -81,6 +95,39 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         }
 
         /// <summary>
+        /// Adds a handler to be called when changes to the section named <paramref name="sectionName"/> are detected.
+        /// </summary>
+        /// <param name="sectionName">The name of the section to watch for.</param>
+        /// <param name="handler">The handler for the change event to add.</param>
+        public void AddSectionChangeHandler(string sectionName, ConfigurationChangedEventHandler handler)
+        {
+            eventHandlers.AddHandler(sectionName, handler);
+        }
+
+        /// <summary>
+        /// Removes a handler to be called when changes to section <code>sectionName</code> are detected.
+        /// </summary>
+        /// <param name="sectionName">The name of the watched section.</param>
+        /// <param name="handler">The handler for the change event to remove.</param>
+        public void RemoveSectionChangeHandler(string sectionName, ConfigurationChangedEventHandler handler)
+        {
+            eventHandlers.RemoveHandler(sectionName, handler);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="SourceChanged"/> event.
+        /// </summary>
+        /// <param name="args">Event arguments</param>
+        protected void OnSourceChangedEvent(ConfigurationSourceChangedEventArgs args)
+        {
+            var handler = this.SourceChanged;
+            if (handler != null)
+            {
+                handler(this, args);
+            }
+        }
+
+        /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
@@ -90,19 +137,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         }
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// Releases unmanaged and - optionally - managed resources.
         /// </summary>
-        /// <param name="disposing"><see langword="true"/> if the method is being called from the <see cref="Dispose()"/> method. <see langword="false"/> if it is being called from within the object finalizer.</param>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
-        }
-
-        /// <summary>
-        /// Releases resources for the <see cref="DictionaryConfigurationSource"/> instance before garbage collection.
-        /// </summary>
-        ~DictionaryConfigurationSource()
-        {
-            this.Dispose(false);
+            if (disposing)
+            {
+                this.eventHandlers.Dispose();
+            }
         }
     }
 }

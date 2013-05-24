@@ -10,18 +10,29 @@
 //===============================================================================
 
 using System;
+using System.Runtime.Remoting;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.ObjectsUnderTest;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Runtime.Remoting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 {
     [TestClass]
     public class PolicyInjectionFixture
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            PolicyInjection.SetPolicyInjector(new PolicyInjector(new SystemConfigurationSource(false)), false);
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            PolicyInjection.Reset();
+        }
+
         [TestMethod]
         public void CanWrapObjectWithInterceptionAttributes()
         {
@@ -91,63 +102,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
             Assert.AreEqual(2, GlobalCountCallHandler.Calls["Method"]);
             Assert.AreEqual(1, GlobalCountCallHandler.Calls["Method3"]);
         }
-
-        [TestMethod]
-        public void StaticFacadeUsesTheCurrentServiceLocator()
-        {
-            GlobalCountCallHandler.Calls.Clear();
-
-            var interceptionConfigurationSource = new DictionaryConfigurationSource();
-            interceptionConfigurationSource.Add(
-                PolicyInjectionSettings.SectionName,
-                new PolicyInjectionSettings
-                {
-                    Policies =
-                    {
-                        new PolicyData("policy")
-                        {
-                            MatchingRules =
-                            {
-                                new CustomMatchingRuleData("always", typeof(AlwaysMatchingRule))
-                            },
-                            Handlers = 
-                            {
-                                new CustomCallHandlerData("count", typeof(GlobalCountCallHandler))
-                                {
-                                    Attributes = { {"callhandler", "count"} }
-                                }
-                            }
-                        }
-                    }
-                });
-            var interceptionLocator = EnterpriseLibraryContainer.CreateDefaultContainer(interceptionConfigurationSource);
-
-            var noInterceptionLocator = EnterpriseLibraryContainer.CreateDefaultContainer(new DictionaryConfigurationSource());
-
-            try
-            {
-                EnterpriseLibraryContainer.Current = interceptionLocator;
-
-                var interceptedWrappable = PolicyInjection.Create<Wrappable>();
-                interceptedWrappable.Method();
-                Assert.AreEqual(1, GlobalCountCallHandler.Calls.Count);
-                GlobalCountCallHandler.Calls.Clear();
-
-
-                EnterpriseLibraryContainer.Current = noInterceptionLocator;
-
-                var nonInterceptedWrappable = PolicyInjection.Create<Wrappable>();
-                nonInterceptedWrappable.Method();
-                Assert.AreEqual(0, GlobalCountCallHandler.Calls.Count);
-            }
-            finally
-            {
-                EnterpriseLibraryContainer.Current = null;
-                GlobalCountCallHandler.Calls.Clear();
-                interceptionLocator.Dispose();
-                noInterceptionLocator.Dispose();
-            }
-        }
     }
 
     [TestClass]
@@ -162,9 +116,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
         [TestCleanup]
         public void TearDown()
         {
-            var current = EnterpriseLibraryContainer.Current;
-            EnterpriseLibraryContainer.Current = null;
-            current.Dispose();
+            PolicyInjection.Reset();
         }
 
         [TestMethod]
@@ -267,8 +219,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
         private void SetupContainer(string globalCallHandlerName)
         {
-            EnterpriseLibraryContainer.Current =
-                EnterpriseLibraryContainer.CreateDefaultContainer(CreateConfigurationSource(globalCallHandlerName));
+            PolicyInjection.SetPolicyInjector(new PolicyInjector(CreateConfigurationSource(globalCallHandlerName)), false);
         }
 
         IConfigurationSource CreateConfigurationSource(string globalCallHandlerName)

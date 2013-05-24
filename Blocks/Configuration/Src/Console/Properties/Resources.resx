@@ -120,6 +120,10 @@
   <data name="LoadedAssembliesGroup" xml:space="preserve">
     <value>Loaded assemblies</value>
   </data>
+  <data name="LoadingProfileExceptionMessage" xml:space="preserve">
+    <value>An error occurred while loading the profile.
+{0}</value>
+  </data>
   <data name="ShowErrorMessageFormat" xml:space="preserve">
     <value>{0}
 

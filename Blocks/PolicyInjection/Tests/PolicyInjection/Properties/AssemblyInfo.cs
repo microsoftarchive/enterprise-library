@@ -10,15 +10,11 @@
 //===============================================================================
 
 using System.Reflection;
-#if !SILVERLIGHT
-using System.Security.Permissions;
 using System.Runtime.ConstrainedExecution;
-using System.Runtime.CompilerServices;
 
-[assembly: SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly: ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
-#endif
 
 [assembly: AssemblyTitle("Enterprise Library Policy Injection Application Block Test")]
 [assembly: AssemblyDescription("Enterprise Library Policy Injection Application Block Test")]
-[assembly: AssemblyVersion("5.0.505.0")]
+[assembly: AssemblyVersion("6.0.0.0")]
+[assembly: AssemblyFileVersion("6.0.1304.0")]

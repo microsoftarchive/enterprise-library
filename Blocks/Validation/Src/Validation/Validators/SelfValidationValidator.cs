@@ -33,9 +33,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             : base(null, null)
         {
             if (null == methodInfo)
+            {
                 throw new ArgumentNullException("methodInfo");
+            }
+
             if (typeof(void) != methodInfo.ReturnType)
+            {
                 throw new ArgumentException(Resources.ExceptionSelfValidationMethodWithInvalidSignature, "methodInfo");
+            }
+
             ParameterInfo[] parameters = methodInfo.GetParameters();
             if (1 != parameters.Length || typeof(ValidationResults) != parameters[0].ParameterType)
                 throw new ArgumentException(Resources.ExceptionSelfValidationMethodWithInvalidSignature, "methodInfo");

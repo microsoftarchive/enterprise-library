@@ -10,13 +10,10 @@
 //===============================================================================
 
 using System.Reflection;
-using System.Security.Permissions;
-
-[assembly: FileIOPermission(SecurityAction.RequestMinimum)]
-[assembly: SecurityPermission(SecurityAction.RequestMinimum)]
-[assembly: RegistryPermission(SecurityAction.RequestMinimum)]
-[assembly: ReflectionPermission(SecurityAction.RequestMinimum, Flags = ReflectionPermissionFlag.MemberAccess)]
+using System.Security;
 
 [assembly: AssemblyTitle("Enterprise Library Logging Application Block MSMQ Distributor")]
 [assembly: AssemblyDescription("Enterprise Library Logging Application Block MSMQ Distributor")]
-[assembly: AssemblyVersion("5.0.505.0")]
+[assembly: AssemblyVersion("6.0.0.0")]
+[assembly: AssemblyFileVersion("6.0.1304.0")]
+[assembly: SecurityCritical]

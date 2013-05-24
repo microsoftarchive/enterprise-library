@@ -9,22 +9,16 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Console.Wpf.Tests.VSTS.DevTests.Contexts;
-using System.ComponentModel.Design;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.Configuration;
 using System.IO;
+using Console.Wpf.Tests.VSTS.DevTests.Contexts;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_source
 {
     [TestClass]
-    [DeploymentItem("temp.config")]
     public class when_saving_configuration_to_source : ExceptionHandlingSettingsContext
     {
         ConfigurationSection clonedSection;
@@ -46,7 +40,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_source
             string text = File.ReadAllText("temp.config");
             Assert.IsTrue(text.Contains(ExceptionHandlingSettings.SectionName));
             Assert.IsFalse(text.Contains("<clear/>"));
-            
         }
     }
 }

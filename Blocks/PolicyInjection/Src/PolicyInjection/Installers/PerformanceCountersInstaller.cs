@@ -13,9 +13,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration.Install;
 using System.Diagnostics;
+using System.Security;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Properties;
@@ -27,6 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
     /// the performance counter categories updated by the <see cref="Installer"/>.
     /// </summary>
     [RunInstaller(true)]
+    [SecurityCritical]
     public class PerformanceCountersInstaller : Installer
     {
         private List<string> categoryNames;
@@ -53,22 +55,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
         /// configured in the given <paramref name="configurationSource"/>.
         /// </summary>
         /// <param name="configurationSource">Configuration source containing the policy set.</param>
-        public PerformanceCountersInstaller(IConfigurationSource configurationSource )
+        public PerformanceCountersInstaller(IConfigurationSource configurationSource)
         {
             categoryNames = new List<string>();
 
             PolicyInjectionSettings settings =
                 configurationSource.GetSection(PolicyInjectionSettings.SectionName) as PolicyInjectionSettings;
 
-            if( settings != null )
+            if (settings != null)
             {
-                foreach(PolicyData policyData in settings.Policies)
+                foreach (PolicyData policyData in settings.Policies)
                 {
-                    foreach(CallHandlerData handlerData in policyData.Handlers)
+                    foreach (CallHandlerData handlerData in policyData.Handlers)
                     {
                         PerformanceCounterCallHandlerData perfHandlerData =
                             handlerData as PerformanceCounterCallHandlerData;
-                        if(perfHandlerData != null)
+                        if (perfHandlerData != null)
                         {
                             categoryNames.Add(perfHandlerData.CategoryName);
                         }
@@ -82,6 +84,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
         ///</summary>
         ///
         ///<param name="savedState">An <see cref="T:System.Collections.IDictionary"></see> that contains the state of the computer before the installers in the <see cref="P:System.Configuration.Install.Installer.Installers"></see> property are installed. This <see cref="T:System.Collections.IDictionary"></see> object should be empty at this point. </param>
+        [SecurityCritical]
         protected override void OnBeforeInstall(IDictionary savedState)
         {
             GetCategoryFromContext();
@@ -95,13 +98,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
             {
                 string categoryName = Context.Parameters["category"];
 
-                if(categoryName != null)
+                if (categoryName != null)
                 {
                     categoryNames = new List<string>(categoryName.Split(';'));
                 }
                 else
                 {
-                    throw new ArgumentException(Resources_Desktop.NoCategoryErrorMessage, "category");
+                    throw new InvalidOperationException(Resources.NoCategoryErrorMessage);
                 }
             }
         }
@@ -109,11 +112,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
         private void CreateInstallers()
         {
             Installers.Clear();
-            foreach(string categoryName in categoryNames)
+            foreach (string categoryName in categoryNames)
             {
                 PerformanceCounterInstaller installer = new PerformanceCounterInstaller();
                 installer.CategoryName = categoryName;
-                installer.CategoryHelp = Resources_Desktop.PerformanceCounterCategoryHelp;
+                installer.CategoryHelp = Resources.PerformanceCounterCategoryHelp;
                 installer.CategoryType = PerformanceCounterCategoryType.MultiInstance;
 
                 installer.Counters.Add(GetNumberOfCallsCreationData());
@@ -132,6 +135,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
         ///</summary>
         ///
         ///<param name="savedState">An <see cref="T:System.Collections.IDictionary"></see> that contains the state of the computer before the installers in the <see cref="P:System.Configuration.Install.Installer.Installers"></see> property uninstall their installations. </param>
+        [SecurityCritical]
         protected override void OnBeforeUninstall(IDictionary savedState)
         {
             GetCategoryFromContext();
@@ -145,7 +149,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
         {
             return new CounterCreationData(
                 PerformanceCounterCallHandler.NumberOfCallsCounterName,
-                Resources_Desktop.NumberOfCallsCounterHelp,
+                Resources.NumberOfCallsCounterHelp,
                 PerformanceCounterType.NumberOfItems32);
 
         }
@@ -154,7 +158,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
         {
             return new CounterCreationData(
                 PerformanceCounterCallHandler.CallsPerSecondCounterName,
-                Resources_Desktop.CallsPerSecondCounterHelp,
+                Resources.CallsPerSecondCounterHelp,
                 PerformanceCounterType.RateOfCountsPerSecond32);
         }
 
@@ -162,7 +166,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
         {
             return new CounterCreationData(
                 PerformanceCounterCallHandler.TotalExceptionsCounterName,
-                Resources_Desktop.NumberOfExceptionsCounterHelp,
+                Resources.NumberOfExceptionsCounterHelp,
                 PerformanceCounterType.NumberOfItems32);
         }
 
@@ -170,7 +174,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
         {
             return new CounterCreationData(
                 PerformanceCounterCallHandler.ExceptionsPerSecondCounterName,
-                Resources_Desktop.ExceptionsPerSecondCounterHelp,
+                Resources.ExceptionsPerSecondCounterHelp,
                 PerformanceCounterType.RateOfCountsPerSecond32);
         }
 
@@ -178,7 +182,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
         {
             return new CounterCreationData(
                 PerformanceCounterCallHandler.AverageCallDurationCounterName,
-                Resources_Desktop.AverageCallDurationCounterHelp,
+                Resources.AverageCallDurationCounterHelp,
                 PerformanceCounterType.AverageTimer32);
         }
 
@@ -186,7 +190,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
         {
             return new CounterCreationData(
                 PerformanceCounterCallHandler.AverageCallDurationBaseCounterName,
-                Resources_Desktop.AverageCallDurationBaseCounterHelp,
+                Resources.AverageCallDurationBaseCounterHelp,
                 PerformanceCounterType.AverageBase);
         }
 

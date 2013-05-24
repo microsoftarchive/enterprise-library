@@ -11,9 +11,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-#if SILVERLIGHT
-using Microsoft.Practices.EnterpriseLibrary.Validation.DataAnnotations;
-#endif
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
@@ -24,13 +22,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         private Validator validator;
 
         [TestInitialize]
-        public void Setup()
+        public void TestInitialize()
         {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new ConfigurationValidatorFactory(new SystemConfigurationSource(false)));
             this.validator =
                 new ValidationAttributeValidatorBuilder(
                     new MemberAccessValidatorBuilderFactory(),
                     ValidationFactory.DefaultCompositeValidatorFactory)
                     .CreateValidator(typeof(TypeWithValidationAttributes));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
         }
 
         [TestMethod]
@@ -99,13 +104,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         private Validator validator;
 
         [TestInitialize]
-        public void Setup()
+        public void TestInitialize()
         {
+            ValidationFactory.SetDefaultConfigurationValidatorFactory(new ConfigurationValidatorFactory(new SystemConfigurationSource(false)));
             this.validator =
                 new ValidationAttributeValidatorBuilder(
                     new MemberAccessValidatorBuilderFactory(),
                     ValidationFactory.DefaultCompositeValidatorFactory)
                     .CreateValidator(typeof(TypeWithValidationAttributes));
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            ValidationFactory.Reset();
         }
 
         [TestMethod]

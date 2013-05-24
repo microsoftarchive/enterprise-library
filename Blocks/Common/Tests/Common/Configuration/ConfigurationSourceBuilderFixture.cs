@@ -32,6 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         }
     }
 
+
     [TestClass]
     public class When_AccessingConfigurationSourceBuilderMembers : ArrangeActAssert
     {
@@ -42,28 +43,43 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         }
     }
 
+
+    [TestClass]
+    public class When_GettingConfigurationSoruceSettingsToConfigurationSourceBuilder : Given_EmptyConfigurationSourceBuilder
+    {
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            ConfigurationSourceBuilder = new ConfigurationSourceBuilder();
+        }
+
+        [TestMethod]
+        public void Then_ConfigurationSourceContainsNoInstrumentationSection()
+        {
+            var configurationSource = GetConfigurationSource();
+            var instrumentationSettings = (ConfigurationSourceSection)configurationSource.GetSection(ConfigurationSourceSection.SectionName);
+
+            Assert.IsNull(instrumentationSettings);
+        }
+    }
+
     [TestClass]
     public class When_AddingSectionsToSourceBuilder : Given_EmptyConfigurationSourceBuilder
     {
-        private MockConfigurationSection section;
-        private const string sectionName = "MockSection";
+        private ConfigurationSourceSection section;
 
         protected override void Act()
         {
-            section = new MockConfigurationSection();
-            base.ConfigurationSourceBuilder.AddSection(sectionName, section);
+            section = new ConfigurationSourceSection();
+            base.ConfigurationSourceBuilder.AddSection(ConfigurationSourceSection.SectionName,
+                                                       section);
         }
 
         [TestMethod]
         public void Then_CanRetrieveAddedSection()
         {
-            Assert.AreSame(section, ConfigurationSourceBuilder.Get(sectionName));
-        }
-
-        [TestMethod]
-        public void Then_CanRetrieveAddedSectionViaGeneric()
-        {
-            Assert.AreSame(section, ConfigurationSourceBuilder.Get<MockConfigurationSection>(sectionName));
+            Assert.AreSame(section, ConfigurationSourceBuilder.Get(ConfigurationSourceSection.SectionName));
         }
 
         [TestMethod]
@@ -75,7 +91,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         [TestMethod]
         public void Then_ReturnsNullIfCannotFindViaGeneric()
         {
-            Assert.IsNull(ConfigurationSourceBuilder.Get<MockConfigurationSection>("unknown section name"));
+            Assert.IsNull(ConfigurationSourceBuilder.Get<ConfigurationSourceSection>("unknown section name"));
         }
     }
 }
