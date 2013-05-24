@@ -1,0 +1,98 @@
+/* reset css */
+body {
+    padding: 0;
+    margin: 0;
+    font-size: 1.1em;
+}
+h1, h2, h3, h4, h5, h6, ul, li, em, strong, pre, code { padding: 0; margin: 0; line-height: 1em; font-size: 100%; font-weight: normal; font-style: normal; }
+input, textarea, select { font-size: 100%; font-weight: normal; font-style: normal; }
+ul { list-style: none; }
+img { border: 0; }
+p { margin: 1em 0; }
+hr, .sep { display: none; }
+.break { clear: both;  display: block;}
+.templates { display: none; }
+h1 { font-size: 200%; }
+a { color: #06c; }
+a:hover { color: #000; }
+
+body {
+    padding: 15px; text-align: center;
+    background: #CDE2F0 /*url(../images/body_bg.png) repeat-x top left*/;
+    color: #000; 
+}
+body, input, textarea, td, th { font-family: Arial, Tahoma, Sans-Serif; }
+#container {
+    margin: 0 auto; text-align: left;
+    min-height: 530px; width: 809px;
+}
+
+#header {
+	height: 100px;
+	background: url(../images/page_bg_1.png) no-repeat bottom center;
+}
+#header h1 { margin: 0; padding: 0; position: absolute; margin-left: 15px; margin-top: 24px; z-index: 200; }
+#header #logo { float: left; }
+#header #toolbar { float: right; padding-top: 20px; padding-right: 30px; }
+
+#pageWrapper { 
+    background: url(../images/page_bg_2.png) repeat-y top center;
+}
+#page { 
+    width: 809px; min-height: 500px; 
+    padding-top: 30px;
+    background: *url(../images/page_bg_3.png) no-repeat bottom center;
+}
+
+#navigation {
+    width: 763px; height: 62px; 
+    position: absolute;margin-top: -63px; margin-left: 23px; z-index: 100;
+    background: url(../images/navbar_bg.png) no-repeat top left;
+}
+#navigation li {
+    display: block; float: left; 
+    font-size: 1.3em; text-transform: uppercase;
+    padding-left: 23px; margin-right: 20px;
+    line-height: 60px;
+    background: url(../images/navbar_sep.png) no-repeat left center;
+}
+#navigation li:first-child { background: none }
+#navigation a { color: #fff; text-decoration: none; }
+#navigation a:hover { color: #c30; }
+
+#main {
+    padding: 20px 35px 25px 35px;
+}
+
+#footer {
+    width: 809px; height: 45px;
+    background: url(../images/page_bg_4.png) no-repeat top center;
+}
+#footer p { margin: 0; padding: 30px; font-size: 11px; }
+#footer, #footer a { color: #fff; }
+#footer .copyright { float: left; }
+#footer .powered { float: right; }
+
+/* add expense */
+#newexpense p { margin: 0; padding: 10px 0; }
+#newexpense p label { font-size: .9em; text-transform: uppercase; color: #036; }
+#newexpense p label span { position: relative; top: -5px; text-transform: none; font-size: .75em; color: #333; }
+#newexpense-button  
+{
+	text-align: right;
+}
+#newexpense-button  input 
+{
+	padding: 15px 30px;
+    font-size: 1.2em; font-weight: bold; text-transform: uppercase;
+}
+.infoBox {
+    float: right;
+    position: relative; z-index: 200;
+    width: 200px;
+    padding: 10px; padding-bottom: 0;
+    background-color: #ccc;
+    border-top: 8px solid #036;
+}
+.infoBox h2 { color: #036; }
+.infoBox p { font-size: .8em; }

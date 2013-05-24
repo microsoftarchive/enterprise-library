@@ -1,0 +1,39 @@
+/* login */
+#page
+{
+	text-align: center;
+}
+
+#login
+{
+    width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: solid;
+    border-width: 1px;
+    border-color: Black;
+    padding: 15px 20px 20px 20px;
+}
+
+#UserOptions table
+{
+    margin: 20px auto 20px auto;
+    text-align: left;
+}
+
+#UserOptions label
+{
+    font-size: 13px;
+}
+
+#windows-auth-popup
+{
+	margin-top: 40px;
+}
+
+#windows-auth-popup img
+{
+	width: 400px;
+	height: 200px;
+	padding-top: 10px;
+}

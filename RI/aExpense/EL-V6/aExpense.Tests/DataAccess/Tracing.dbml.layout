@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="Tracing">
+  <DataContextMoniker Name="/TracingDataContext" />
+  <nestedChildShapes>
+    <classShape Id="6e7ad35b-b4af-4478-9b7d-ad991b5efce6" absoluteBounds="4.75, 1.75, 2, 3.3093082682291666">
+      <DataClassMoniker Name="/TracingDataContext/Trace" />
+      <nestedChildShapes>
+        <elementListCompartment Id="5f3a84d8-e3a9-43e7-bc8f-71cf1f84f894" absoluteBounds="4.765, 2.21, 1.9700000000000002, 2.7493082682291665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

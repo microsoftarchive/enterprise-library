@@ -1,0 +1,56 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="AExpense.Site" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head id="Head1" runat="server">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+    <title>Adatum a-Expense</title>
+    <link href="styles/site.css" rel="stylesheet" type="text/css" />
+
+    <asp:ContentPlaceholder id="HeadPlaceholder" runat="server" />
+</head>
+<body>
+    <form id="form1" runat="server">
+    <asp:ScriptManager ID="ScriptManager1" runat="server" />
+    
+    <div id="container">
+    
+        <div id="header">
+            <div id="logo">
+                <h1>
+                    <img src="Styling/images/header_logo.png" alt="Adatum logo" />
+                </h1>
+            </div>
+            <div id="toolbar">
+                Logged in as: <i><%= Microsoft.Security.Application.Encoder.HtmlEncode(this.Context.User.Identity.Name) %></i>  |  
+                <asp:LoginStatus ID="LoginStatus1" runat="server" OnLoggedOut="LoginStatusOnLoggedOut" />
+            </div>
+        </div>
+    
+        <div id="pageWrapper">
+            <div id="page">
+				<hr />
+				<ul id="navigation">
+					<li><a href="Default.aspx">My Expenses</a></li>
+					<li><a href="AddExpense.aspx">Add Expense</a></li>
+					<% if (this.Context.User.IsInRole("Manager")) { %>
+					<li><a href="Approve.aspx">Approve</a></li>
+					<% } %>					
+				</ul>
+				<hr />
+				<div id="main">
+                    <asp:ContentPlaceholder id="ContentPlaceholder" runat="server">
+                    </asp:ContentPlaceholder>
+                </div>
+            </div>
+        </div>
+        <div id="footer">
+            <hr />
+            <p class="copyright">
+                &copy; 2013 Microsoft Corporation.  All rights reserved.</p>
+        </div>
+    </div>
+    </form>
+</body>
+</html>

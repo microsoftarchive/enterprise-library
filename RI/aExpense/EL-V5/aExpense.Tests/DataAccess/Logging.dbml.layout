@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="Logging">
+  <DataContextMoniker Name="/LoggingDataContext" />
+  <nestedChildShapes>
+    <classShape Id="cea4a182-d2f3-47ea-be21-1d1b7d508554" absoluteBounds="2.5, 1.875, 2, 3.5016097005208326">
+      <DataClassMoniker Name="/LoggingDataContext/Log" />
+      <nestedChildShapes>
+        <elementListCompartment Id="7f662289-5326-45f4-9da0-dd0779342f69" absoluteBounds="2.515, 2.335, 1.9700000000000002, 2.941609700520833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="6d93b03c-8351-499a-9ded-adae93e1ac20" absoluteBounds="6.375, 2.375, 2, 1.3862939453125">
+      <DataClassMoniker Name="/LoggingDataContext/CategoryLog" />
+      <nestedChildShapes>
+        <elementListCompartment Id="483c082c-37f4-4e75-ad17-05d7537a3ee3" absoluteBounds="6.39, 2.835, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(4.5 : 3.06814697265625); (6.375 : 3.06814697265625)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/LoggingDataContext/Log/Log_CategoryLog" />
+      <nodes>
+        <classShapeMoniker Id="cea4a182-d2f3-47ea-be21-1d1b7d508554" />
+        <classShapeMoniker Id="6d93b03c-8351-499a-9ded-adae93e1ac20" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="36e00b79-7b93-47b2-9583-8e9dafe43bda" absoluteBounds="4.625, 0.875, 2, 1.1939925130208333">
+      <DataClassMoniker Name="/LoggingDataContext/Category" />
+      <nestedChildShapes>
+        <elementListCompartment Id="d041ff16-68a9-4d16-9637-9255165e2d36" absoluteBounds="4.64, 1.335, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(6.625 : 1.47199625651042); (7.5000005 : 1.47199625651042); (7.5000005 : 2.375)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/LoggingDataContext/Category/Category_CategoryLog" />
+      <nodes>
+        <classShapeMoniker Id="36e00b79-7b93-47b2-9583-8e9dafe43bda" />
+        <classShapeMoniker Id="6d93b03c-8351-499a-9ded-adae93e1ac20" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

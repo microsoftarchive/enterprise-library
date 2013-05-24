@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="Expenses">
+  <DataContextMoniker Name="/ExpensesDataContext" />
+  <nestedChildShapes>
+    <classShape Id="fd58ac35-119e-4aa1-a81e-1ca32bc460a2" absoluteBounds="5, 2.375, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/ExpensesDataContext/Expense" />
+      <nestedChildShapes>
+        <elementListCompartment Id="0e64186d-7c68-466f-9e4d-88c85227bde1" absoluteBounds="5.015, 2.835, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="c13ff7cc-f6a3-4fa2-862a-46b3ec63bf28" absoluteBounds="8.25, 4.375, 2, 1.9631982421875">
+      <DataClassMoniker Name="/ExpensesDataContext/ExpenseDetail" />
+      <nestedChildShapes>
+        <elementListCompartment Id="ef926661-ce0c-4526-91e3-71c427e7bccc" absoluteBounds="8.265, 4.835, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(7 : 4.74120198567708); (8.25 : 4.74120198567708)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ExpensesDataContext/Expense/Expense_ExpenseDetail" />
+      <nodes>
+        <classShapeMoniker Id="fd58ac35-119e-4aa1-a81e-1ca32bc460a2" />
+        <classShapeMoniker Id="c13ff7cc-f6a3-4fa2-862a-46b3ec63bf28" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

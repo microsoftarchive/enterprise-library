@@ -1,0 +1,63 @@
+Overview
+========
+
+The Reference Implementation (RI) source contains two folders: EL-V5 and EL-V6.
+The EL-V5 and EL-V6 folders each contains a version of the aExpense ASP.NET Visual Studio solution files. The EL-V5 folder contains a version of the aExpense application tha uses blocks from Enterprise Library 5, the The EL-V6 folder contains a version of the aExpense application tha uses blocks from Enterprise Library 6. This document contains instructions for installing and running these applications in a local development environment.
+The EL-V6 folder also contains a solution named aExpense.CodedUI.Tests.sln that enables you to run a set of coded UI unit tests on the V6 version of the RI.
+
+To install and run the V5 version of aExpense
+=============================================
+
+1. In the EL-V5 folder, open the "Setup Database" folder and run the Install-Database.ps1 PowerShell script.
+   This script creates the aExpenseV5 SQL Server Local DB database in the user's home directory.
+   The aExpenseV5 database stores aExpense application data and log messages written by the Logging Application Block.
+2. Build the project to ensure all the NuGet packages are installed.
+3. Open the aExpense Visual Studio solution file in the EL-V5 folder. In Solution Explorer, open the context menu for the aExpense project, and choose Properties.
+   On the Web panel, click Create Virtual Directory, to create the web site in IIS Express.
+4. In Visual Studio, on the Debug menu, select Start Debugging or Start Without Debugging to run the application. 
+   The first time you run the application, Visual Studio uses NuGet package restore to download and install the v5 application blocks. 
+5. You can view the log messages from the application in the log files created in the solution folder, in Windows Event Viewer, and in the Logging database.
+   You can open the Logging database using Server Explorer in Visual Studio.
+6. For details of the configuration of the Enterprise Library blocks (including the Logging Application Block), see the Web.EnterpriseLibrary.config file.
+
+
+To install and run the V6 version of aExpense
+=============================================
+
+1. In the EL-V6 folder, open the "Setup Database" folder and run the Install-Database.ps1 PowerShell script.
+   This script creates the aExpenseV6 SQL Server Local DB databases in the user's home directory.
+   The aExpenseV6 database stores aExpense application data and log messages written by the Semantic Logging Application Block.
+2. By default, the V6 version of aExpense uses the Semantic Logging Application Block in in-process mode. If you want to run this block in out-of-process mode, you must complete the optional steps 3 and 4.
+3. Optionally, download and install the Semantic Logging Application Block out-of-process Windows Service from http://go.microsoft.com/fwlink/p/?LinkID=290903
+   The download includes installation instructions for this service.
+4. Optionally, copy the file SemanticLogging-svc.xml from the "EL6-V6\Semantic Logging Service" folder to the folder where you installed the Semantic Logging Application Block out-of-process Windows Service in step 2, replacing the existing file in this folder.
+   Start the Semantic Logging Application Block out-of-process Windows Service in console mode by opening an elevated command prompt window, navigating to the folder where you installed the Semantic Logging Application Block out-of-process Windows Service in step 2 and typing:
+   SemanticLogging-svc -console
+5. Open the aExpense Visual Studio solution file in the EL-V6 folder. In Solution Explorer, open the context menu for the aExpense project, and choose Properties.
+   On the Web panel, click Create Virtual Directory, to create the web site in IIS Express.
+   If you plan to run the Semantic Logging Application Block in out-of-process mode, change the setting UseInprocEventTracing in the Web.config file to false.
+6. In Visual Studio, on the Debug menu, select Start Debugging or Start Without Debugging to run the application. 
+   The first time you run the application, Visual Studio uses NuGet package restore to download and install the v6 application blocks. 
+7. You can view the log messages from the application in the log files created in the folder where you installed the Semantic Logging Application Block out-of-process Windows Service in step 2 and in the Tracing database.
+   You can open the Tracing database using Server Explorer in Visual Studio.
+8. For details of the configuration of the Enterprise Library blocks, see the Web.EnterpriseLibrary.config file.
+
+To setup and run the Coded UI Tests
+===================================
+Requirements to run the coded UI tests:
+- Visual Studio 2012 Ultimate or Visual Studio 2012 Premium
+- Internet Explorer with a zoom setting of 100% (without this setting, some tests may fail because they won't locate the controls correctly)
+
+To build and run the tests:
+1. In the EL-V6 folder, open the "Setup Database" folder and run the Install-Database.ps1 PowerShell script.
+   This script creates the aExpense and Tracing SQL Server Local DB databases in the user's home directory. The aExpense database stores aExpense application data. The Tracing database stores log messages written by the Semantic Logging Application Block.
+2. Build the solution.
+3. Run the tests in the aExpense.AutomationTests project.
+
+More Information
+================
+
+For more information:
+- See the Migration Guide at http://go.microsoft.com/fwlink/p/?LinkID=290906
+- See chapter 8, "Updating the aExpense Application to Enterprise Library v6.0," in the Developer's Guide at http://go.microsoft.com/fwlink/p/?LinkID=290904
+- See "Verifying Code by Using Coded User Interface Tests" at http://msdn.microsoft.com/en-us/library/dd286726.aspx
