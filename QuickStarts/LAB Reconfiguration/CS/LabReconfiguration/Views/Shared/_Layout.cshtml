@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <header>
+        <div>
+            <h1>Logging Application Block</h1>
+            <h1>Reconfiguration Quick Start</h1>
+        </div>
+    </header>
+    @RenderBody()
+
+    @Scripts.Render("~/bundles/jquery")
+    @RenderSection("scripts", required: false)
+
+    <footer>
+        @if (File.Exists(Path.Combine(HttpRuntime.AppDomainAppPath, "messaging.log")))
+        {
+            @Html.ActionLink("Download the log file", "DownloadLog", "Home")
+        }
+    </footer>
+</body>
+</html>
