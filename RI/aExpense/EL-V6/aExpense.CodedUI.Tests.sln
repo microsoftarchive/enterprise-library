@@ -3,12 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aExpense.AutomationTests", "aExpense.AutomationTests\aExpense.AutomationTests.csproj", "{3FEF04E9-1C37-4C7A-8D1E-5EDB7A7567EF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{7CDA0A3C-65AA-4CBE-80CB-02F528E644D1}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aExpense", "..\EL-V6\aExpense\aExpense.csproj", "{5862D4D6-40E3-4D99-8CFD-0AF0A86175AF}"
 EndProject
 Global
